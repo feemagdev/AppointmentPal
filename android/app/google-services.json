@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "581112834014",
+    "firebase_url": "https://professional-appointment-pal.firebaseio.com",
+    "project_id": "professional-appointment-pal",
+    "storage_bucket": "professional-appointment-pal.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:581112834014:android:5434b3e6f715c4e7135f4f",
+        "android_client_info": {
+          "package_name": "com.feemag.appointmentproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "581112834014-q3f1c5e7ffeh3go5r45aisiqv0n32r43.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBx1dqZ7YqOTwbauLhhfjyJPtvXlSODu-I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "581112834014-q3f1c5e7ffeh3go5r45aisiqv0n32r43.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
