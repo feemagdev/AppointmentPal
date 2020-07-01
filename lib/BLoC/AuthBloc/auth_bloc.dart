@@ -19,12 +19,15 @@ class AuthBloc extends Bloc<AuthEvent,AuthState>{
     try{
       if(event is AppStartedEvent){
         print("App Started Event");
+
         var isSignedIn = await userRepository.isSignedIn();
         print(isSignedIn);
         if(isSignedIn){
+          userRepository.signOut();
           print("isSignedIn Run");
           var user = await userRepository.getCurrentUser();
           print(user.email);
+
 
           yield AuthenticatedState(user:user);
         }else{

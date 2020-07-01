@@ -1,24 +1,32 @@
+
+import 'package:appointmentproject/BLoC/UserRoleBloc/bloc.dart';
+import 'package:appointmentproject/BLoC/ProfessionalBloc/bloc.dart';
 import 'package:appointmentproject/BLoC/authBloc/auth_bloc.dart';
 import 'package:appointmentproject/BLoC/authBloc/auth_event.dart';
 import 'package:appointmentproject/BLoC/authBloc/auth_state.dart';
-import 'package:appointmentproject/BLoC/userRoleBloc/bloc.dart';
 import 'package:appointmentproject/ui/Signup/signup_screen.dart';
+import 'package:appointmentproject/ui/Welcome/welcome_screen.dart';
 import 'package:appointmentproject/ui/helpers/check_user_role_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 void main() {
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(SplashScreen());
+  });
+
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "flutter bloc",
       theme: ThemeData(
-        primarySwatch: Colors.orange,
+        primarySwatch: Colors.blue,
       ),
       home: BlocProvider(
         create: (context) => AuthBloc()..add(AppStartedEvent()),
@@ -33,9 +41,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc,AuthState>(
       builder: (context,state){
-        if(state is AuthInitialState){
-          return SplashScreen();
-        }else if(state is UnAuthenticatedState){
+        if(state is UnAuthenticatedState){
           return SignUpScreen();
         } else if(state is AuthenticatedState){
           print("authenticated run");
@@ -44,7 +50,7 @@ class App extends StatelessWidget {
             child: CheckUserRole(user: state.user),
           );
         }else{
-          return null;
+          return Container();
         }
       },
     );
@@ -52,12 +58,46 @@ class App extends StatelessWidget {
 }
 
 
-class SplashScreen extends StatelessWidget{
+class SplashScreen extends StatefulWidget{
+  @override
+  Splash createState() => Splash();
+}
+class Splash extends State<SplashScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    Timer(Duration(seconds: 50),()=>{
+      runMyApp()
+    });
+
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text("Welcome"),
+    return MaterialApp(
+      home: WelcomeScreen(),
     );
   }
-  
+
+  runMyApp() {
+    WidgetsFlutterBinding.ensureInitialized();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+        .then((_) {
+      runApp(new MyApp());
+    });
+  }
+
+}
+
+class Chawal extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: CircularProgressIndicator(
+        backgroundColor: Colors.red,
+      )
+    );
+  }
+
 }

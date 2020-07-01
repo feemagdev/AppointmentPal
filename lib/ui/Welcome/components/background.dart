@@ -9,18 +9,11 @@ class Background extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Container(
+      height: size.height,
       width: double.infinity,
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              colors: [
-                Color.fromRGBO(21, 91, 111, 0.7),
-                Color.fromRGBO(21, 91, 111, 0.6),
-                Color.fromRGBO(21, 91, 111, 0.5),
-              ]
-          )
-      ),
+      color: Color.fromRGBO(21, 91, 111, 0.7),
       child: child,
     );
   }
