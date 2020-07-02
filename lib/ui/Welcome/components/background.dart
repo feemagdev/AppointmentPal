@@ -13,7 +13,7 @@ class Background extends StatelessWidget {
     return Container(
       height: size.height,
       width: double.infinity,
-      color: Color.fromRGBO(21, 91, 111, 0.7),
+      color: Colors.white,
       child: child,
     );
   }

@@ -12,7 +12,7 @@ class Body extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Center(child: FadeAnimation(1,Image.asset("assets/images/welcome_screen1.png",width: 300,height: 300,))),
+          Center(child: FadeAnimation(1,Image.asset("assets/images/test.png",width: 200,height: 200,))),
           FadeAnimation(
               1,
               Text(
@@ -21,8 +21,8 @@ class Body extends StatelessWidget {
                   fontFamily: 'Raleway',
                   fontWeight: FontWeight.w500,
                   fontSize: 20,
-                  color: Colors.white,
-                  letterSpacing: 2
+                  color: Colors.black,
+                  letterSpacing: 1
                 ),
               )),
           SizedBox(
@@ -32,7 +32,7 @@ class Body extends StatelessWidget {
               1,
               Text(
                 "Make your life easy !",
-                style: TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.w500),
+                style: TextStyle(color: Colors.black, fontSize: 15,fontWeight: FontWeight.w500),
               )),
         ],
       ),
