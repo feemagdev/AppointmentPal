@@ -8,31 +8,31 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
+    Size size = MediaQuery.of(context).size;
+    double titleSize = size.height*0.03;
+    double subTitleSize = size.height*0.02;
     return Background(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Center(child: FadeAnimation(1,Image.asset("assets/images/test.png",width: 200,height: 200,))),
+          Center(child: FadeAnimation(1,Image.asset("assets/images/logo2.png",height: size.height*.15,width:size.height*.15 ,))),
           FadeAnimation(
               1,
               Text(
                 "Appointment Pal",
                 style: TextStyle(
-                  fontFamily: 'Raleway',
-                  fontWeight: FontWeight.w500,
-                  fontSize: 20,
-                  color: Colors.black,
-                  letterSpacing: 1
+                  fontWeight: FontWeight.w700,
+                  fontSize: titleSize,
+                  color: Colors.white,
+                  letterSpacing: 2
                 ),
               )),
-          SizedBox(
-            height: 10,
-          ),
+          SizedBox(height: size.height*0.01),
           FadeAnimation(
               1,
               Text(
                 "Make your life easy !",
-                style: TextStyle(color: Colors.black, fontSize: 15,fontWeight: FontWeight.w500),
+                style: TextStyle(color: Colors.white, fontSize: subTitleSize,fontWeight: FontWeight.w500),
               )),
         ],
       ),

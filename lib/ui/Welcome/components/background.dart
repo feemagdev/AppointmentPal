@@ -13,7 +13,16 @@ class Background extends StatelessWidget {
     return Container(
       height: size.height,
       width: double.infinity,
-      color: Colors.white,
+      decoration: BoxDecoration(
+          gradient: RadialGradient(
+            radius: 1.5,
+              colors: [
+                Color.fromRGBO(59, 193, 226, 1),
+                Color.fromRGBO(95, 193, 231, 1),
+                Color.fromRGBO(131, 206, 236, 1),
+              ]
+          )
+      ),
       child: child,
     );
   }

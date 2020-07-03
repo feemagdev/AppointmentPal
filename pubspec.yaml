@@ -70,16 +70,6 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: Proxima
-      fonts:
-        - asset: fonts/Proxima-Nova-Alt-Bold.otf
-        - asset: fonts/ProximaNova-Regular.otf
-        - asset: fonts/Proxima-Nova-Thin.otf
-        - asset: fonts/Proxima-Nova-Extrabold.otf
-        - asset: fonts/Proxima-Nova-Bold.otf
-        - asset: fonts/Proxima-Nova-Black.otf
-        - asset: fonts/Proxima-Nova-Alt-Thin.otf
-        - asset: fonts/Proxima-Nova-Alt-Light.otf
     - family: Raleway
       fonts:
         - asset: fonts/Raleway-Black.ttf
@@ -91,5 +81,8 @@ flutter:
         - asset: fonts/Raleway-Regular.ttf
         - asset: fonts/Raleway-SemiBold.ttf
         - asset: fonts/Raleway-Thin.ttf
+    - family: Megrim
+      fonts:
+        - asset: fonts/Megrim-Regular.ttf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
