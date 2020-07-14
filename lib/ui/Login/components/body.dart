@@ -202,11 +202,7 @@ class Body extends StatelessWidget {
     );
   }
 
-  void navigateToHomePage(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return ClientHomePageParent();
-    }));
-  }
+
 
   void navigateToSignUpPage(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {

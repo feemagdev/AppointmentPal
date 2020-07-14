@@ -187,11 +187,7 @@ class Body extends StatelessWidget {
     }));
   }
 
-  void navigateToProfessionalHomePage(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return ProfessionalHomePageParent();
-    }));
-  }
+
 
   Widget buildInitialUi() {
     return Text("Waiting for user registration");
