@@ -12,15 +12,10 @@ class Background extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              colors: [
-                Color.fromRGBO(59, 193, 226, 1),
-                Color.fromRGBO(95, 193, 231, 1),
-                Color.fromRGBO(131, 206, 236, 1),
-              ]
-          )
-      ),
+          gradient: LinearGradient(begin: Alignment.topLeft, colors: [
+            Color.fromRGBO(56, 178, 227, 1),
+            Color.fromRGBO(56, 178, 227, 0.7),
+          ])),
       child: child,
     );
   }

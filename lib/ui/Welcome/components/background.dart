@@ -15,11 +15,11 @@ class Background extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
           gradient: RadialGradient(
-            radius: 1.5,
+            radius: 2,
               colors: [
-                Color.fromRGBO(59, 193, 226, 1),
-                Color.fromRGBO(95, 193, 231, 1),
-                Color.fromRGBO(131, 206, 236, 1),
+                Color.fromRGBO(56, 178, 227, 1),
+                Color.fromRGBO(56, 178, 227, 0.8),
+                Color.fromRGBO(56, 178, 227, 0.7),
               ]
           )
       ),

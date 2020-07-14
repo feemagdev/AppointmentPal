@@ -58,9 +58,7 @@ class Body extends StatelessWidget {
               }
             }),
           ),
-          SizedBox(
-            height: size.height * 0.15,
-          ),
+          SizedBox(height: size.height * 0.15),
           Padding(
             padding: EdgeInsets.all(20),
             child: Column(
@@ -72,9 +70,7 @@ class Body extends StatelessWidget {
                       "Login",
                       style: TextStyle(color: Colors.white, fontSize: 35),
                     )),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 10),
                 FadeAnimation(
                     1.3,
                     Text(
@@ -97,9 +93,7 @@ class Body extends StatelessWidget {
                   padding: EdgeInsets.all(30),
                   child: Column(
                     children: <Widget>[
-                      SizedBox(
-                        height: 60,
-                      ),
+                      SizedBox(height: 60,),
                       FadeAnimation(
                           1.4,
                           Container(
@@ -129,24 +123,21 @@ class Body extends StatelessWidget {
                               ],
                             ),
                           )),
-                      SizedBox(
-                        height: 40,
-                      ),
+                      SizedBox(height: 40),
                       FadeAnimation(
                           1.5,
                           Text(
                             "Forgot Password?",
                             style: TextStyle(color: Colors.grey),
                           )),
-                      SizedBox(
-                        height: 40,
-                      ),
+                      SizedBox(height: 40),
                       FadeAnimation(
                           1.6,
                           RoundedButton(
                             text: "LOGIN",
                             press: () async {
-                              if (this.email == null || !EmailValidator.validate(this.email)) {
+                              if (this.email == null ||
+                                  !EmailValidator.validate(this.email)) {
                                 String message = "invalid email";
                                 showErrorDialog(message, context);
                                 return;
@@ -160,9 +151,7 @@ class Body extends StatelessWidget {
                                   email: this.email, password: this.password));
                             },
                           )),
-                      SizedBox(
-                        height: 30,
-                      ),
+                      SizedBox(height: 30),
                       Row(
                         children: <Widget>[
                           Expanded(

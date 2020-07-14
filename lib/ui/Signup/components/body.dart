@@ -36,22 +36,20 @@ class Body extends StatelessWidget {
               }
             },
             child: BlocBuilder<SignUpBloc, SignUpState>(
-                // ignore: missing_return
+              // ignore: missing_return
                 builder: (context, state) {
-              if (state is SignUpInitialState) {
-                return Container();
-              } else if (state is SignUpLoadingState) {
-                return buildLoadingUi();
-              } else if (state is SignUpSuccessfulState) {
-                return Container();
-              } else if (state is SignUpFailureState) {
-                return buildFailureUi(state.message);
-              }
-            }),
+                  if (state is SignUpInitialState) {
+                    return Container();
+                  } else if (state is SignUpLoadingState) {
+                    return buildLoadingUi();
+                  } else if (state is SignUpSuccessfulState) {
+                    return Container();
+                  } else if (state is SignUpFailureState) {
+                    return buildFailureUi(state.message);
+                  }
+                }),
           ),
-          SizedBox(
-            height: height * 0.15,
-          ),
+          SizedBox(height: height * 0.15,),
           Padding(
             padding: EdgeInsets.all(20),
             child: Column(

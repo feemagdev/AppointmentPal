@@ -1,3 +1,5 @@
+
+
 import 'package:appointmentproject/repository/user_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'auth_event.dart';
@@ -23,7 +25,6 @@ class AuthBloc extends Bloc<AuthEvent,AuthState>{
         var isSignedIn = await userRepository.isSignedIn();
         print(isSignedIn);
         if(isSignedIn){
-          userRepository.signOut();
           print("isSignedIn Run");
           var user = await userRepository.getCurrentUser();
           print(user.email);

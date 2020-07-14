@@ -67,7 +67,7 @@ class Splash extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 50),()=>{
+    Timer(Duration(seconds: 10),()=>{
       runMyApp()
     });
 

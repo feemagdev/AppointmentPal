@@ -7,3 +7,5 @@ abstract class ClientDashboardEvent {}
 
 // ignore: must_be_immutable
 class SearchBarOnTapEvent extends ClientDashboardEvent {}
+
+class AddAppointmentEvent extends ClientDashboardEvent{}

@@ -1,6 +1,6 @@
+import 'package:appointmentproject/ui/constants.dart';
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
 
 class RoundedButton extends StatelessWidget {
   final String text;
@@ -23,8 +23,8 @@ class RoundedButton extends StatelessWidget {
           height: 50,
           margin: EdgeInsets.symmetric(horizontal: 50),
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(50),
-              color: Color.fromRGBO(59, 193, 226, 0.8),
+            borderRadius: BorderRadius.circular(50),
+            color: Color.fromRGBO(56, 178, 227, 1),
           ),
           child: Center(
             child: Text(
