@@ -15,19 +15,30 @@ class SearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 30),
       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 5),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Color.fromRGBO(234, 245, 245, .23),
         borderRadius: BorderRadius.circular(29.5),
+          boxShadow: [
+            BoxShadow(
+                color: Color.fromRGBO(0, 0, 0, 0.08),
+                blurRadius: 20,
+                offset: Offset(0, 0))
+          ]
       ),
       child: TextField(
         onTap:onTap,
         onChanged: onChanged,
+        style: TextStyle(
+          color: Colors.white,
+        ),
         decoration: InputDecoration(
           hintText: "Search for professional",
+          hintStyle: TextStyle(
+            color: Color.fromRGBO(255, 255, 255, .80)
+          ),
           suffixIcon:IconButton(
-              icon: SvgPicture.asset("assets/icons/search.svg"),
+              icon: SvgPicture.asset("assets/icons/search.svg",color: Colors.white,),
               onPressed: onPressed),
           border: InputBorder.none,
 

@@ -1,33 +1,33 @@
-import 'package:appointmentproject/ui/components/text_field_container.dart';
+
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
 
 
 class RoundedInputField extends StatelessWidget {
   final ValueChanged<String> onChanged;
   final String hintText;
-  final IconData icon;
+  final Icon icon;
   const RoundedInputField({
     Key key,
     this.hintText,
-    this.icon = Icons.person,
+    this.icon,
     this.onChanged,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return TextFieldContainer(
+    return Container(
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: Colors.grey[200]))
+      ),
       child: TextField(
-        cursorColor: kPrimaryColor,
         onChanged: onChanged,
         decoration: InputDecoration(
-          icon: Icon(
-            icon,
-            color: kPrimaryColor,
-          ),
-          hintText: hintText,
-          border: InputBorder.none,
+            icon: icon,
+            hintText:hintText,
+            hintStyle: TextStyle(color: Colors.grey),
+            border: InputBorder.none
         ),
       ),
     );

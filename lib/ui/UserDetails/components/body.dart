@@ -60,7 +60,7 @@ class Body extends StatelessWidget {
               height: size.height * 0.20,
             ),
             RoundedInputField(
-              icon: IconData(59389,fontFamily: 'MaterialIcons',matchTextDirection: true),
+              icon: Icon(Icons.person),
               hintText: "Name",
               onChanged: (value) {
                 name = value;
@@ -68,14 +68,14 @@ class Body extends StatelessWidget {
             ),
             RoundedInputField(
               hintText: "Address",
-              icon: IconData(0xe7f1,fontFamily: 'MaterialIcons',matchTextDirection: true),
+              icon: Icon(Icons.location_city),
               onChanged: (value) {
                 address = value;
               },
             ),
             RoundedInputField(
               hintText: "phone",
-              icon: IconData(58705,fontFamily: 'MaterialIcons',matchTextDirection: true),
+              icon: Icon(Icons.phone),
               onChanged: (value) {
                 phone = value;
               },
