@@ -1,4 +1,5 @@
 
+import 'package:appointmentproject/model/service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 
@@ -39,4 +40,11 @@ class LoginFailureState extends LoginState{
   final String message;
   LoginFailureState({@required this.message});
 
+}
+
+
+class ClientDetailsNotFilledSignIn extends LoginState{
+  final List<Service> services;
+  final FirebaseUser user;
+  ClientDetailsNotFilledSignIn({@required this.services, @required this.user});
 }

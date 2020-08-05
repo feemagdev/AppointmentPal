@@ -116,10 +116,10 @@ class Body extends StatelessWidget {
         itemBuilder: (context, index) => Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Services(
-            svgSrc: servicesList[index].link,
+            svgSrc: servicesList[index].image,
             title: servicesList[index].name,
             onTap: () {
-              addAppointmentBloc.add(TapOnServiceEvent(serviceID: servicesList[index].key));
+              addAppointmentBloc.add(TapOnServiceEvent(serviceID: servicesList[index].name));
             },
           ),
         ),

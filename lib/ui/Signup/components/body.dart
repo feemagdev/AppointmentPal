@@ -1,5 +1,7 @@
 import 'package:appointmentproject/BLoC/SignUpBloc/bloc.dart';
 import 'package:appointmentproject/BLoC/SignUpBloc/sign_up_bloc.dart';
+import 'package:appointmentproject/model/service.dart';
+import 'package:appointmentproject/ui/ClientEmailVerification/email_verification.dart';
 import 'package:appointmentproject/ui/Login/login_screen.dart';
 import 'package:appointmentproject/ui/UserDetails/user_detail_screen.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
@@ -11,18 +13,17 @@ import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../professional_home_page.dart';
 import 'background.dart';
 
-// ignore: must_be_immutable
+
 class Body extends StatelessWidget {
-  String email;
-  String password;
-  SignUpBloc signUpBloc;
+
 
   @override
   Widget build(BuildContext context) {
+    String email;
+    String password;
+    SignUpBloc signUpBloc;
     signUpBloc = BlocProvider.of<SignUpBloc>(context);
     double height = MediaQuery.of(context).size.height;
     return Background(
@@ -32,7 +33,7 @@ class Body extends StatelessWidget {
           BlocListener<SignUpBloc, SignUpState>(
             listener: (context, state) {
               if (state is SignUpSuccessfulState) {
-                navigateToClientDetailsPage(context, state.user);
+                navigateToEmailVerificationPage(context, state.user);
               }
             },
             child: BlocBuilder<SignUpBloc, SignUpState>(
@@ -105,12 +106,12 @@ class Body extends StatelessWidget {
                                   icon: Icon(Icons.email),
                                   hintText: "Email",
                                   onChanged: (value) {
-                                    this.email = value;
+                                    email = value;
                                   },
                                 ),
                                 RoundedPasswordField(
                                   onChanged: (value) {
-                                    this.password = value;
+                                    password = value;
                                   },
                                 )
                               ],
@@ -125,9 +126,9 @@ class Body extends StatelessWidget {
                             text: "SIGN UP",
                             press: () async {
                               print('button pressed');
-                              print(this.email);
-                              if (this.email == null ||
-                                  !EmailValidator.validate(this.email)) {
+                              print(email);
+                              if (email == null ||
+                                  !EmailValidator.validate(email)) {
                                 String message = "invalid email";
                                 showErrorDialog(message, context);
                                 return;
@@ -175,9 +176,9 @@ class Body extends StatelessWidget {
     );
   }
 
-  void navigateToClientDetailsPage(BuildContext context, FirebaseUser user) {
+  void navigateToClientDetailsPage(BuildContext context, FirebaseUser user,List<Service> services) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return UserDetail(user: user);
+      return UserDetail(user: user,services:services);
     }));
   }
 
@@ -187,7 +188,11 @@ class Body extends StatelessWidget {
     }));
   }
 
-
+  void navigateToEmailVerificationPage(BuildContext context,FirebaseUser user) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ClientEmailVerification(user:user);
+    }));
+  }
 
   Widget buildInitialUi() {
     return Text("Waiting for user registration");
@@ -226,4 +231,7 @@ class Body extends StatelessWidget {
           );
         });
   }
+
+
+
 }

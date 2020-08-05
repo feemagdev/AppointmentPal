@@ -7,11 +7,6 @@ import './bloc.dart';
 class CompleteRegistrationBloc
     extends Bloc<CompleteRegistrationBlocEvent, CompleteRegistrationBlocState> {
   ClientRepository clientRepository;
-  UserRepository userRepository;
-
-  CompleteRegistrationBloc() {
-    userRepository = UserRepository();
-  }
 
   @override
   CompleteRegistrationBlocState get initialState =>
@@ -24,7 +19,14 @@ class CompleteRegistrationBloc
     if (event is CompleteRegistrationButtonPressedEvent) {
       try {
         clientRepository = new ClientRepository(
-            name: event.name, address: event.address, phone: event.phone,user: event.user);
+            name: event.name,
+            phone: event.phone,
+            country: event.country,
+            city: event.city,
+            address: event.address,
+            dob: event.dob,
+            need: event.need,
+            user: event.user);
         clientRepository.registerClient();
         yield SuccessfulCompleteRegistrationBlocState(user: event.user);
       } catch (Exception) {
@@ -32,6 +34,10 @@ class CompleteRegistrationBloc
         yield FailureCompleteRegistrationBlocState(
             message: Exception.toString());
       }
+    }
+
+    if(event is DatePickerEvent){
+      yield DatePickerState(dateTime: event.dateTime);
     }
 
     // TODO: Add Logic

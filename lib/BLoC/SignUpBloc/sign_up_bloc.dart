@@ -1,10 +1,10 @@
+import 'package:appointmentproject/model/service.dart';
+import 'package:appointmentproject/repository/service_repository.dart';
+
 import './bloc.dart';
 
 class SignUpBloc extends Bloc<SignUpEvent,SignUpState>{
-  UserRepository userRepository;
-  SignUpBloc(){
-    userRepository = UserRepository();
-  }
+  PersonRepository personRepository;
   @override
   // TODO: implement initialState
   SignUpState get initialState => SignUpInitialState();
@@ -15,12 +15,19 @@ class SignUpBloc extends Bloc<SignUpEvent,SignUpState>{
       try{
         yield SignUpLoadingState();
         print(event.email);
-        var user = await userRepository.registerUser(event.email,event.password);
+        personRepository = new PersonRepository(email: event.email, password: event.password);
+        var user = await personRepository.registerUser();
+        PersonRepository.defaultConstructor().sendVerificationEmail(user);
         yield SignUpSuccessfulState(user: user);
       }catch(e){
         yield SignUpFailureState(message:e.toString());
       }
     }
+  }
+
+  Future<List<Service>> getServicesList(){
+    ServiceRepository serviceRepository = new ServiceRepository();
+    return serviceRepository.getServicesList();
   }
 
 }

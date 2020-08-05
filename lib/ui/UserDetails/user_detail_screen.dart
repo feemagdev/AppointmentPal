@@ -1,4 +1,5 @@
 import 'package:appointmentproject/BLoC/CompleteRegistrationBloc/bloc.dart';
+import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/ui/UserDetails/components/body.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +8,9 @@ import 'package:meta/meta.dart';
 
 class UserDetail extends StatelessWidget {
 
-  FirebaseUser user;
-  UserDetail({@required this.user});
+  final FirebaseUser user;
+  final List<Service> services;
+  UserDetail({@required this.user,@required this.services});
 
 
   @override
@@ -16,7 +18,7 @@ class UserDetail extends StatelessWidget {
     return BlocProvider(
       create: (context) => CompleteRegistrationBloc(),
       child: Scaffold(
-        body: Body(user: user),
+        body: Body(user: user,services: services,),
       ),
     );
   }

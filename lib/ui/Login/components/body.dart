@@ -1,20 +1,23 @@
+
+import 'package:appointmentproject/BLoC/LoginBloc/login_bloc.dart';
 import 'package:appointmentproject/BLoC/LoginBloc/login_event.dart';
-import 'package:appointmentproject/BLoC/loginBloc/login_bloc.dart';
-import 'package:appointmentproject/BLoC/loginBloc/login_state.dart';
+import 'package:appointmentproject/BLoC/LoginBloc/login_state.dart';
+import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/ui/ClientDashboard/client_dashboard_screen.dart';
 import 'package:appointmentproject/ui/Signup/signup_screen.dart';
+import 'package:appointmentproject/ui/UserDetails/user_detail_screen.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
 import 'package:appointmentproject/ui/components/already_have_an_account_acheck.dart';
 import 'package:appointmentproject/ui/components/rounded_button.dart';
 import 'package:appointmentproject/ui/components/rounded_input_field.dart';
 import 'package:appointmentproject/ui/components/rounded_password_field.dart';
+import 'package:appointmentproject/ui/professional_home_page.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../client_home_page.dart';
-import '../../professional_home_page.dart';
+
 import 'background.dart';
 
 class Body extends StatelessWidget {
@@ -40,10 +43,12 @@ class Body extends StatelessWidget {
                 print("login body professional login");
                 print(state.user.email);
                 navigateToProfessionalHomePage(context, state.user);
+              }else if(state is ClientDetailsNotFilledSignIn){
+                print("no details found");
+                navigateToClientDetailsPage(context,state.services,state.user);
               }
             },
             child: BlocBuilder<LoginBloc, LoginState>(
-                // ignore: missing_return
                 builder: (context, state) {
               if (state is LoginInitialState) {
                 return buildInitialUi();
@@ -55,7 +60,10 @@ class Body extends StatelessWidget {
                 return Container();
               } else if (state is LoginFailureState) {
                 return buildFailureUi(state.message);
+              }else if(state is ClientDetailsNotFilledSignIn){
+                return Container();
               }
+              return Container();
             }),
           ),
           SizedBox(height: size.height * 0.15),
@@ -222,6 +230,12 @@ class Body extends StatelessWidget {
     }));
   }
 
+  void navigateToClientDetailsPage(BuildContext context, List<Service> services,FirebaseUser user) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return UserDetail(user: user,services: services,);
+    }));
+  }
+
   showErrorDialog(String message, BuildContext context) {
     showDialog(
         context: context,
@@ -240,4 +254,6 @@ class Body extends StatelessWidget {
           );
         });
   }
+
+
 }

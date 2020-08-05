@@ -5,11 +5,21 @@ import 'package:meta/meta.dart';
 abstract class CompleteRegistrationBlocEvent {}
 
 
-// ignore: must_be_immutable
+
 class CompleteRegistrationButtonPressedEvent extends CompleteRegistrationBlocEvent{
-  String name;
-  String address;
-  String phone;
-  FirebaseUser user;
-  CompleteRegistrationButtonPressedEvent({@required this.name,@required this.address,@required this.phone,@required this.user});
+  final String name;
+  final String phone;
+  final String country;
+  final String city;
+  final String address;
+  final DateTime dob;
+  final String need;
+  final FirebaseUser user;
+  CompleteRegistrationButtonPressedEvent({@required this.name,@required this.phone,@required this.country,@required this.city
+  ,@required this.address,@required this.dob,@required this.need,@required this.user});
+}
+
+class DatePickerEvent extends CompleteRegistrationBlocEvent{
+  final DateTime dateTime;
+  DatePickerEvent({@required this.dateTime});
 }
