@@ -1,4 +1,7 @@
 
+
+
+import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
@@ -28,8 +31,8 @@ class ProfessionalLoginSuccessState extends LoginState{
 class ClientLoginSuccessState extends LoginState{
 
   final FirebaseUser user;
-
-  ClientLoginSuccessState({@required this.user});
+  final Client client;
+  ClientLoginSuccessState({@required this.user, @required this.client});
 }
 
 
@@ -48,3 +51,5 @@ class ClientDetailsNotFilledSignIn extends LoginState{
   final FirebaseUser user;
   ClientDetailsNotFilledSignIn({@required this.services, @required this.user});
 }
+
+class ForgotPasswordState extends LoginState{}

@@ -44,15 +44,15 @@ class UserRoleBloc extends Bloc<UserRoleEvent, UserRoleState> {
       else{
         print("client details not filled state");
 
-        yield ClientDetailsNotFilled(services: await getServicesList());
+        yield ClientDetailsNotFilled(services: await getServicesList(null));
       }
     }
 
 
   }
 
-  Future<List<Service>> getServicesList() async{
-    return await ServiceRepository.defaultConstructor().getServicesList();
+  Future<List<Service>> getServicesList(String need) async{
+    return await ServiceRepository.defaultConstructor().getServicesList(need);
   }
 
   Future<bool> checkProfessionalRole(FirebaseUser user) async {

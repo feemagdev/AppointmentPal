@@ -1,4 +1,5 @@
 import 'package:appointmentproject/BLoC/AddAppointmentBloc/bloc.dart';
+import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/ui/AddAppointmentScreen/components/body.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,6 @@ import 'package:meta/meta.dart';
 class AddAppointmentScreen extends StatelessWidget {
 
   final List<Service> servicesList;
-
   AddAppointmentScreen({@required this.servicesList});
 
   @override
@@ -16,7 +16,7 @@ class AddAppointmentScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => AddAppointmentBloc(),
       child: Scaffold(
-        body: Body(servicesList: servicesList,),
+        body: Body(servicesList: servicesList),
       ),
     );
   }

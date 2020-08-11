@@ -1,4 +1,5 @@
 import 'package:appointmentproject/BLoC/ClientDashboardBloc/bloc.dart';
+import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/ui/AddAppointmentScreen/add_appoinmtment_screen.dart';
 import 'package:appointmentproject/ui/ClientDashboard/components/background.dart';
@@ -15,8 +16,9 @@ import 'package:meta/meta.dart';
 class Body extends StatelessWidget {
 
   final FirebaseUser user;
+  final Client client;
   ClientDashboardBloc clientDashboardBloc;
-  Body({@required this.user});
+  Body({@required this.user,@required this.client});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +56,7 @@ class Body extends StatelessWidget {
               children: <Widget>[
                 FadeAnimation(1,
                   Text(
-                      "welcome your name",
+                      "welcome "+ client.name,
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 20,
@@ -128,7 +130,7 @@ class Body extends StatelessWidget {
 
   void addAppointmentTap(){
     print("add appointment tap");
-    clientDashboardBloc.add(AddAppointmentEvent());
+    clientDashboardBloc.add(AddAppointmentEvent(client:client));
   }
 
   void navigateToAddAppointmentScreen(BuildContext context,List<Service> services) {

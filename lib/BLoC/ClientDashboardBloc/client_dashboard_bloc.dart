@@ -5,7 +5,6 @@ import './bloc.dart';
 
 class ClientDashboardBloc extends Bloc<ClientDashboardEvent, ClientDashboardState> {
 
-  ServiceRepository serviceRepository = new ServiceRepository();
 
   @override
   ClientDashboardState get initialState => InitialClientDashboardState();
@@ -19,11 +18,8 @@ class ClientDashboardBloc extends Bloc<ClientDashboardEvent, ClientDashboardStat
       yield MoveToSearchScreenState();
     }
     if(event is AddAppointmentEvent){
-      yield AddAppointmentScreenState(serviceList: await serviceRepository.getServicesList());
+      yield AddAppointmentScreenState(serviceList: await ServiceRepository.defaultConstructor().getServicesList(event.client.need));
     }
-
-
-    // TODO: Add Logic
   }
 
 

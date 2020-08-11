@@ -1,10 +1,10 @@
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/repository/service_repository.dart';
+import 'package:flutter/services.dart';
 
 import './bloc.dart';
 
 class SignUpBloc extends Bloc<SignUpEvent,SignUpState>{
-  PersonRepository personRepository;
   @override
   // TODO: implement initialState
   SignUpState get initialState => SignUpInitialState();
@@ -15,10 +15,30 @@ class SignUpBloc extends Bloc<SignUpEvent,SignUpState>{
       try{
         yield SignUpLoadingState();
         print(event.email);
-        personRepository = new PersonRepository(email: event.email, password: event.password);
-        var user = await personRepository.registerUser();
-        PersonRepository.defaultConstructor().sendVerificationEmail(user);
-        yield SignUpSuccessfulState(user: user);
+        try{
+          PersonRepository personRepository = new PersonRepository(email: event.email, password: event.password);
+          var user = await personRepository.registerUser();
+          PersonRepository.defaultConstructor().sendVerificationEmail(user);
+          yield SignUpSuccessfulState(user: user);
+        }catch (e) {
+          String errorMessage = "";
+          if (e is PlatformException) {
+            if (e.code == "ERROR_INVALID_EMAIL") {
+              errorMessage = "Your email is invalid";
+            } else if (e.code == "ERROR_USER_NOT_FOUND") {
+              errorMessage = "you are not registered with us";
+            } else if (e.code == "ERROR_WRONG_PASSWORD") {
+              errorMessage = "your password is wrong";
+            } else if(e.code == "ERROR_EMAIL_ALREADY_IN_USE"){
+              errorMessage = "this email is already in use";
+            }else {
+              errorMessage = "undefined error or network problem";
+              yield SignUpFailureState(message: e.toString());
+            }
+            yield SignUpFailureState(message: errorMessage);
+          }
+        }
+
       }catch(e){
         yield SignUpFailureState(message:e.toString());
       }
@@ -26,8 +46,7 @@ class SignUpBloc extends Bloc<SignUpEvent,SignUpState>{
   }
 
   Future<List<Service>> getServicesList(){
-    ServiceRepository serviceRepository = new ServiceRepository();
-    return serviceRepository.getServicesList();
+    return ServiceRepository.defaultConstructor().getServicesList(null);
   }
 
 }

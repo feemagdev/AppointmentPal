@@ -25,11 +25,13 @@ class AuthBloc extends Bloc<AuthEvent,AuthState>{
           print("isSignedIn Run");
           //PersonRepository.defaultConstructor().signOut();
           var user = await PersonRepository.defaultConstructor().getCurrentUser();
+          if(user.uid == null){
+            yield UnAuthenticatedState();
+          }
+          else{
+            yield AuthenticatedState(user:user);
+          }
 
-          print(user.email);
-
-          if(user.uid == null)
-          yield AuthenticatedState(user:user);
         }else{
           yield UnAuthenticatedState();
         }

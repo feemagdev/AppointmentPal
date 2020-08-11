@@ -2,8 +2,10 @@
 import 'package:appointmentproject/BLoC/LoginBloc/login_bloc.dart';
 import 'package:appointmentproject/BLoC/LoginBloc/login_event.dart';
 import 'package:appointmentproject/BLoC/LoginBloc/login_state.dart';
+import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/ui/ClientDashboard/client_dashboard_screen.dart';
+import 'package:appointmentproject/ui/ForgotPassword/forgot_password_screen.dart';
 import 'package:appointmentproject/ui/Signup/signup_screen.dart';
 import 'package:appointmentproject/ui/UserDetails/user_detail_screen.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
@@ -38,7 +40,7 @@ class Body extends StatelessWidget {
             listener: (context, state) {
               if (state is ClientLoginSuccessState) {
                 print("login body client login");
-                navigateToClientHomePage(context, state.user);
+                navigateToClientHomePage(context, state.user, state.client);
               } else if (state is ProfessionalLoginSuccessState) {
                 print("login body professional login");
                 print(state.user.email);
@@ -46,6 +48,8 @@ class Body extends StatelessWidget {
               }else if(state is ClientDetailsNotFilledSignIn){
                 print("no details found");
                 navigateToClientDetailsPage(context,state.services,state.user);
+              }else if(state is ForgotPasswordState){
+                navigateToForgotPasswordPage(context);
               }
             },
             child: BlocBuilder<LoginBloc, LoginState>(
@@ -59,8 +63,12 @@ class Body extends StatelessWidget {
               } else if (state is ClientLoginSuccessState) {
                 return Container();
               } else if (state is LoginFailureState) {
-                return buildFailureUi(state.message);
+                WidgetsBinding.instance.addPostFrameCallback((_){
+                  showErrorDialog(state.message, context);
+                });
               }else if(state is ClientDetailsNotFilledSignIn){
+                return Container();
+              }else if(state is ForgotPasswordState){
                 return Container();
               }
               return Container();
@@ -134,9 +142,16 @@ class Body extends StatelessWidget {
                       SizedBox(height: 40),
                       FadeAnimation(
                           1.5,
-                          Text(
-                            "Forgot Password?",
-                            style: TextStyle(color: Colors.grey),
+                          GestureDetector(
+                            child: Text(
+                              "Forgot Password?",
+                              style: TextStyle(color: Colors.grey),
+
+                            ),
+                            onTap: (){
+                              print("forgot button tap");
+                              loginBloc.add(ForgotPasswordButtonPressedEvent());
+                            },
                           )),
                       SizedBox(height: 40),
                       FadeAnimation(
@@ -224,15 +239,21 @@ class Body extends StatelessWidget {
     }));
   }
 
-  void navigateToClientHomePage(BuildContext context, FirebaseUser user) {
+  void navigateToClientHomePage(BuildContext context, FirebaseUser user,Client client) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return ClientDashboardScreen(user: user);
+      return ClientDashboardScreen(user: user,client: client,);
     }));
   }
 
   void navigateToClientDetailsPage(BuildContext context, List<Service> services,FirebaseUser user) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return UserDetail(user: user,services: services,);
+    }));
+  }
+
+  void navigateToForgotPasswordPage(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ForgotPasswordScreen();
     }));
   }
 
@@ -254,6 +275,8 @@ class Body extends StatelessWidget {
           );
         });
   }
+
+
 
 
 }

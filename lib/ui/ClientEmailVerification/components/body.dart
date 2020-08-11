@@ -1,6 +1,8 @@
-import 'package:appointmentproject/BLoC/EmailVerfificationBloc/email_verification_bloc.dart';
+import 'package:appointmentproject/BLoC/EmailVerificationBloc/email_verification_bloc.dart';
 import 'package:appointmentproject/model/service.dart';
+import 'package:appointmentproject/ui/ClientEmailVerification/components/background.dart';
 import 'package:appointmentproject/ui/UserDetails/user_detail_screen.dart';
+import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
 import 'package:appointmentproject/ui/components/rounded_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,66 +11,120 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
 class Body extends StatelessWidget {
-
-  final FirebaseUser user;
-  EmailVerificationBloc emailVerificationBloc;
+  FirebaseUser user;
   Body({@required this.user});
 
+  EmailVerificationBloc emailVerificationBloc;
   @override
   Widget build(BuildContext context) {
+
     emailVerificationBloc = BlocProvider.of<EmailVerificationBloc>(context);
-    return Container(
+    double height = MediaQuery.of(context).size.height;
+    return Background(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           BlocListener<EmailVerificationBloc, EmailVerificationState>(
             listener: (context, state) {
               if (state is EmailVerified) {
-                navigateToClientDetailsPage(context,state.user,state.services);
+                print("email verified");
+                navigateToClientDetailsPage(context, state.user,state.services);
               }
             },
             child: BlocBuilder<EmailVerificationBloc, EmailVerificationState>(
+
                 builder: (context, state) {
-                  if (state is EmailVerificationInitial) {
-                    return Container();
-                  } else if (state is EmailVerified) {
-                    return Container();
-                  } else if (state is EmailNotVerified) {
-                    String message = "email not verified";
-                    print(message);
-                    //showErrorDialog(message, context);
-                  }else if(state is VerificationEmailSent){
-                    String message = "verification email sent";
-                    print(message);
-                   // showErrorDialog(message, context);
-                  }
-                  return Container();
-                }),
+              if (state is EmailVerificationInitial) {
+                return Container();
+              } else if (state is VerificationEmailSent) {
+                WidgetsBinding.instance.addPostFrameCallback((_){
+                  showErrorDialog("verification email sent", context);
+                });
+
+              } else if (state is EmailVerified) {
+                return Container();
+              } else if (state is EmailNotVerified) {
+                WidgetsBinding.instance.addPostFrameCallback((_){
+                  showErrorDialog("email not verified", context);
+                });
+              }
+              return Container();
+            }),
           ),
-          Text("verification email sent to you"),
-          SizedBox(height: 20,),
-          RoundedButton(
-            text: "Send email again",
-            press: () {
-              emailVerificationBloc.add(SendEmailVerificationEvent(user: user));
-            },
+          SizedBox(
+            height: height * 0.15,
           ),
-          SizedBox(height: 20,),
-          RoundedButton(
-            text: "Click here after verification",
-            press: () {
-              emailVerificationBloc.add(CheckEmailVerification(user: user));
-            },
-          )
+          Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                FadeAnimation(
+                    1.0,
+                    Text(
+                      "Please verify your email",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    )),
+              ],
+            ),
+          ),
+          SizedBox(height: 20),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(60),
+                      topRight: Radius.circular(60))),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(30),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 60,
+                      ),
+                      FadeAnimation(
+                          1.3,
+                          Text(
+                              "Verification email sent. please check your inbox")),
+                      SizedBox(
+                        height: 50,
+                      ),
+                      FadeAnimation(
+                          1.6,
+                          RoundedButton(
+                            text: "send verification email again",
+                            press: () async {
+                              emailVerificationBloc.add(SendEmailVerificationEvent(user: user));
+                            },
+                          )),
+                      SizedBox(
+                        height: 50,
+                      ),
+                      FadeAnimation(
+                          1.6,
+                          RoundedButton(
+                            text: "check email verification",
+                            press: () async {
+                              emailVerificationBloc.add(CheckEmailVerification(user: user));
+                            },
+                          )),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  void navigateToClientDetailsPage(BuildContext context, FirebaseUser user,List<Service> services) {
+  void navigateToClientDetailsPage(
+      BuildContext context, FirebaseUser user, List<Service> services) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return UserDetail(user: user,services:services);
+      return UserDetail(user: user, services: services);
     }));
   }
 
@@ -83,8 +139,8 @@ class Body extends StatelessWidget {
             actions: [
               FlatButton(
                 child: Text("Close"),
-                onPressed: () {
-                  Navigator.of(context).pop();
+                onPressed: () => {
+                  Navigator.of(context).pop()
                 },
               )
             ],

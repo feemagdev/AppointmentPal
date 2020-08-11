@@ -36,4 +36,8 @@ class PersonRepository {
     return await Person.defaultConstructor().checkUserVerification(user);
   }
 
+  Future<void> sendPasswordResetMail (String email) async{
+    return await Person.defaultConstructor().sendPasswordResetMail(email);
+  }
+
 }

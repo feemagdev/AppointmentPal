@@ -4,6 +4,7 @@
 import 'package:appointmentproject/BLoC/AddAppointmentBloc/add_appointment_bloc.dart';
 import 'package:appointmentproject/BLoC/AddAppointmentBloc/add_appointment_event.dart';
 import 'package:appointmentproject/BLoC/AddAppointmentBloc/add_appointment_state.dart';
+import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/model/sub_services.dart';
 import 'package:appointmentproject/ui/AddAppointmentScreen/components/backgound.dart';
@@ -15,17 +16,19 @@ import 'package:meta/meta.dart';
 import 'package:appointmentproject/ui/AddAppointmentScreen/components/sub_services_ui.dart';
 
 class Body extends StatelessWidget {
-  List<Service> servicesList;
+  final List<Service> servicesList;
+  double height;
+  double width;
   AddAppointmentBloc addAppointmentBloc;
-  String dummyLink = "https://firebasestorage.googleapis.com/v0/b/professional-appointment-pal.appspot.com/o/services%2Fdoctor.svg?alt=media&token=52523529-4ef4-4747-a5b4-a002a82ff355";
-  Body({@required this.servicesList});
+
+
+  Body({@required this.servicesList,});
 
   @override
   Widget build(BuildContext context) {
-
     addAppointmentBloc = BlocProvider.of<AddAppointmentBloc>(context);
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
+    width = MediaQuery.of(context).size.width;
     print(width);
     return Background(
       child: Column(
@@ -33,7 +36,7 @@ class Body extends StatelessWidget {
         children: <Widget>[
 
           SizedBox(
-            height: height * 0.05,
+            height: 60,
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -42,7 +45,7 @@ class Body extends StatelessWidget {
               Text(
                 "Add Appointment",
                 style: TextStyle(
-                  fontSize: 25,
+                  fontSize: height * 0.035,
                   fontWeight: FontWeight.w400,
                   color: Colors.white,
                 ),
@@ -61,7 +64,7 @@ class Body extends StatelessWidget {
                 child: Text(
                   "select a service",
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: height * 0.022,
                     color: Colors.white,
                   ),
                 ),
@@ -69,7 +72,7 @@ class Body extends StatelessWidget {
             ],
           ),
           SizedBox(
-            height: 15,
+            height: 5,
           ),
           serviceListBuilder(context),
           SizedBox(height: 25,),
@@ -78,7 +81,7 @@ class Body extends StatelessWidget {
             child: Text(
               "select a sub service",
               style: TextStyle(
-                fontSize: 18,
+                fontSize: height * 0.022,
                 color: Colors.white,
               ),
             ),
@@ -108,13 +111,13 @@ class Body extends StatelessWidget {
 
   Widget serviceListBuilder(BuildContext context){
     return Container(
-      height: 100,
+      height: height * 0.14,
       child: ListView.builder(
         shrinkWrap: true,
         itemCount: servicesList.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) => Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Services(
             svgSrc: servicesList[index].image,
             title: servicesList[index].name,
@@ -128,14 +131,14 @@ class Body extends StatelessWidget {
   }
   Widget subServiceListBuilder(BuildContext context,List<SubServices> list){
     return Container(
-      height: 100,
+      height: height * 0.14,
       child: ListView.builder(
         shrinkWrap: true,
         itemCount: list.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) => Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: SubServicesUI(title:list[index].name,svgSrc:list[index].link),
+          child: SubServicesUI(title:list[index].name,svgSrc:list[index].image),
         ),
       ),
     );

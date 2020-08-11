@@ -36,9 +36,8 @@ class EmailVerificationBloc extends Bloc<EmailVerificationEvent, EmailVerificati
     }
   }
 
-  Future<List<Service>> getServicesList(){
-    ServiceRepository serviceRepository = new ServiceRepository();
-    return serviceRepository.getServicesList();
+  Future<List<Service>> getServicesList() async{
+    return await ServiceRepository.defaultConstructor().getServicesList(null);
   }
 
 }

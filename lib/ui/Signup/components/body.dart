@@ -18,12 +18,12 @@ import 'background.dart';
 
 class Body extends StatelessWidget {
 
-
+  SignUpBloc signUpBloc;
   @override
   Widget build(BuildContext context) {
     String email;
     String password;
-    SignUpBloc signUpBloc;
+
     signUpBloc = BlocProvider.of<SignUpBloc>(context);
     double height = MediaQuery.of(context).size.height;
     return Background(
@@ -37,7 +37,6 @@ class Body extends StatelessWidget {
               }
             },
             child: BlocBuilder<SignUpBloc, SignUpState>(
-              // ignore: missing_return
                 builder: (context, state) {
                   if (state is SignUpInitialState) {
                     return Container();
@@ -46,8 +45,11 @@ class Body extends StatelessWidget {
                   } else if (state is SignUpSuccessfulState) {
                     return Container();
                   } else if (state is SignUpFailureState) {
-                    return buildFailureUi(state.message);
+                    WidgetsBinding.instance.addPostFrameCallback((_){
+                      showErrorDialog(state.message, context);
+                    });
                   }
+                  return Container();
                 }),
           ),
           SizedBox(height: height * 0.15,),
@@ -133,10 +135,14 @@ class Body extends StatelessWidget {
                                 showErrorDialog(message, context);
                                 return;
                               }
-                              if (password.length <= 5) {
-                                String message = "please use a strong password";
+                              if (password == null) {
+                                String message = "please write password again";
                                 showErrorDialog(message, context);
                                 return;
+                              }
+                              if(password.length <= 5){
+                                String message = "please use strong password";
+                                showErrorDialog(message, context);
                               }
                               signUpBloc.add(SignUpButtonPressedEvent(
                                   email: email, password: password));
@@ -204,14 +210,6 @@ class Body extends StatelessWidget {
     );
   }
 
-  Widget buildFailureUi(String message) {
-    return Text(
-      message,
-      style: TextStyle(
-        color: Colors.red,
-      ),
-    );
-  }
 
   showErrorDialog(String message, BuildContext context) {
     showDialog(
@@ -224,6 +222,7 @@ class Body extends StatelessWidget {
               FlatButton(
                 child: Text("Close"),
                 onPressed: () {
+
                   Navigator.of(context).pop();
                 },
               )

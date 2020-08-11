@@ -1,4 +1,5 @@
 import 'package:appointmentproject/BLoC/CompleteRegistrationBloc/bloc.dart';
+import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/ui/ClientDashboard/client_dashboard_screen.dart';
 import 'package:appointmentproject/ui/UserDetails/components/services_dropdown.dart';
@@ -47,7 +48,7 @@ class Body extends StatelessWidget {
               CompleteRegistrationBlocState>(
             listener: (context, state) {
               if (state is SuccessfulCompleteRegistrationBlocState) {
-                navigateToClientDashboard(context, state.user);
+                navigateToClientDashboard(context, state.user,state.client);
               }
             },
             child: BlocBuilder<CompleteRegistrationBloc,
@@ -173,9 +174,9 @@ class Body extends StatelessWidget {
     );
   }
 
-  void navigateToClientDashboard(BuildContext context, FirebaseUser user) {
+  void navigateToClientDashboard(BuildContext context, FirebaseUser user, Client client) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return ClientDashboardScreen(user: user);
+      return ClientDashboardScreen(user: user,client:client);
     }));
   }
 

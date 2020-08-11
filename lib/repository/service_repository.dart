@@ -10,8 +10,8 @@ class ServiceRepository {
   ServiceRepository.defaultConstructor();
 
 
-  Future<List<Service>> getServicesList() async{
-    return await Service.defaultConstructor().getServices();
+  Future<List<Service>> getServicesList(String need) async{
+    return await Service.defaultConstructor().getServices(need);
   }
 
 

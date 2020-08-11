@@ -1,5 +1,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:meta/meta.dart';
 
 
 
@@ -44,7 +45,7 @@ class Service {
     return servicesList;
   }  */
 
-  Future<List<Service>> getServices() async{
+  Future<List<Service>> getServices(String need) async{
     final _dbReference = Firestore.instance;
     final path = "service";
      List<Service> servicesList= [];
@@ -60,6 +61,16 @@ class Service {
      });
      print(servicesList[0].name);
      print(servicesList[0].image);
+     if(need != null){
+       for(int index = 0 ; index < servicesList.length ; index++){
+         if(servicesList[index].name == need){
+           Service tempObject =  servicesList[0];
+           servicesList[0] = servicesList[index];
+           servicesList[index] = tempObject;
+           break;
+         }
+       }
+     }
      return servicesList;
   }
 

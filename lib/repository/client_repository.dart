@@ -26,11 +26,23 @@ class ClientRepository {
   ClientRepository.defaultConstructor();
 
   registerClient() {
-    Client client = Client(name, phone,country, city, address, dob, need, user);
+    Client client =
+        Client.register(name, phone, country, city, address, dob, need, user);
     client.registerClient();
   }
 
+  ClientRepository.fromMap(Map snapshot)
+      : name = snapshot['name'],
+        phone = snapshot['phone'],
+        country = snapshot['country'],
+        dob = snapshot['dob'],
+        need = snapshot['need'];
+
   Future<bool> checkClientDetails(String uid) async {
     return Client.defaultConstructor().checkClientDetails(uid);
+  }
+
+  Future<Client> getClientData(String uid) async {
+    return  await Client.defaultConstructor().getClientData(uid);
   }
 }

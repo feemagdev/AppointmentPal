@@ -11,13 +11,9 @@ class Person{
   Person.defaultConstructor();
 
   Future<FirebaseUser> registerUser() async{
-    try{
       print(this._email);
       await firebaseAuth.createUserWithEmailAndPassword(email: this._email,password: this._password);
       return await firebaseAuth.currentUser();
-    }catch(e){
-      throw Exception(e.toString());
-    }
   }
 
   Future<FirebaseUser> signInUser() async{
@@ -52,6 +48,10 @@ class Person{
 
   Future<bool> checkUserVerification(FirebaseUser user) async {
      return user.isEmailVerified;
+  }
+
+  Future<void> sendPasswordResetMail (String email) async{
+    return await firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
 
