@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class Services extends StatelessWidget {
   final String svgSrc;
@@ -13,6 +12,7 @@ class Services extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final deviceHeight = MediaQuery.of(context).size.height;
     return Column(
       children: <Widget>[
         Material(
@@ -31,6 +31,8 @@ class Services extends StatelessWidget {
                       children: <Widget>[
                         SvgPicture.network(
                           svgSrc,
+                          width: deviceHeight * 0.04,
+                          height: deviceHeight * 0.04,
                           color: Color.fromRGBO(56, 178, 227, 1),
                         ),
                       ],
@@ -44,8 +46,10 @@ class Services extends StatelessWidget {
         ),
         Text(
           title,
+
           style: TextStyle(
             color: Colors.white,
+            fontSize: deviceHeight * 0.021
           ),
         ),
       ],

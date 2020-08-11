@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class SubServicesUI extends StatelessWidget {
   final String svgSrc;
@@ -13,14 +12,15 @@ class SubServicesUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    final deviceWidth = MediaQuery.of(context).size.width;
+    final deviceHeight = MediaQuery.of(context).size.height;
     String convertedTitle = this.title.replaceAll(" ", "\n");
 
     return Column(
       children: <Widget>[
         SizedBox(
-          height: 50,
-          width: 115,
+          height: deviceHeight * 0.09,
+          width: deviceHeight * 0.21,
           child: Material(
               type: MaterialType.card,
               borderRadius: BorderRadius.circular(10),
@@ -40,6 +40,8 @@ class SubServicesUI extends StatelessWidget {
                         children: <Widget>[
                           SvgPicture.network(
                             svgSrc,
+                            width: deviceHeight*0.04,
+                            height: deviceHeight*0.04,
                           ),
 
                           Padding(
@@ -48,7 +50,7 @@ class SubServicesUI extends StatelessWidget {
                               convertedTitle,
                               style: TextStyle(
                                 color: Color.fromRGBO(56, 178, 227, 1),
-                                fontSize: 12
+                                fontSize: deviceHeight * 0.020
                               ),
                             ),
                           ),

@@ -1,30 +1,49 @@
-import 'package:firebase_database/firebase_database.dart';
-import 'package:meta/meta.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SubServices {
-  String key;
-  String name;
-  String link;
+  String _name;
+  String _image;
+  int _price;
 
-  SubServices({@required this.key, @required this.name, @required this.link});
+  SubServices(this._name, this._image, this._price);
+
+  SubServices.defaultConstructor();
 
 
-  Future<List<SubServices>> fetchSubServices(String serviceID) async {
+  Future<List<SubServices>> getSubServices(String serviceID) async {
     List<SubServices> subServicesList = [];
-    Query query = FirebaseDatabase.instance.reference().child("sub_services").orderByChild("serviceid");
-    await query.equalTo(serviceID).once().then((snapshot){
-      print(snapshot.value);
-      var DATA = snapshot.value;
-      var KEYS = snapshot.value.keys;
-
-      for(var individualKey in KEYS){
-        SubServices subServices = new SubServices(key: individualKey, name: DATA[individualKey]['name'], link: DATA[individualKey]['link']);
+    final _dbReference = Firestore.instance;
+    final String servicePath = 'service';
+    final String subServicesPath = 'sub_service';
+    await _dbReference
+        .collection(servicePath)
+        .document(serviceID)
+        .collection(subServicesPath)
+        .getDocuments()
+        .then((snapshot) {
+      snapshot.documents.forEach((element) {
+        SubServices subServices = new SubServices(element.documentID, element.data['image'],element.data['price']);
         subServicesList.add(subServices);
-      }
+      });
     });
     return subServicesList;
   }
 
+  int get price => _price;
 
+  set price(int value) {
+    _price = value;
+  }
+
+  String get image => _image;
+
+  set image(String value) {
+    _image = value;
+  }
+
+  String get name => _name;
+
+  set name(String value) {
+    _name = value;
+  }
 }

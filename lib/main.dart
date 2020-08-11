@@ -42,6 +42,7 @@ class App extends StatelessWidget {
     return BlocBuilder<AuthBloc,AuthState>(
       builder: (context,state){
         if(state is UnAuthenticatedState){
+          print("un-authenticated state");
           return SignUpScreen();
         } else if(state is AuthenticatedState){
           print("authenticated run");

@@ -1,11 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 
-abstract class AuthEvent extends Equatable{}
+abstract class AuthEvent{}
 
-class AppStartedEvent extends AuthEvent{
-  @override
-  // TODO: implement props
-  List<Object> get props => null;
-
-}
+class AppStartedEvent extends AuthEvent{}

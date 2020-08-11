@@ -2,13 +2,16 @@ import 'package:appointmentproject/model/sub_services.dart';
 import 'package:meta/meta.dart';
 
 class SubServiceRepository {
-  String serviceID;
+  String name;
+  String image;
+  String price;
 
-  SubServiceRepository({@required this.serviceID});
+  SubServiceRepository({@required this.name,@required this.image,@required this.price});
 
-  SubServices subService = new SubServices();
+  SubServiceRepository.defaultConstructor();
 
-  Future<List<SubServices>> getSubServicesList() async {
-    return await subService.fetchSubServices(serviceID);
+
+  Future<List<SubServices>> getSubServicesList(String serviceID) async {
+    return await SubServices.defaultConstructor().getSubServices(serviceID);
   }
 }

@@ -1,11 +1,17 @@
 import 'package:appointmentproject/model/service.dart';
+import 'package:meta/meta.dart';
 
 class ServiceRepository {
+  String name;
+  String image;
 
-  Service service = new Service();
+  ServiceRepository({@required this.name,@required this.image});
 
-  Future<List<Service>> getServicesList() async{
-    return await service.serviceList();
+  ServiceRepository.defaultConstructor();
+
+
+  Future<List<Service>> getServicesList(String need) async{
+    return await Service.defaultConstructor().getServices(need);
   }
 
 

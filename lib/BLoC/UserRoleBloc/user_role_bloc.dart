@@ -1,19 +1,25 @@
 import 'dart:async';
+import 'package:appointmentproject/BLoC/SignUpBloc/bloc.dart';
 import 'package:appointmentproject/BLoC/signUpBloc/bloc.dart';
+import 'package:appointmentproject/model/service.dart';
+import 'package:appointmentproject/repository/client_repository.dart';
+import 'package:appointmentproject/repository/service_repository.dart';
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import './bloc.dart';
 
 class UserRoleBloc extends Bloc<UserRoleEvent, UserRoleState> {
-  FirebaseDatabase firebaseDatabase;
-  UserRepository userRepository;
+  Firestore _dbRef;
+  PersonRepository _personRepository;
+
   @override
   UserRoleState get initialState => InitialUserRoleState();
 
   UserRoleBloc(){
-    firebaseDatabase = FirebaseDatabase.instance;
-    userRepository = UserRepository();
+    _dbRef = Firestore.instance;
+    _personRepository = PersonRepository();
   }
 
   @override
@@ -23,7 +29,7 @@ class UserRoleBloc extends Bloc<UserRoleEvent, UserRoleState> {
     print("in check user role async");
     if(event is CheckUserRoleEvent){
 
-      FirebaseUser user = await userRepository.getCurrentUser();
+      FirebaseUser user = await _personRepository.getCurrentUser();
       print("in check user role event");
       print(user.email);
 
@@ -35,28 +41,28 @@ class UserRoleBloc extends Bloc<UserRoleEvent, UserRoleState> {
         print("check client true");
         yield ClientState(user: user);
       }
+      else{
+        print("client details not filled state");
+
+        yield ClientDetailsNotFilled(services: await getServicesList(null));
+      }
     }
 
 
   }
 
-
+  Future<List<Service>> getServicesList(String need) async{
+    return await ServiceRepository.defaultConstructor().getServicesList(need);
+  }
 
   Future<bool> checkProfessionalRole(FirebaseUser user) async {
-    Query query = firebaseDatabase.reference().child('professional').orderByChild('uid').equalTo(user.uid);
-    Future<bool> check = query.once().then((snapshot){
-      return (snapshot.value != null);
-    });
-    return await check;
+    DocumentSnapshot data = await _dbRef.collection('professional').document(user.uid).get();
+    return data.exists;
 
   }
 
   Future<bool> checkClientRole(FirebaseUser user) async {
-    Query query = firebaseDatabase.reference().child('client').orderByChild('uid').equalTo(user.uid);
-    Future<bool> check = query.once().then((snapshot){
-      return (snapshot.value != null);
-    });
-    return await check;
+    return ClientRepository.defaultConstructor().checkClientDetails(user.uid);
   }
 
 

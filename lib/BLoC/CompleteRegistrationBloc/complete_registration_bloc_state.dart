@@ -1,23 +1,28 @@
+import 'package:appointmentproject/model/client.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 
-@immutable
+
 abstract class CompleteRegistrationBlocState {}
 
-class InitialCompleteRegistrationBlocState extends CompleteRegistrationBlocState {}
+class InitialCompleteRegistrationBlocState
+    extends CompleteRegistrationBlocState {}
 
-
-class SuccessfulCompleteRegistrationBlocState extends CompleteRegistrationBlocState{
-
+class SuccessfulCompleteRegistrationBlocState
+    extends CompleteRegistrationBlocState {
   final FirebaseUser user;
-
-  SuccessfulCompleteRegistrationBlocState({@required this.user});
-
-
+  final Client client;
+  SuccessfulCompleteRegistrationBlocState({@required this.user,@required this.client});
 }
-class FailureCompleteRegistrationBlocState extends CompleteRegistrationBlocState{
 
+class FailureCompleteRegistrationBlocState
+    extends CompleteRegistrationBlocState {
   final String message;
-  FailureCompleteRegistrationBlocState({@required this.message});
 
+  FailureCompleteRegistrationBlocState({@required this.message});
+}
+
+class DatePickerState extends CompleteRegistrationBlocState {
+  final DateTime dateTime;
+  DatePickerState({@required this.dateTime});
 }

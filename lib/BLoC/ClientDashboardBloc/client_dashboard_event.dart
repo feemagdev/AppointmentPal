@@ -1,11 +1,14 @@
 
-import 'package:flutter/cupertino.dart';
+import 'package:appointmentproject/model/client.dart';
 import 'package:meta/meta.dart';
 
-@immutable
+
 abstract class ClientDashboardEvent {}
 
-// ignore: must_be_immutable
+
 class SearchBarOnTapEvent extends ClientDashboardEvent {}
 
-class AddAppointmentEvent extends ClientDashboardEvent{}
+class AddAppointmentEvent extends ClientDashboardEvent{
+  final Client client;
+  AddAppointmentEvent({@required this.client});
+}

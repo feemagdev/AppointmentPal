@@ -1,17 +1,14 @@
 import 'dart:async';
 import 'package:appointmentproject/BLoC/SignUpBloc/bloc.dart';
+import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/repository/client_repository.dart';
 import 'package:bloc/bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import './bloc.dart';
 
 class CompleteRegistrationBloc
     extends Bloc<CompleteRegistrationBlocEvent, CompleteRegistrationBlocState> {
   ClientRepository clientRepository;
-  UserRepository userRepository;
-
-  CompleteRegistrationBloc() {
-    userRepository = UserRepository();
-  }
 
   @override
   CompleteRegistrationBlocState get initialState =>
@@ -24,9 +21,16 @@ class CompleteRegistrationBloc
     if (event is CompleteRegistrationButtonPressedEvent) {
       try {
         clientRepository = new ClientRepository(
-            name: event.name, address: event.address, phone: event.phone,user: event.user);
+            name: event.name,
+            phone: event.phone,
+            country: event.country,
+            city: event.city,
+            address: event.address,
+            dob: event.dob,
+            need: event.need,
+            user: event.user);
         clientRepository.registerClient();
-        yield SuccessfulCompleteRegistrationBlocState(user: event.user);
+        yield SuccessfulCompleteRegistrationBlocState(user: event.user,client: await getClientData(event.user.uid));
       } catch (Exception) {
         print("user not registered completely " + Exception);
         yield FailureCompleteRegistrationBlocState(
@@ -34,6 +38,14 @@ class CompleteRegistrationBloc
       }
     }
 
-    // TODO: Add Logic
+    if(event is DatePickerEvent){
+      yield DatePickerState(dateTime: event.dateTime);
+    }
+
   }
+
+  Future<Client> getClientData(String uid) async {
+    return await ClientRepository.defaultConstructor().getClientData(uid);
+  }
+
 }
