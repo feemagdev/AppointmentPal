@@ -1,19 +1,26 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:meta/meta.dart';
 
 
 
 class Service {
+  String _serviceID;
   String _name;
   String _image;
+
 
 
   Service.defaultConstructor();
 
 
-  Service(this._name,this._image);
+  Service(this._serviceID,this._name,this._image);
 
+
+  String get serviceID => _serviceID;
+
+  set serviceID(String value) {
+    _serviceID = value;
+  }
 
   String get name => _name;
 
@@ -27,23 +34,6 @@ class Service {
     _image = value;
   }
 
- /* Future<List<Service>> serviceList() async{
-    List<Service> servicesList = [];
-    DatabaseReference serviceReference =
-    FirebaseDatabase.instance.reference();
-    await serviceReference.child('service').once().then((DataSnapshot snapshot) {
-      var KEYS = snapshot.value.keys;
-      var DATA = snapshot.value;
-      for(var individualKey in KEYS){
-        Service service = new Service(
-          _name: DATA[individualKey]['name'],
-          image: DATA[individualKey]['link'],
-        );
-        servicesList.add(service);
-      }
-    });
-    return servicesList;
-  }  */
 
   Future<List<Service>> getServices(String need) async{
     final _dbReference = Firestore.instance;
@@ -51,16 +41,10 @@ class Service {
      List<Service> servicesList= [];
      await _dbReference.collection(path).getDocuments().then((snapshot){
        snapshot.documents.forEach((element) {
-         var name = element.documentID;
-         element.data.forEach((key, value) {
-           var image = value;
-           Service service = new Service(name,image);
-           servicesList.add(service);
-         });
+         Service service = new Service(element.documentID,element.data['name'],element.data['image']);
+         servicesList.add(service);
        });
      });
-     print(servicesList[0].name);
-     print(servicesList[0].image);
      if(need != null){
        for(int index = 0 ; index < servicesList.length ; index++){
          if(servicesList[index].name == need){

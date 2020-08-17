@@ -12,15 +12,14 @@ class SubServicesUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final deviceWidth = MediaQuery.of(context).size.width;
     final deviceHeight = MediaQuery.of(context).size.height;
     String convertedTitle = this.title.replaceAll(" ", "\n");
 
     return Column(
       children: <Widget>[
         SizedBox(
-          height: deviceHeight * 0.09,
-          width: deviceHeight * 0.21,
+          height: deviceHeight * 0.070,
+          width: deviceHeight * 0.15,
           child: Material(
               type: MaterialType.card,
               borderRadius: BorderRadius.circular(10),
@@ -40,8 +39,8 @@ class SubServicesUI extends StatelessWidget {
                         children: <Widget>[
                           SvgPicture.network(
                             svgSrc,
-                            width: deviceHeight*0.04,
-                            height: deviceHeight*0.04,
+                            width: deviceHeight*0.025,
+                            height: deviceHeight*0.025,
                           ),
 
                           Padding(
@@ -50,7 +49,7 @@ class SubServicesUI extends StatelessWidget {
                               convertedTitle,
                               style: TextStyle(
                                 color: Color.fromRGBO(56, 178, 227, 1),
-                                fontSize: deviceHeight * 0.020
+                                fontSize: 13
                               ),
                             ),
                           ),

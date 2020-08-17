@@ -7,6 +7,7 @@ import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
 import 'package:appointmentproject/ui/components/date_picker.dart';
 import 'package:appointmentproject/ui/components/rounded_button.dart';
 import 'package:appointmentproject/ui/components/rounded_input_field.dart';
+import 'package:appointmentproject/ui/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -158,7 +159,10 @@ class Body extends StatelessWidget {
                         height: 40,
                       ),
                       RoundedButton(
+                        color:kPrimaryColor,
                         text: "Complete Registration",
+                        textColor:Colors.white,
+                        fontSize: 12,
                         press: () async {
                            completeRegistration(context);
                         },

@@ -1,9 +1,9 @@
 
 import 'package:appointmentproject/BLoC/UserRoleBloc/bloc.dart';
+import 'package:appointmentproject/model/service.dart';
 
 import 'package:appointmentproject/ui/ClientDashboard/client_dashboard_screen.dart';
 import 'package:appointmentproject/ui/UserDetails/user_detail_screen.dart';
-import 'package:appointmentproject/ui/Welcome/welcome_screen.dart';
 import 'package:appointmentproject/ui/professional_home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,11 +17,10 @@ import 'package:meta/meta.dart';
 
 class CheckUserRole extends StatelessWidget{
   final FirebaseUser user;
-  UserRoleBloc userRoleBloc;
   CheckUserRole({@required this.user});
   @override
   Widget build(BuildContext context) {
-    userRoleBloc = BlocProvider.of(context)..add(CheckUserRoleEvent());
+    print("in check user role helper");
     return BlocBuilder<UserRoleBloc,UserRoleState>(
       builder: (context,state){
         if(state is ProfessionalState){
@@ -30,7 +29,7 @@ class CheckUserRole extends StatelessWidget{
         }
         else if(state is ClientState){
           print("else if client state run");
-          return ClientDashboardScreen(user:user);
+          return ClientDashboardScreen(user:user,client: state.client);
         }
         else if(state is InitialUserRoleState){
           return userInitialState(context);
@@ -43,7 +42,6 @@ class CheckUserRole extends StatelessWidget{
   }
 
   Widget userInitialState(BuildContext context){
-    Size size = MediaQuery.of(context).size;
     return Container(
       child: Center(
         heightFactor: 30,

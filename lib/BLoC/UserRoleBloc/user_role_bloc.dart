@@ -1,25 +1,23 @@
 import 'dart:async';
 import 'package:appointmentproject/BLoC/SignUpBloc/bloc.dart';
 import 'package:appointmentproject/BLoC/signUpBloc/bloc.dart';
+import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/repository/client_repository.dart';
 import 'package:appointmentproject/repository/service_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import './bloc.dart';
 
 class UserRoleBloc extends Bloc<UserRoleEvent, UserRoleState> {
   Firestore _dbRef;
-  PersonRepository _personRepository;
 
   @override
   UserRoleState get initialState => InitialUserRoleState();
 
   UserRoleBloc(){
     _dbRef = Firestore.instance;
-    _personRepository = PersonRepository();
   }
 
   @override
@@ -29,7 +27,7 @@ class UserRoleBloc extends Bloc<UserRoleEvent, UserRoleState> {
     print("in check user role async");
     if(event is CheckUserRoleEvent){
 
-      FirebaseUser user = await _personRepository.getCurrentUser();
+      FirebaseUser user = await PersonRepository.defaultConstructor().getCurrentUser();
       print("in check user role event");
       print(user.email);
 
@@ -39,7 +37,7 @@ class UserRoleBloc extends Bloc<UserRoleEvent, UserRoleState> {
       }
       else if(await checkClientRole(user)){
         print("check client true");
-        yield ClientState(user: user);
+        yield ClientState(user: user,client: await getClientData(user.uid));
       }
       else{
         print("client details not filled state");
@@ -65,6 +63,10 @@ class UserRoleBloc extends Bloc<UserRoleEvent, UserRoleState> {
     return ClientRepository.defaultConstructor().checkClientDetails(user.uid);
   }
 
+
+  Future<Client> getClientData(String uid) async {
+    return await ClientRepository.defaultConstructor().getClientData(uid);
+  }
 
 
 
