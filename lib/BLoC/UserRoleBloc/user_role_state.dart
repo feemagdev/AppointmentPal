@@ -1,4 +1,5 @@
 
+import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/repository/service_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,7 +12,8 @@ class InitialUserRoleState extends UserRoleState {}
 
 class ClientState extends UserRoleState{
   final FirebaseUser user;
-  ClientState({@required this.user});
+  final Client client;
+  ClientState({@required this.user, @required this.client});
 }
 
 class ProfessionalState extends UserRoleState{

@@ -31,8 +31,8 @@ class Services extends StatelessWidget {
                       children: <Widget>[
                         SvgPicture.network(
                           svgSrc,
-                          width: deviceHeight * 0.04,
-                          height: deviceHeight * 0.04,
+                          width: deviceHeight * 0.03,
+                          height: deviceHeight * 0.03,
                           color: Color.fromRGBO(56, 178, 227, 1),
                         ),
                       ],
@@ -49,7 +49,7 @@ class Services extends StatelessWidget {
 
           style: TextStyle(
             color: Colors.white,
-            fontSize: deviceHeight * 0.021
+            fontSize: 13
           ),
         ),
       ],

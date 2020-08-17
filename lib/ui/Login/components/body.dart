@@ -36,7 +36,6 @@ class Body extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           BlocListener<LoginBloc, LoginState>(
-            // ignore: missing_return
             listener: (context, state) {
               if (state is ClientLoginSuccessState) {
                 print("login body client login");

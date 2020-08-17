@@ -6,12 +6,14 @@ class RoundedButton extends StatelessWidget {
   final String text;
   final Function press;
   final Color color, textColor;
+  final double fontSize;
   const RoundedButton({
     Key key,
     this.text,
     this.press,
-    this.color = kPrimaryColor,
-    this.textColor = Colors.white,
+    this.color,
+    this.textColor,
+    this.fontSize,
   }) : super(key: key);
 
   @override
@@ -20,17 +22,19 @@ class RoundedButton extends StatelessWidget {
       onTap: press,
       child: Container(
           height: 50,
-          margin: EdgeInsets.symmetric(horizontal: 50),
+          width: 170,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(50),
-            color: Color.fromRGBO(56, 178, 227, 1),
+            color: color,
           ),
           child: Center(
             child: Text(
               text,
               style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold),
+                  color: textColor,
+                  fontWeight: FontWeight.normal,
+                fontSize: fontSize
+              ),
             ),
           )
       ),
