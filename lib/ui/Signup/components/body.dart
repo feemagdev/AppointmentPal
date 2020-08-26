@@ -23,9 +23,9 @@ class Body extends StatelessWidget {
   Widget build(BuildContext context) {
     String email;
     String password;
-
     signUpBloc = BlocProvider.of<SignUpBloc>(context);
-    double height = MediaQuery.of(context).size.height;
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.height;
     return Background(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,7 +52,7 @@ class Body extends StatelessWidget {
                   return Container();
                 }),
           ),
-          SizedBox(height: height * 0.15,),
+          SizedBox(height: deviceHeight * 0.15,),
           Padding(
             padding: EdgeInsets.all(20),
             child: Column(
@@ -125,7 +125,10 @@ class Body extends StatelessWidget {
                       FadeAnimation(
                           1.6,
                           RoundedButton(
-                            text: "SIGN UP",
+                              height: deviceWidth < 400 ? deviceHeight * 0.09:deviceHeight * 0.06,
+                            color: Color.fromRGBO(56, 178, 227,1),
+                            textColor: Colors.white,
+                            text: "Sign up",
                             press: () async {
                               print('button pressed');
                               print(email);

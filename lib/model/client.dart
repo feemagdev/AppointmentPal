@@ -1,8 +1,17 @@
+
+import 'package:appointmentproject/model/service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Client {
-  var _name, _phone,_country,_city, _address, _dob, _need;
+  String _name;
+  String _phone;
+  String _country;
+  String _address;
+  String _city;
+  Timestamp _dob;
+  Service _need;
+
   FirebaseUser _user;
   final db = Firestore.instance;
   final path = "client";
@@ -14,16 +23,16 @@ class Client {
 
 
 
-  Client.fromMap(Map snapshot)
+  Client.fromMap(Map snapshot,Service service)
       : _name = snapshot['name'],
         _phone = snapshot['phone'],
         _country = snapshot['country'],
         _city = snapshot['city'],
         _address = snapshot['address'],
         _dob = snapshot['dob'],
-        _need = snapshot['need'];
+        _need = service;
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap([DocumentReference needReference]) {
     return {
       'name': _name,
       'phone': _phone,
@@ -31,12 +40,14 @@ class Client {
       'city': _city,
       'address': _address,
       'dob': _dob,
-      'need': _need,
+      'need': needReference,
     };
   }
 
   Future<void> registerClient() async {
-    await db.collection(path).document(_user.uid).setData(toMap());
+    final dbReference = Firestore.instance;
+    DocumentReference serviceReference = dbReference.collection('service').document(_need.serviceID);
+    await db.collection(path).document(_user.uid).setData(toMap(serviceReference));
   }
 
   Future<void> updateClient() async {
@@ -49,50 +60,61 @@ class Client {
   }
 
   Future<Client> getClientData(String uid) async{
+    print("in client get data");
     DocumentSnapshot documentSnapshot = await db.collection(path).document(uid).get();
-    Client client = Client.fromMap(documentSnapshot.data);
+    DocumentReference serviceReference = documentSnapshot.data['need'];
+    Service service = await Service.defaultConstructor().getService(serviceReference);
+    Client client = Client.fromMap(documentSnapshot.data,service);
+    print("map created");
     return  client;
   }
 
-  get need => _need;
+  FirebaseUser get user => _user;
 
-  set need(value) {
+  set user(FirebaseUser value) {
+    _user = value;
+  }
+
+  Service get need => _need;
+
+  set need(Service value) {
     _need = value;
   }
 
-  get dob => _dob;
+  Timestamp get dob => _dob;
 
-  set dob(value) {
+  set dob(Timestamp value) {
     _dob = value;
   }
 
-  get address => _address;
+  String get city => _city;
 
-  set address(value) {
-    _address = value;
-  }
-
-  get city => _city;
-
-  set city(value) {
+  set city(String value) {
     _city = value;
   }
 
-  get country => _country;
+  String get address => _address;
 
-  set country(value) {
+  set address(String value) {
+    _address = value;
+  }
+
+  String get country => _country;
+
+  set country(String value) {
     _country = value;
   }
 
-  get phone => _phone;
+  String get phone => _phone;
 
-  set phone(value) {
+  set phone(String value) {
     _phone = value;
   }
 
-  get name => _name;
+  String get name => _name;
 
-  set name(value) {
+  set name(String value) {
     _name = value;
   }
+
 }

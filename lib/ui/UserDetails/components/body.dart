@@ -23,18 +23,20 @@ class Body extends StatelessWidget {
   static String city;
   static String address;
   static DateTime dob;
-  static String need;
+  static Service need;
 
   CompleteRegistrationBloc completeRegistrationBloc;
   FirebaseUser user;
   List<Service> services;
+
   TextEditingController nameController = new TextEditingController();
   Body({@required this.user,@required this.services});
 
   @override
   Widget build(BuildContext context) {
 
-
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.height;
     completeRegistrationBloc =
         BlocProvider.of<CompleteRegistrationBloc>(context);
     Size size = MediaQuery.of(context).size;
@@ -159,10 +161,12 @@ class Body extends StatelessWidget {
                         height: 40,
                       ),
                       RoundedButton(
-                        color:kPrimaryColor,
                         text: "Complete Registration",
-                        textColor:Colors.white,
+                        color: Color.fromRGBO(56, 178, 227, 1),
+                        textColor: Colors.white,
                         fontSize: 12,
+                        height: deviceWidth < 400 ? deviceHeight * 0.09:deviceHeight * 0.07,
+                        width: deviceWidth < 400 ? deviceHeight * 0.3:deviceHeight * 0.5,
                         press: () async {
                            completeRegistration(context);
                         },

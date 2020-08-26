@@ -10,22 +10,27 @@ class SubServicesUI extends StatelessWidget {
   const SubServicesUI({Key key, this.svgSrc, this.title, this.onTap})
       : super(key: key);
 
+
+
   @override
   Widget build(BuildContext context) {
     final deviceHeight = MediaQuery.of(context).size.height;
+    final deviceWidth = MediaQuery.of(context).size.width;
+    print("device width : "+ deviceWidth.toString());
+    print("device width : "+ deviceHeight.toString());
     String convertedTitle = this.title.replaceAll(" ", "\n");
 
     return Column(
       children: <Widget>[
         SizedBox(
-          height: deviceHeight * 0.070,
-          width: deviceHeight * 0.15,
+          height: deviceWidth < 400 ? deviceHeight* 0.075: deviceHeight* 0.08,
+          width: deviceWidth < 400 ? deviceWidth* 0.29: deviceWidth* 0.35,
           child: Material(
               type: MaterialType.card,
               borderRadius: BorderRadius.circular(10),
               clipBehavior: Clip.antiAlias,
               color: Color.fromRGBO(234, 245, 245, 1),
-                child: Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
@@ -39,8 +44,8 @@ class SubServicesUI extends StatelessWidget {
                         children: <Widget>[
                           SvgPicture.network(
                             svgSrc,
-                            width: deviceHeight*0.025,
-                            height: deviceHeight*0.025,
+                            width: deviceWidth < 400 ? deviceWidth* 0.035: deviceWidth* 0.05,
+                            height: deviceWidth < 400 ? deviceWidth* 0.035: deviceWidth* 0.05,
                           ),
 
                           Padding(
@@ -48,8 +53,8 @@ class SubServicesUI extends StatelessWidget {
                             child: Text(
                               convertedTitle,
                               style: TextStyle(
-                                color: Color.fromRGBO(56, 178, 227, 1),
-                                fontSize: 13
+                                  color: Color.fromRGBO(56, 178, 227, 1),
+                                  fontSize: deviceWidth < 400 ? 10:15,
                               ),
                             ),
                           ),

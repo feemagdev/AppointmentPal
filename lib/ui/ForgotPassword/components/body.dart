@@ -18,7 +18,8 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     forgotPasswordBloc = BlocProvider.of<ForgotPasswordBloc>(context);
-    Size size = MediaQuery.of(context).size;
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.height;
     return Background(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,7 +44,7 @@ class Body extends StatelessWidget {
               return Container();
             }),
           ),
-          SizedBox(height: size.height * 0.15),
+          SizedBox(height: deviceHeight * 0.15),
           Padding(
             padding: EdgeInsets.all(20),
             child: Column(
@@ -111,6 +112,10 @@ class Body extends StatelessWidget {
                           1.6,
                           RoundedButton(
                             text: "send reset link",
+                            color: Color.fromRGBO(56, 178, 227, 1),
+                            textColor: Colors.white,
+                            height: deviceWidth < 400 ? deviceHeight * 0.09:deviceHeight * 0.07,
+                            width: deviceWidth < 400 ? deviceHeight * 0.3:deviceHeight * 0.5,
                             press: () async {
                               if (this.email == null ||
                                   !EmailValidator.validate(this.email)) {

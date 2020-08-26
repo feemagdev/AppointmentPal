@@ -19,7 +19,8 @@ class Body extends StatelessWidget {
   Widget build(BuildContext context) {
 
     emailVerificationBloc = BlocProvider.of<EmailVerificationBloc>(context);
-    double height = MediaQuery.of(context).size.height;
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.height;
     return Background(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,7 +53,7 @@ class Body extends StatelessWidget {
             }),
           ),
           SizedBox(
-            height: height * 0.15,
+            height: deviceHeight * 0.15,
           ),
           Padding(
             padding: EdgeInsets.all(20),
@@ -95,6 +96,10 @@ class Body extends StatelessWidget {
                           1.6,
                           RoundedButton(
                             text: "send verification email again",
+                            color: Color.fromRGBO(56, 178, 227, 1),
+                            textColor: Colors.white,
+                            height: deviceWidth < 400 ? deviceHeight * 0.09:deviceHeight * 0.07,
+                            width: deviceWidth < 400 ? deviceHeight * 0.3:deviceHeight * 0.5,
                             press: () async {
                               emailVerificationBloc.add(SendEmailVerificationEvent(user: user));
                             },
@@ -106,6 +111,10 @@ class Body extends StatelessWidget {
                           1.6,
                           RoundedButton(
                             text: "check email verification",
+                            color: Color.fromRGBO(56, 178, 227, 1),
+                            textColor: Colors.white,
+                            height: deviceWidth < 400 ? deviceHeight * 0.09:deviceHeight * 0.07,
+                            width: deviceWidth < 400 ? deviceHeight * 0.3:deviceHeight * 0.5,
                             press: () async {
                               emailVerificationBloc.add(CheckEmailVerification(user: user));
                             },
