@@ -7,13 +7,15 @@ class RoundedButton extends StatelessWidget {
   final Function press;
   final Color color, textColor;
   final double fontSize;
+  final double width;
+  final double height;
   const RoundedButton({
     Key key,
     this.text,
     this.press,
     this.color,
     this.textColor,
-    this.fontSize,
+    this.fontSize, this.width, this.height,
   }) : super(key: key);
 
   @override
@@ -21,8 +23,8 @@ class RoundedButton extends StatelessWidget {
     return InkWell(
       onTap: press,
       child: Container(
-          height: 50,
-          width: 170,
+          height:height,
+          width: width,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(50),
             color: color,

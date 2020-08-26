@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 
 class DropDownServices extends StatelessWidget {
   final List<Service> services;
-  static String selectedNeed;
+  static Service selectedNeed;
   DropDownServices({@required this.services});
 
   @override
@@ -57,7 +57,7 @@ class _BodyState extends State<Body> {
                 onChanged: (value){
                   setState(() {
                     selectedService = value;
-                    DropDownServices.selectedNeed = value.name;
+                    DropDownServices.selectedNeed = value;
                   });
                 },
               ),

@@ -29,6 +29,10 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.height;
+
     loginBloc = BlocProvider.of<LoginBloc>(context);
     Size size = MediaQuery.of(context).size;
     return Background(
@@ -37,6 +41,7 @@ class Body extends StatelessWidget {
         children: <Widget>[
           BlocListener<LoginBloc, LoginState>(
             listener: (context, state) {
+              print("in bloc");
               if (state is ClientLoginSuccessState) {
                 print("login body client login");
                 navigateToClientHomePage(context, state.user, state.client);
@@ -60,6 +65,7 @@ class Body extends StatelessWidget {
               } else if (state is ProfessionalLoginSuccessState) {
                 return Container();
               } else if (state is ClientLoginSuccessState) {
+                print("login body success");
                 return Container();
               } else if (state is LoginFailureState) {
                 WidgetsBinding.instance.addPostFrameCallback((_){
@@ -70,6 +76,7 @@ class Body extends StatelessWidget {
               }else if(state is ForgotPasswordState){
                 return Container();
               }
+              print("no state is run");
               return Container();
             }),
           ),
@@ -156,7 +163,11 @@ class Body extends StatelessWidget {
                       FadeAnimation(
                           1.6,
                           RoundedButton(
-                            text: "LOGIN",
+                            height: deviceWidth < 400 ? deviceHeight * 0.09:deviceHeight * 0.07,
+                            width: deviceWidth < 400 ? deviceHeight * 0.3:deviceHeight * 0.5,
+                            color: Color.fromRGBO(56, 178,227, 1),
+                            textColor: Colors.white,
+                            text: "Login",
                             press: () async {
                               if (this.email == null ||
                                   !EmailValidator.validate(this.email)) {

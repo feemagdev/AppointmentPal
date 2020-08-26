@@ -39,13 +39,13 @@ class Body extends StatelessWidget {
               }
             },
             child: BlocBuilder<ClientDashboardBloc, ClientDashboardState>(
-              // ignore: missing_return
                 builder: (context, state) {
                   if (state is InitialClientDashboardState) {
                     return Container();
                   } else if (state is AddAppointmentScreenState) {
                     return Container();
                   }
+                  return Container();
                 }),
           ),
           SizedBox(height: height * 0.10,),

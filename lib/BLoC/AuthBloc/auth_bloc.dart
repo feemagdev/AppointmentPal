@@ -18,6 +18,7 @@ class AuthBloc extends Bloc<AuthEvent,AuthState>{
     try{
       if(event is AppStartedEvent){
         print("App Started Event");
+        PersonRepository.defaultConstructor().signOut();
         var isSignedIn = await PersonRepository.defaultConstructor().isSignedIn();
         print(isSignedIn);
         if(isSignedIn){

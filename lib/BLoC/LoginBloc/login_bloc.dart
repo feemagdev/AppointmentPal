@@ -35,8 +35,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             yield ProfessionalLoginSuccessState(user: user);
           } else if (await checkClientRole(user)) {
             print("check client true");
-            yield ClientLoginSuccessState(
-                user: user, client: await getClientData(user.uid));
+            try{
+              yield ClientLoginSuccessState(
+                  user: user, client: await getClientData(user.uid));
+            }catch(e){
+              print(e);
+            }
           } else {
             print("sign in client not filled state");
             yield ClientDetailsNotFilledSignIn(
