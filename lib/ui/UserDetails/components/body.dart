@@ -7,7 +7,6 @@ import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
 import 'package:appointmentproject/ui/components/date_picker.dart';
 import 'package:appointmentproject/ui/components/rounded_button.dart';
 import 'package:appointmentproject/ui/components/rounded_input_field.dart';
-import 'package:appointmentproject/ui/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +16,11 @@ import 'background.dart';
 
 class Body extends StatelessWidget {
 
+
+
+  CompleteRegistrationBloc completeRegistrationBloc;
+  FirebaseUser user;
+  List<Service> services;
   static String name;
   static String phone;
   static String country;
@@ -25,11 +29,6 @@ class Body extends StatelessWidget {
   static DateTime dob;
   static Service need;
 
-  CompleteRegistrationBloc completeRegistrationBloc;
-  FirebaseUser user;
-  List<Service> services;
-
-  TextEditingController nameController = new TextEditingController();
   Body({@required this.user,@required this.services});
 
   @override
@@ -37,6 +36,8 @@ class Body extends StatelessWidget {
 
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.height;
+
+
     completeRegistrationBloc =
         BlocProvider.of<CompleteRegistrationBloc>(context);
     Size size = MediaQuery.of(context).size;
@@ -56,7 +57,6 @@ class Body extends StatelessWidget {
             },
             child: BlocBuilder<CompleteRegistrationBloc,
                     CompleteRegistrationBlocState>(
-                // ignore: missing_return
                 builder: (context, state) {
               if (state is InitialCompleteRegistrationBlocState) {
                 return Container();
@@ -65,6 +65,7 @@ class Body extends StatelessWidget {
               } else if (state is FailureCompleteRegistrationBlocState) {
                 return buildFailureUi(state.message);
               }
+              return Container();
             }),
           ),
           SizedBox(height: height * 0.15,),
@@ -167,7 +168,7 @@ class Body extends StatelessWidget {
                         fontSize: 12,
                         height: deviceWidth < 400 ? deviceHeight * 0.09:deviceHeight * 0.07,
                         width: deviceWidth < 400 ? deviceHeight * 0.3:deviceHeight * 0.5,
-                        press: () async {
+                        press: ()  {
                            completeRegistration(context);
                         },
                       ),
@@ -274,5 +275,35 @@ class Body extends StatelessWidget {
             dob: dob,
             user: user,
             need: need));
+  }
+
+
+  showDatePickers(TextEditingController dobTextController,BuildContext context,DateTime dateTime){
+    return Container(
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: Colors.grey[200]))),
+      child: TextField(
+        controller: dobTextController,
+        onChanged: (value) {
+        },
+        onTap: () {
+          showDatePicker(
+              context: context,
+              initialDate: dateTime == null ? DateTime.now() : dateTime,
+              firstDate: DateTime(1970),
+              lastDate: DateTime(2100)).then((value) {
+                dob = value;
+                completeRegistrationBloc.add(DatePickerEvent(dateTime: dob));
+          });
+        },
+
+        decoration: InputDecoration(
+            icon: Icon(Icons.date_range),
+            hintText: "Select date",
+            hintStyle: TextStyle(color: Colors.grey),
+            border: InputBorder.none),
+      ),
+    );
   }
 }

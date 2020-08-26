@@ -53,3 +53,4 @@ class ClientDetailsNotFilledSignIn extends LoginState{
 }
 
 class ForgotPasswordState extends LoginState{}
+class DoNotHaveAnAccountState extends LoginState{}

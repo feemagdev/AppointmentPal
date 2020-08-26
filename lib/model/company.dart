@@ -11,7 +11,7 @@ class Company {
 
   Company.fromMap(Map snapshot)
       : _name = snapshot['name'],
-        _companyLocation = snapshot['location'];
+        _companyLocation = snapshot['address'];
 
 
 

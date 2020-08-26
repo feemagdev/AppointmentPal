@@ -43,6 +43,9 @@ class SignUpBloc extends Bloc<SignUpEvent,SignUpState>{
         yield SignUpFailureState(message:e.toString());
       }
     }
+    else if(event is AlreadyHaveAnAccountEvent){
+      yield AlreadyHaveAnAccountState();
+    }
   }
 
   Future<List<Service>> getServicesList(){

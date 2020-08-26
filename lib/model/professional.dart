@@ -24,7 +24,7 @@ class Professional {
         _phone = snapshot['phone'],
         _image = snapshot['image'],
         _dob = snapshot['dob'],
-        _appointmentCharges = snapshot['appointmentCharge'],
+        _appointmentCharges = snapshot['appointmentCharges'],
         _experience = snapshot['experience'],
         _subServices = subServices,
         _address = snapshot['address'],
