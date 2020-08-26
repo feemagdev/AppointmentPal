@@ -66,6 +66,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     } else if (event is ForgotPasswordButtonPressedEvent) {
       print("forgot passord evemt");
       yield ForgotPasswordState();
+    } else if(event is DoNotHaveAnAccountEvent){
+      yield DoNotHaveAnAccountState();
     }
   }
 

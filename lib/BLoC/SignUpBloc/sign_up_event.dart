@@ -12,3 +12,5 @@ class SignUpButtonPressedEvent extends SignUpEvent {
 
 
 }
+
+class AlreadyHaveAnAccountEvent extends SignUpEvent {}

@@ -10,3 +10,6 @@ class LoginButtonPressedEvent extends LoginEvent{
 
 class ForgotPasswordButtonPressedEvent extends LoginEvent{}
 
+
+class DoNotHaveAnAccountEvent extends LoginEvent {}
+

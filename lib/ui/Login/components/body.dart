@@ -54,6 +54,8 @@ class Body extends StatelessWidget {
                 navigateToClientDetailsPage(context,state.services,state.user);
               }else if(state is ForgotPasswordState){
                 navigateToForgotPasswordPage(context);
+              }else if(state is DoNotHaveAnAccountState){
+                navigateToSignUpPage(context);
               }
             },
             child: BlocBuilder<LoginBloc, LoginState>(
@@ -67,7 +69,9 @@ class Body extends StatelessWidget {
               } else if (state is ClientLoginSuccessState) {
                 print("login body success");
                 return Container();
-              } else if (state is LoginFailureState) {
+              } else if(state is DoNotHaveAnAccountState){
+                return Container();
+              }else if (state is LoginFailureState) {
                 WidgetsBinding.instance.addPostFrameCallback((_){
                   showErrorDialog(state.message, context);
                 });
@@ -168,7 +172,7 @@ class Body extends StatelessWidget {
                             color: Color.fromRGBO(56, 178,227, 1),
                             textColor: Colors.white,
                             text: "Login",
-                            press: () async {
+                            press: ()  {
                               if (this.email == null ||
                                   !EmailValidator.validate(this.email)) {
                                 String message = "invalid email";
@@ -180,8 +184,9 @@ class Body extends StatelessWidget {
                                 showErrorDialog(message, context);
                                 return;
                               }
-                              loginBloc.add(LoginButtonPressedEvent(
-                                  email: this.email, password: this.password));
+                                loginBloc.add(LoginButtonPressedEvent(
+                                    email: this.email, password: this.password));
+
                             },
                           )),
                       SizedBox(height: 30),
@@ -194,9 +199,9 @@ class Body extends StatelessWidget {
                                   child: Column(
                                     children: <Widget>[
                                       AlreadyHaveAnAccountCheck(
-                                        login: true,
-                                        press: () async {
-                                          navigateToSignUpPage(context);
+                                        text:"Don't have an account ? sign Up",
+                                        press: ()  {
+                                          loginBloc.add(DoNotHaveAnAccountEvent());
                                         },
                                       ),
                                     ],

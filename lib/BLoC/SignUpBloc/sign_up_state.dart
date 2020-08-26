@@ -20,4 +20,7 @@ class SignUpFailureState extends SignUpState{
 }
 
 
+class AlreadyHaveAnAccountState extends SignUpState {}
+
+
 

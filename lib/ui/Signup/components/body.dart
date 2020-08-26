@@ -35,6 +35,9 @@ class Body extends StatelessWidget {
               if (state is SignUpSuccessfulState) {
                 navigateToEmailVerificationPage(context, state.user);
               }
+              else if(state is AlreadyHaveAnAccountState){
+                navigateToLoginPage(context);
+              }
             },
             child: BlocBuilder<SignUpBloc, SignUpState>(
                 builder: (context, state) {
@@ -43,6 +46,8 @@ class Body extends StatelessWidget {
                   } else if (state is SignUpLoadingState) {
                     return buildLoadingUi();
                   } else if (state is SignUpSuccessfulState) {
+                    return Container();
+                  }else if(state is AlreadyHaveAnAccountState){
                     return Container();
                   } else if (state is SignUpFailureState) {
                     WidgetsBinding.instance.addPostFrameCallback((_){
@@ -129,7 +134,7 @@ class Body extends StatelessWidget {
                             color: Color.fromRGBO(56, 178, 227,1),
                             textColor: Colors.white,
                             text: "Sign up",
-                            press: () async {
+                            press: ()  {
                               print('button pressed');
                               print(email);
                               if (email == null ||
@@ -146,6 +151,7 @@ class Body extends StatelessWidget {
                               if(password.length <= 5){
                                 String message = "please use strong password";
                                 showErrorDialog(message, context);
+                                return;
                               }
                               signUpBloc.add(SignUpButtonPressedEvent(
                                   email: email, password: password));
@@ -163,9 +169,9 @@ class Body extends StatelessWidget {
                                   child: Column(
                                     children: <Widget>[
                                       AlreadyHaveAnAccountCheck(
-                                        login: false,
-                                        press: () async {
-                                          navigateToLoginPage(context);
+                                        text:"Already have an account ? sign in",
+                                        press: ()  {
+                                          signUpBloc.add(AlreadyHaveAnAccountEvent());
                                         },
                                       ),
                                     ],
