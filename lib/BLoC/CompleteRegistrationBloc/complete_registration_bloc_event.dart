@@ -21,6 +21,12 @@ class CompleteRegistrationButtonPressedEvent extends CompleteRegistrationBlocEve
 }
 
 class DatePickerEvent extends CompleteRegistrationBlocEvent{
-  final DateTime dateTime;
-  DatePickerEvent({@required this.dateTime});
+  final String name;
+  final String phone;
+  final String country;
+  final String city;
+  final String address;
+  final DateTime dob;
+  DatePickerEvent({@required this.name,@required this.phone,@required this.country,@required this.city
+    ,@required this.address,@required this.dob});
 }

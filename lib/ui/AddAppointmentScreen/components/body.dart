@@ -85,15 +85,25 @@ class Body extends StatelessWidget {
                 SizedBox(
                   height: 10,
                 ),
+                BlocBuilder<AddAppointmentBloc,AddAppointmentState>(builder: (context,state){
+                  if(state is LocationPermissionDeniedState){
+                    WidgetsBinding.instance.addPostFrameCallback((_){
+                      showErrorDialog("please give location permission", context);
+                    });
+                  }return Container();
+                }),
 
                 BlocBuilder<AddAppointmentBloc,AddAppointmentState>(builder: (context,state){
                   if (state is TapOnServiceState) {
+                    selectedSubService = "";
                     return selectSubServiceText();
                   }else if(state is TapOnSubServiceState){
                     return selectSubServiceText();
                   }else if(state is NearByProfessionalsState){
                     return selectSubServiceText();
                   }else if(state is AllProfessionalsState){
+                    return selectSubServiceText();
+                  }else if(state is LocationPermissionDeniedState){
                     return selectSubServiceText();
                   }return Container();
                 }),
@@ -112,6 +122,8 @@ class Body extends StatelessWidget {
                         return subServiceListBuilder(context, state.subServices, state.selectedService);
                       }else if(state is AllProfessionalsState){
                         return subServiceListBuilder(context, state.subServices, state.selectedService);
+                      }else if(state is LocationPermissionDeniedState){
+                        return subServiceListBuilder(context, state.subServices, selectedService);
                       }return Container();
                     },
                 ),
@@ -140,6 +152,11 @@ class Body extends StatelessWidget {
                          width: deviceWidth < 400 ? deviceWidth * 0.4: deviceWidth * 0.4,
                          height: deviceWidth < 400 ? deviceHeight * 0.05: deviceHeight * 0.055,
                          press: (){
+                           if(selectedSubService == null || selectedSubService.isEmpty){
+                             showErrorDialog("Please select a sub service", context);
+                             return;
+                           }
+                           print(selectedSubService);
                            addAppointmentBloc.add(AllProfessionalsEvent(
                                professionals:listOfProfessionals,
                                subServices: listOfSubServices,
@@ -155,19 +172,17 @@ class Body extends StatelessWidget {
                           fontSize: deviceWidth < 400 ? 10:15,
                           width: deviceWidth < 400 ? deviceWidth * 0.35: deviceWidth * 0.4,
                           height: deviceWidth < 400 ? deviceHeight * 0.055: deviceHeight * 0.055,
-                          press: () async{
-                            if(await checkLocationPermission(context)){
-                              showErrorDialog("please turn on gps", context);
-                            }
-                            else{
-                              print('near by clicked');
+                          press: () {
+                              if(selectedSubService == null || selectedSubService.isEmpty){
+                                showErrorDialog("Please select a sub service", context);
+                                return;
+                              }
                               addAppointmentBloc.add(NearByProfessionalsEvent(
                                   professionals:listOfProfessionals,
                                   subServices: listOfSubServices,
                               selectedService:selectedService,
                               selectedSubService: selectedSubService));
                             }
-                          },
                         ),
 
                       ],
@@ -186,6 +201,9 @@ class Body extends StatelessWidget {
                         }else if(state is AllProfessionalsState){
                           List<double> distances = new List(state.professionals.length);
                           return professionalListBuilder(context, state.professionals,distances);
+                        }else if(state is LocationPermissionDeniedState){
+                          List<double> distances = new List(state.professionals.length);
+                          return professionalListBuilder(context, state.professionals, distances);
                         }
                         return Container();
                       },
@@ -243,31 +261,34 @@ class Body extends StatelessWidget {
 
 
   Widget professionalListBuilder(BuildContext context, List<Professional> list,List<double> distance) {
-   return  Container(
-     height: deviceHeight * 0.30,
-     child: PageView.builder(
-       itemCount: list.length,
-       scrollDirection: Axis.horizontal,
-         itemBuilder: (context, index) => Padding(
-           padding:  EdgeInsets.only(left:deviceWidth*0.05,right: deviceWidth*0.05),
-           child: ProfessionalShowcase(
-             appointmentCharges: list[index].appointmentCharges,
-             professionalName: list[index].name,
-             address: list[index].address,
-             subService: list[index].subServices.name,
-             experience: list[index].experience,
-             professionalImage: list[index].image,
-             distance: distance[index],
-           ),
-         )
-     ),
-   );
-  }
+    if(list.length == 0){
+      return Container(
+        child: Center(
+          child: Text("sorry no professionals found :( "),
+        ),
+      );
+    }else{
+      return  Container(
+        height: deviceHeight * 0.30,
+        child: PageView.builder(
+            itemCount: list.length,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) => Padding(
+              padding:  EdgeInsets.only(left:deviceWidth*0.05,right: deviceWidth*0.05),
+              child: ProfessionalShowcase(
+                appointmentCharges: list[index].appointmentCharges,
+                professionalName: list[index].name,
+                address: list[index].address,
+                subService: list[index].subServices.name,
+                experience: list[index].experience,
+                professionalImage: list[index].image,
+                distance: distance[index],
+              ),
+            )
+        ),
+      );
+    }
 
-
-
-  Future<bool> checkLocationPermission(context) async{
-    return !(await Geolocator().isLocationServiceEnabled());
   }
 
 

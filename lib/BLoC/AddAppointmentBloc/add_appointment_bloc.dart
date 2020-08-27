@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/repository/sub_services_repository.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import './bloc.dart';
 
@@ -30,16 +31,30 @@ class AddAppointmentBloc
         selectedSubService: event.subServiceID,
       );
     } else if (event is NearByProfessionalsEvent) {
-      List<double> distances = await getDistance(event.professionals);
-      // now run sorting
-      sorting(event.professionals, distances);
-      // sorting done
-      yield NearByProfessionalsState(
-          professionals: event.professionals,
-          subServices: event.subServices,
-          selectedService: event.selectedService,
-          selectedSubService: event.selectedSubService,
-          distances: distances);
+      try{
+        List<double> distances = await getDistance(event.professionals);
+        // now run sorting
+        sorting(event.professionals, distances);
+        // sorting done
+        yield NearByProfessionalsState(
+            professionals: event.professionals,
+            subServices: event.subServices,
+            selectedService: event.selectedService,
+            selectedSubService: event.selectedSubService,
+            distances: distances);
+      }catch(exception){
+        if(exception is PlatformException){
+          if(exception.code == "PERMISSION_DENIED"){
+            yield LocationPermissionDeniedState(
+              subServices: event.subServices,
+              selectedService: event.selectedService,
+              selectedSubService: event.selectedSubService,
+              professionals: event.professionals
+            );
+          }
+        }
+      }
+
     }
     else if(event is AllProfessionalsEvent){
       event.professionals.shuffle();
@@ -54,7 +69,7 @@ class AddAppointmentBloc
 
   Future<Position> getCurrentPosition() async {
     return await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
   }
 
   Future<List<double>> getDistance(List<Professional> professionals) async {

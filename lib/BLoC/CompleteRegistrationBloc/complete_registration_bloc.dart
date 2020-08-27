@@ -39,7 +39,14 @@ class CompleteRegistrationBloc
     }
 
     if(event is DatePickerEvent){
-      yield DatePickerState(dateTime: event.dateTime);
+      yield DatePickerState(
+        name: event.name,
+        phone: event.phone,
+        country: event.country,
+        city:event.city,
+        address: event.address,
+        dob: event.dob
+      );
     }
 
   }
