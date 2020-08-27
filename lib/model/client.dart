@@ -1,4 +1,5 @@
 
+
 import 'package:appointmentproject/model/service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -46,7 +47,7 @@ class Client {
 
   Future<void> registerClient() async {
     final dbReference = Firestore.instance;
-    DocumentReference serviceReference = dbReference.collection('service').document(_need.serviceID);
+    DocumentReference serviceReference = dbReference.collection('service').document(_need.getServiceID());
     await db.collection(path).document(_user.uid).setData(toMap(serviceReference));
   }
 
@@ -69,52 +70,66 @@ class Client {
     return  client;
   }
 
-  FirebaseUser get user => _user;
-
-  set user(FirebaseUser value) {
-    _user = value;
+  FirebaseUser getFirebaseUser(){
+    return _user;
+  }
+  void setFirebaseUser(FirebaseUser user){
+    _user = user;
   }
 
-  Service get need => _need;
-
-  set need(Service value) {
-    _need = value;
+  Service getNeed(){
+    return _need;
   }
 
-  Timestamp get dob => _dob;
-
-  set dob(Timestamp value) {
-    _dob = value;
+  void setNeed(Service need){
+    _need = need;
   }
 
-  String get city => _city;
-
-  set city(String value) {
-    _city = value;
+  Timestamp getDob(){
+    return _dob;
   }
 
-  String get address => _address;
-
-  set address(String value) {
-    _address = value;
+  void setDob(Timestamp dob){
+    _dob = dob;
   }
 
-  String get country => _country;
-
-  set country(String value) {
-    _country = value;
+  String getCity(){
+    return _city;
   }
 
-  String get phone => _phone;
-
-  set phone(String value) {
-    _phone = value;
+  void setCity(String city){
+    _city = city;
+  }
+  String getCountry(){
+    return _country;
   }
 
-  String get name => _name;
-
-  set name(String value) {
-    _name = value;
+  void setCountry(String country){
+    _country = country;
   }
+  String getAddress(){
+    return _address;
+  }
+
+  void setAddress(String address){
+    _address = address;
+  }
+
+  String getPhone(){
+    return _phone;
+  }
+
+  void setPhone(String phone){
+    _address = phone;
+  }
+
+  String getName(){
+    return _name;
+  }
+
+  void setName(String name){
+    _name = name;
+  }
+
 
 }

@@ -2,10 +2,8 @@ import 'package:appointmentproject/BLoC/CompleteRegistrationBloc/bloc.dart';
 import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/ui/ClientDashboard/client_dashboard_screen.dart';
-import 'package:appointmentproject/ui/UserDetails/components/services_dropdown.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
 import 'package:appointmentproject/ui/components/rounded_button.dart';
-import 'package:appointmentproject/ui/components/rounded_input_field.dart';
 import 'package:country_pickers/country_pickers.dart';
 import 'package:country_pickers/country.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -39,7 +37,7 @@ class _Form extends State<Body> {
   Service selectedNeed;
   DateTime dob;
 
-  Country _selectedDialogCountry;
+
 
   _Form({@required this.user, @required this.services});
 
@@ -291,7 +289,7 @@ class _Form extends State<Body> {
     for (Service listItem in services) {
       items.add(
         DropdownMenuItem(
-          child: Text(listItem.name),
+          child: Text(listItem.getName()),
           value: listItem,
         ),
       );
@@ -312,7 +310,6 @@ class _Form extends State<Body> {
             title: Text('Select your phone code'),
             onValuePicked: (Country country) =>
                 setState(() {
-                  _selectedDialogCountry = country;
                   countryTextController.text = country.name;
                 }),
             priorityList: [

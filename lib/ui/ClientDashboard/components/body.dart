@@ -17,13 +17,10 @@ class Body extends StatelessWidget {
 
   final FirebaseUser user;
   final Client client;
-  ClientDashboardBloc clientDashboardBloc;
   Body({@required this.user,@required this.client});
 
   @override
   Widget build(BuildContext context) {
-
-    clientDashboardBloc = BlocProvider.of<ClientDashboardBloc>(context);
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     print(width);
@@ -56,7 +53,7 @@ class Body extends StatelessWidget {
               children: <Widget>[
                 FadeAnimation(1,
                   Text(
-                      "welcome "+ client.name,
+                      "welcome "+ client.getName(),
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 20,
@@ -115,7 +112,7 @@ class Body extends StatelessWidget {
           ),
           children: <Widget>[
 
-            FadeAnimation(1.4, CategoryCard(svgSrc: "assets/icons/add_appointment.svg",title: "add appointment",onTap: () {addAppointmentTap();})),
+            FadeAnimation(1.4, CategoryCard(svgSrc: "assets/icons/add_appointment.svg",title: "add appointment",onTap: () {addAppointmentTap(context);})),
             FadeAnimation(1.4, CategoryCard(svgSrc: "assets/icons/edit_appointment.svg",title: "edit appointment",)),
             FadeAnimation(1.4, CategoryCard(svgSrc: "assets/icons/payment.svg",title: "payment",)),
             FadeAnimation(1.4, CategoryCard(svgSrc: "assets/icons/history.svg",title: "history",)),
@@ -128,9 +125,9 @@ class Body extends StatelessWidget {
   }
 
 
-  void addAppointmentTap(){
+  void addAppointmentTap(BuildContext context){
     print("add appointment tap");
-    clientDashboardBloc.add(AddAppointmentEvent(client:client));
+    BlocProvider.of<ClientDashboardBloc>(context).add(AddAppointmentEvent(client:client));
   }
 
   void navigateToAddAppointmentScreen(BuildContext context,List<Service> services) {

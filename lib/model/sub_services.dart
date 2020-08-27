@@ -1,4 +1,4 @@
-import 'package:appointmentproject/model/service.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SubServices {
@@ -50,22 +50,23 @@ class SubServices {
 
 
 
-
-  String get subServicesID => _subServicesID;
-
-  set subServicesID(String value) {
-    _subServicesID = value;
+  String getSubServiceID(){
+    return _subServicesID;
   }
 
-  String get image => _image;
-
-  set image(String value) {
-    _image = value;
+  String getName(){
+    return _name;
   }
 
-  String get name => _name;
+  void setName(String name){
+    _name = name;
+  }
 
-  set name(String value) {
-    _name = value;
+  String getImage(){
+    return _image;
+  }
+
+  void setImage(String image){
+    _image = image;
   }
 }

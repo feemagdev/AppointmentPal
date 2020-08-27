@@ -23,17 +23,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'background.dart';
 
 class Body extends StatelessWidget {
-  String email;
-  String password;
-  LoginBloc loginBloc;
+
+
 
   @override
   Widget build(BuildContext context) {
 
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.height;
-
-    loginBloc = BlocProvider.of<LoginBloc>(context);
+    String email;
+    String password;
     Size size = MediaQuery.of(context).size;
     return Background(
       child: Column(
@@ -138,12 +137,12 @@ class Body extends StatelessWidget {
                                   icon: Icon(Icons.email),
                                   hintText: "Email",
                                   onChanged: (value) {
-                                    this.email = value;
+                                    email = value;
                                   },
                                 ),
                                 RoundedPasswordField(
                                   onChanged: (value) {
-                                    this.password = value;
+                                    password = value;
                                   },
                                 )
                               ],
@@ -160,7 +159,7 @@ class Body extends StatelessWidget {
                             ),
                             onTap: (){
                               print("forgot button tap");
-                              loginBloc.add(ForgotPasswordButtonPressedEvent());
+                              BlocProvider.of<LoginBloc>(context).add(ForgotPasswordButtonPressedEvent());
                             },
                           )),
                       SizedBox(height: 40),
@@ -173,8 +172,8 @@ class Body extends StatelessWidget {
                             textColor: Colors.white,
                             text: "Login",
                             press: ()  {
-                              if (this.email == null ||
-                                  !EmailValidator.validate(this.email)) {
+                              if (email == null ||
+                                  !EmailValidator.validate(email)) {
                                 String message = "invalid email";
                                 showErrorDialog(message, context);
                                 return;
@@ -184,8 +183,8 @@ class Body extends StatelessWidget {
                                 showErrorDialog(message, context);
                                 return;
                               }
-                                loginBloc.add(LoginButtonPressedEvent(
-                                    email: this.email, password: this.password));
+                              BlocProvider.of<LoginBloc>(context).add(LoginButtonPressedEvent(
+                                    email: email, password: password));
 
                             },
                           )),
@@ -201,7 +200,7 @@ class Body extends StatelessWidget {
                                       AlreadyHaveAnAccountCheck(
                                         text:"Don't have an account ? sign Up",
                                         press: ()  {
-                                          loginBloc.add(DoNotHaveAnAccountEvent());
+                                          BlocProvider.of<LoginBloc>(context).add(DoNotHaveAnAccountEvent());
                                         },
                                       ),
                                     ],
@@ -250,7 +249,7 @@ class Body extends StatelessWidget {
 
   void navigateToProfessionalHomePage(BuildContext context, FirebaseUser user) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return ProfessionalHomePageParent(user: user);
+      return ProfessionalHomePage();
     }));
   }
 

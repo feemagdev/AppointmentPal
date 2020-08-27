@@ -187,7 +187,7 @@ class QuickSort
     print("distance name function");
 
     for(int i=0;i<professional.length;i++)
-      print(professional[i].name);
+      print(professional[i].getName());
 
   }
 

@@ -1,5 +1,4 @@
 
-import 'package:appointmentproject/BLoC/ProfessionalBloc/bloc.dart';
 import 'package:appointmentproject/ui/Welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,7 +24,6 @@ class SplashScreen extends StatelessWidget{
       ),
       home: WelcomeScreen()
     );
-    Timer(Duration(seconds: 10),() => WelcomeScreen());
 
   }
 }

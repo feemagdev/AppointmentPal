@@ -1,6 +1,5 @@
 
 import 'package:appointmentproject/BLoC/UserRoleBloc/bloc.dart';
-import 'package:appointmentproject/model/service.dart';
 
 import 'package:appointmentproject/ui/ClientDashboard/client_dashboard_screen.dart';
 import 'package:appointmentproject/ui/UserDetails/user_detail_screen.dart';
@@ -25,7 +24,7 @@ class CheckUserRole extends StatelessWidget{
       builder: (context,state){
         if(state is ProfessionalState){
           print("if professional state run");
-          return ProfessionalHomePageParent(user: user);
+          return ProfessionalHomePage();
         }
         else if(state is ClientState){
           print("else if client state run");

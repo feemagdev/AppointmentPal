@@ -2,31 +2,27 @@ import 'package:appointmentproject/model/company.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Manager {
-
-
   String _name;
   String _phone;
+  String _country;
   String _city;
   String _address;
-  DateTime _dob;
+  Timestamp _dob;
   int _salary;
   Company _company;
 
-
-  Manager(this._name, this._phone, this._city, this._address, this._dob,
-      this._salary, this._company);
-
+  Manager(this._name, this._phone, this._country, this._city, this._address,
+      this._dob, this._salary, this._company);
 
   Manager._fromMap(Map snapshot)
-      :
-    _name = snapshot['name'],
-    _phone = snapshot['phone'],
-    _city = snapshot['city'],
-    _address = snapshot['address'],
-    _dob = snapshot['dob'],
-    _salary = snapshot['salary'],
-    _company = snapshot['companyID'];
-
+      : _name = snapshot['name'],
+        _phone = snapshot['phone'],
+        _country = snapshot['country'],
+        _city = snapshot['city'],
+        _address = snapshot['address'],
+        _dob = snapshot['dob'],
+        _salary = snapshot['salary'],
+        _company = snapshot['companyID'];
 
   Manager.defaultConstructor();
 
@@ -34,55 +30,76 @@ class Manager {
     Manager manager;
     DocumentSnapshot documentSnapshot = await documentReference.get();
     DocumentReference companyReference = documentSnapshot.data['companyID'];
-    documentSnapshot.data['companyID'] = await getCompany(companyReference);
+    documentSnapshot.data['companyID'] = await getCompanyByReference(companyReference);
     manager = Manager._fromMap(documentSnapshot.data);
     return manager;
   }
 
-
-  Future<Company> getCompany(DocumentReference documentReference) async {
+  Future<Company> getCompanyByReference(DocumentReference documentReference) async {
     return await Company.defaultConstructor().getCompany(documentReference);
   }
 
-  String get name => _name;
-
-  set name(String value) {
-    _name = value;
+  Timestamp getDob() {
+    return _dob;
   }
 
-  String get phone => _phone;
-
-  set phone(String value) {
-    _phone = value;
+  void setDob(Timestamp dob) {
+    _dob = dob;
   }
 
-  Company get company => _company;
-
-  set company(Company value) {
-    _company = value;
+  String getCity() {
+    return _city;
   }
 
-  int get salary => _salary;
-
-  set salary(int value) {
-    _salary = value;
+  void setCity(String city) {
+    _city = city;
   }
 
-  DateTime get dob => _dob;
-
-  set dob(DateTime value) {
-    _dob = value;
+  String getCountry() {
+    return _country;
   }
 
-  String get address => _address;
-
-  set address(String value) {
-    _address = value;
+  void setCountry(String country) {
+    _country = country;
   }
 
-  String get city => _city;
+  String getAddress() {
+    return _address;
+  }
 
-  set city(String value) {
-    _city = value;
+  void setAddress(String address) {
+    _address = address;
+  }
+
+  String getPhone() {
+    return _phone;
+  }
+
+  void setPhone(String phone) {
+    _address = phone;
+  }
+
+  String getName() {
+    return _name;
+  }
+
+  void setName(String name) {
+    _name = name;
+  }
+
+  int getSalary() {
+    return _salary;
+  }
+
+  void setSalary(int salary) {
+    _salary = salary;
+  }
+
+  Company getCompany() {
+    return _company;
+  }
+
+  void setCompany(Company company){
+    _company = company;
   }
 }

@@ -18,12 +18,12 @@ import 'background.dart';
 
 class Body extends StatelessWidget {
 
-  SignUpBloc signUpBloc;
+
   @override
   Widget build(BuildContext context) {
     String email;
     String password;
-    signUpBloc = BlocProvider.of<SignUpBloc>(context);
+
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.height;
     return Background(
@@ -31,7 +31,7 @@ class Body extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           BlocListener<SignUpBloc, SignUpState>(
-            listener: (context, state) {
+            listener: (context, state)  {
               if (state is SignUpSuccessfulState) {
                 navigateToEmailVerificationPage(context, state.user);
               }
@@ -117,7 +117,7 @@ class Body extends StatelessWidget {
                                   },
                                 ),
                                 RoundedPasswordField(
-                                  onChanged: (value) {
+                                  onChanged: (value) async {
                                     password = value;
                                   },
                                 )
@@ -153,7 +153,7 @@ class Body extends StatelessWidget {
                                 showErrorDialog(message, context);
                                 return;
                               }
-                              signUpBloc.add(SignUpButtonPressedEvent(
+                              BlocProvider.of<SignUpBloc>(context).add(SignUpButtonPressedEvent(
                                   email: email, password: password));
                             },
                           )),
@@ -171,7 +171,7 @@ class Body extends StatelessWidget {
                                       AlreadyHaveAnAccountCheck(
                                         text:"Already have an account ? sign in",
                                         press: ()  {
-                                          signUpBloc.add(AlreadyHaveAnAccountEvent());
+                                          BlocProvider.of<SignUpBloc>(context).add(AlreadyHaveAnAccountEvent());
                                         },
                                       ),
                                     ],

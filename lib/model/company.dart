@@ -2,18 +2,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Company {
   String _name;
-  GeoPoint _companyLocation;
+  String _address;
+  String _contact;
 
-  Company(this._name, this._companyLocation);
+  Company(this._name, this._address, this._contact);
 
   Company.defaultConstructor();
 
-
   Company.fromMap(Map snapshot)
       : _name = snapshot['name'],
-        _companyLocation = snapshot['address'];
-
-
+        _address = snapshot['address'],
+        _contact = snapshot['address'];
 
   Future<Company> getCompany(DocumentReference documentReference) async {
     DocumentSnapshot documentSnapshot = await documentReference.get();
@@ -21,15 +20,28 @@ class Company {
     return company;
   }
 
-  GeoPoint get companyLocation => _companyLocation;
-
-  set companyLocation(GeoPoint value) {
-    _companyLocation = value;
+  String getCompanyAddress() {
+    return _address;
   }
 
-  String get name => _name;
-
-  set name(String value) {
-    _name = value;
+  void setCompanyAddress(String address) {
+    _address = address;
   }
+
+  String getName() {
+    return _name;
+  }
+
+  void setName(String name) {
+    _name = name;
+  }
+
+  String getContact() {
+    return _contact;
+  }
+
+  void setContact(String contact) {
+    _contact = contact;
+  }
+
 }

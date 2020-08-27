@@ -5,7 +5,6 @@ import 'package:appointmentproject/BLoC/ProfessionalBloc/bloc.dart';
 import 'package:appointmentproject/BLoC/SplashScreen/splash_screen_bloc.dart';
 import 'package:appointmentproject/ui/Welcome/components/background.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
-import 'package:appointmentproject/ui/helpers/check_user_role_helper.dart';
 import 'package:appointmentproject/ui/helpers/login_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

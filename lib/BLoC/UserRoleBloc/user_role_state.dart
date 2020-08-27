@@ -1,7 +1,6 @@
 
 import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/service.dart';
-import 'package:appointmentproject/repository/service_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 

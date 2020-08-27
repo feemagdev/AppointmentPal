@@ -11,14 +11,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
 class Body extends StatelessWidget {
-  FirebaseUser user;
+  final FirebaseUser user;
   Body({@required this.user});
 
-  EmailVerificationBloc emailVerificationBloc;
   @override
   Widget build(BuildContext context) {
 
-    emailVerificationBloc = BlocProvider.of<EmailVerificationBloc>(context);
+
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.height;
     return Background(
@@ -101,7 +100,7 @@ class Body extends StatelessWidget {
                             height: deviceWidth < 400 ? deviceHeight * 0.09:deviceHeight * 0.07,
                             width: deviceWidth < 400 ? deviceHeight * 0.3:deviceHeight * 0.5,
                             press: () async {
-                              emailVerificationBloc.add(SendEmailVerificationEvent(user: user));
+                              BlocProvider.of<EmailVerificationBloc>(context).add(SendEmailVerificationEvent(user: user));
                             },
                           )),
                       SizedBox(
@@ -116,7 +115,7 @@ class Body extends StatelessWidget {
                             height: deviceWidth < 400 ? deviceHeight * 0.09:deviceHeight * 0.07,
                             width: deviceWidth < 400 ? deviceHeight * 0.3:deviceHeight * 0.5,
                             press: () async {
-                              emailVerificationBloc.add(CheckEmailVerification(user: user));
+                              BlocProvider.of<EmailVerificationBloc>(context).add(CheckEmailVerification(user: user));
                             },
                           )),
                     ],

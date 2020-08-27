@@ -1,33 +1,34 @@
 
-import 'package:appointmentproject/model/manager.dart';
-import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/model/sub_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Professional {
-  String _uid;
   String _name;
   String _phone;
-  String _image;
+  String _country;
+  String _city;
+  String _address;
   Timestamp _dob;
+  String _image;
   int _appointmentCharges;
   int _experience;
   SubServices _subServices;
-  String _address;
   GeoPoint _appointmentLocation;
 
   Professional.defaultConstructor();
 
   Professional.fromMap(Map snapshot, SubServices subServices)
-      : _uid = snapshot['professionalUID'],
+      :
         _name = snapshot['name'],
         _phone = snapshot['phone'],
-        _image = snapshot['image'],
+        _country = snapshot['country'],
+        _city = snapshot['city'],
+        _address = snapshot['address'],
         _dob = snapshot['dob'],
+        _image = snapshot['image'],
         _appointmentCharges = snapshot['appointmentCharges'],
         _experience = snapshot['experience'],
         _subServices = subServices,
-        _address = snapshot['address'],
         _appointmentLocation = snapshot['appointmentLocation'];
 
   Future<List<Professional>> getListOfProfessionalsBySubService(
@@ -38,12 +39,12 @@ class Professional {
         getSubServiceReference(subServiceID);
     SubServices subServices = await SubServices.defaultConstructor()
         .getSubService(subServiceReference);
-    await dbReference
+     dbReference
         .collection('professional')
         .where('sub_serviceID', isEqualTo: subServiceReference)
         .getDocuments()
         .then((value) {
-      value.documents.forEach((element) async {
+      value.documents.forEach((element)  {
         Professional professional =
             Professional.fromMap(element.data, subServices);
         listOfProfessionals.add(professional);
@@ -53,13 +54,6 @@ class Professional {
     return listOfProfessionals;
   }
 
-  Future<Manager> getManager(DocumentReference documentReference) async {
-    return await Manager.defaultConstructor().getManager(documentReference);
-  }
-
-  Future<Service> getService(DocumentReference documentReference) async {
-    //  return await Service.defaultConstructor().getService(documentReference);
-  }
 
   Future<SubServices> getSubService(DocumentReference documentReference) async {
     return await SubServices.defaultConstructor()
@@ -71,63 +65,93 @@ class Professional {
         .getSubServiceReference(subServiceID);
   }
 
-  int get appointmentCharges => _appointmentCharges;
 
-  set appointmentCharges(int value) {
-    _appointmentCharges = value;
+  Timestamp getDob() {
+    return _dob;
   }
 
-  Timestamp get dob => _dob;
-
-  set dob(Timestamp value) {
-    _dob = value;
+  void setDob(Timestamp dob) {
+    _dob = dob;
   }
 
-  String get image => _image;
-
-  set image(String value) {
-    _image = value;
+  String getCity() {
+    return _city;
   }
 
-  String get phone => _phone;
-
-  set phone(String value) {
-    _phone = value;
+  void setCity(String city) {
+    _city = city;
   }
 
-  String get name => _name;
-
-  set name(String value) {
-    _name = value;
+  String getCountry() {
+    return _country;
   }
 
-  String get uid => _uid;
-
-  set uid(String value) {
-    _uid = value;
+  void setCountry(String country) {
+    _country = country;
   }
 
-  int get experience => _experience;
-
-  set experience(int value) {
-    _experience = value;
+  String getAddress() {
+    return _address;
   }
 
-  SubServices get subServices => _subServices;
-
-  set subServices(SubServices value) {
-    _subServices = value;
+  void setAddress(String address) {
+    _address = address;
   }
 
-  String get address => _address;
-
-  set address(String value) {
-    _address = value;
+  String getPhone() {
+    return _phone;
   }
 
-  GeoPoint get appointmentLocation => _appointmentLocation;
-
-  set appointmentLocation(GeoPoint value) {
-    _appointmentLocation = value;
+  void setPhone(String phone) {
+    _address = phone;
   }
+
+  String getName() {
+    return _name;
+  }
+
+  void setName(String name) {
+    _name = name;
+  }
+
+  String getImage(){
+    return _image;
+  }
+
+  void setImage(String image){
+    _image = image;
+  }
+
+  int getAppointmentCharges(){
+    return _appointmentCharges;
+  }
+
+  void setAppointmentCharges(int appointmentCharges){
+    _appointmentCharges = appointmentCharges;
+  }
+  int getExperience(){
+    return _experience;
+  }
+
+  void setExperience(int experience){
+    _experience = experience;
+  }
+
+  SubServices getSubServices(){
+    return _subServices;
+  }
+
+  void setSubServices(SubServices subServices){
+    _subServices = subServices;
+  }
+
+  GeoPoint getAppointmentLocation(){
+    return _appointmentLocation;
+  }
+
+  void setAppointmentLocation(GeoPoint appointmentLocation) {
+    _appointmentLocation = appointmentLocation;
+  }
+
+
 }

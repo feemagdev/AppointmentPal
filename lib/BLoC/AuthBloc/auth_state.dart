@@ -13,7 +13,7 @@ class AuthInitialState extends AuthState{
 
 class AuthenticatedState extends AuthState{
 
-  FirebaseUser user;
+  final FirebaseUser user;
   AuthenticatedState({@required this.user});
   @override
   // TODO: implement props

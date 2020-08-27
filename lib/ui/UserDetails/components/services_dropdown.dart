@@ -70,7 +70,7 @@ class _BodyState extends State<Body> {
     for (Service listItem in services) {
       items.add(
         DropdownMenuItem(
-          child: Text(listItem.name),
+          child: Text(listItem.getName()),
           value: listItem,
         ),
       );
