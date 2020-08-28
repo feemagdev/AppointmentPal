@@ -23,7 +23,6 @@ class PersonRepository {
 
   Future<void> signOut() async =>await Person.defaultConstructor().signOut();
 
-  Future<bool> isSignedIn() async => await Person.defaultConstructor().isSignedIn();
 
   Future<FirebaseUser> getCurrentUser() async =>await Person.defaultConstructor().getCurrentUser();
 

@@ -54,3 +54,16 @@ class AllProfessionalsState extends AddAppointmentState {
         @required this.selectedService,
         @required this.selectedSubService,});
 }
+
+class LocationPermissionDeniedState extends AddAppointmentState{
+  final List<Professional> professionals;
+  final List<SubServices> subServices;
+  final String selectedService;
+  final String selectedSubService;
+
+  LocationPermissionDeniedState(
+      {@required this.professionals,
+        @required this.subServices,
+        @required this.selectedService,
+        @required this.selectedSubService,});
+}

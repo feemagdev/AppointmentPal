@@ -3,7 +3,6 @@
 
 
 import 'package:appointmentproject/BLoC/AuthBloc/auth_bloc.dart';
-import 'package:appointmentproject/BLoC/AuthBloc/auth_event.dart';
 import 'package:appointmentproject/BLoC/AuthBloc/auth_state.dart';
 import 'package:appointmentproject/BLoC/UserRoleBloc/user_role_bloc.dart';
 import 'package:appointmentproject/BLoC/UserRoleBloc/user_role_event.dart';
@@ -23,20 +22,20 @@ class LoginHelper extends StatelessWidget {
     return BlocListener<AuthBloc,AuthState>(
       listener: (context,state){
         if(state is UnAuthenticatedState){
-          print("un-authenticated state");
           return navigateToSignUpPage(context);
         } else if(state is AuthenticatedState){
-          print("authenticated run");
           return navigateToCheckUserRole(context,state.user);
         }
-        return Container();
-
       },
       child: BlocBuilder<AuthBloc,AuthState>(builder: (context,state){
         if(state is AuthInitialState){
+
           return Container();
         }
-        return Container();
+        print("no auth state run");
+        return Container(
+          color: Colors.white,
+        );
       }),
     );
   }
@@ -50,9 +49,10 @@ class LoginHelper extends StatelessWidget {
 
 
   navigateToCheckUserRole(BuildContext context,FirebaseUser user) {
+
     Navigator.of(context).push(MaterialPageRoute(builder: (context){
       return BlocProvider(
-        create: (context) => UserRoleBloc()..add(CheckUserRoleEvent()),
+        create: (context) => UserRoleBloc()..add(CheckUserRoleEvent(user: user)),
         child: CheckUserRole(user: user)
       );
     }));

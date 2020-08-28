@@ -1,4 +1,4 @@
-import 'package:appointmentproject/model/service.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SubServices {
@@ -11,12 +11,10 @@ class SubServices {
   SubServices.defaultConstructor();
 
   Future<List<SubServices>> getSubServices(String serviceID) async {
-    print("in get sub services function");
     List<SubServices> subServicesList = [];
     final _dbReference = Firestore.instance;
     final String servicePath = 'service';
     final String subServicesPath = 'sub_service';
-    print(Firestore.instance.collection(servicePath).document(serviceID).path);
     final String referenceAttribute = "serviceID";
     DocumentReference documentReference =
         Firestore.instance.collection(servicePath).document(serviceID);
@@ -25,14 +23,12 @@ class SubServices {
         .where(referenceAttribute, isEqualTo: documentReference)
         .getDocuments()
         .then((snapshot) {
-      print(snapshot.documents.length);
       snapshot.documents.forEach((element) {
         SubServices subServices = new SubServices(
             element.documentID, element.data['name'], element.data['image']);
         subServicesList.add(subServices);
       });
     });
-
     return subServicesList;
   }
 
@@ -50,22 +46,23 @@ class SubServices {
 
 
 
-
-  String get subServicesID => _subServicesID;
-
-  set subServicesID(String value) {
-    _subServicesID = value;
+  String getSubServiceID(){
+    return _subServicesID;
   }
 
-  String get image => _image;
-
-  set image(String value) {
-    _image = value;
+  String getName(){
+    return _name;
   }
 
-  String get name => _name;
+  void setName(String name){
+    _name = name;
+  }
 
-  set name(String value) {
-    _name = value;
+  String getImage(){
+    return _image;
+  }
+
+  void setImage(String image){
+    _image = image;
   }
 }

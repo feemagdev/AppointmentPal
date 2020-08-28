@@ -34,7 +34,6 @@ class ProfessionalShowcase extends StatelessWidget {
         .of(context)
         .size
         .height;
-    print(appointmentCharges);
 
     return Material(
         type: MaterialType.card,

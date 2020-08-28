@@ -16,8 +16,6 @@ class SubServicesUI extends StatelessWidget {
   Widget build(BuildContext context) {
     final deviceHeight = MediaQuery.of(context).size.height;
     final deviceWidth = MediaQuery.of(context).size.width;
-    print("device width : "+ deviceWidth.toString());
-    print("device width : "+ deviceHeight.toString());
     String convertedTitle = this.title.replaceAll(" ", "\n");
 
     return Column(

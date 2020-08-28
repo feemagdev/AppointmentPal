@@ -11,13 +11,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'background.dart';
 
 class Body extends StatelessWidget {
-  String email;
-  String password;
-  ForgotPasswordBloc forgotPasswordBloc;
+
+
 
   @override
   Widget build(BuildContext context) {
-    forgotPasswordBloc = BlocProvider.of<ForgotPasswordBloc>(context);
+    String email;
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.height;
     return Background(
@@ -100,7 +99,7 @@ class Body extends StatelessWidget {
                                   icon: Icon(Icons.email),
                                   hintText: "Email",
                                   onChanged: (value) {
-                                    this.email = value;
+                                    email = value;
                                   },
                                 ),
                               ],
@@ -117,14 +116,14 @@ class Body extends StatelessWidget {
                             height: deviceWidth < 400 ? deviceHeight * 0.09:deviceHeight * 0.07,
                             width: deviceWidth < 400 ? deviceHeight * 0.3:deviceHeight * 0.5,
                             press: () async {
-                              if (this.email == null ||
-                                  !EmailValidator.validate(this.email)) {
+                              if (email == null ||
+                                  !EmailValidator.validate(email)) {
                                 String message = "invalid email";
                                 showErrorDialog(message, context);
                                 return;
                               }
-                              forgotPasswordBloc.add(
-                                  SendPasswordResetLink(email: this.email));
+                              BlocProvider.of<ForgotPasswordBloc>(context).add(
+                                  SendPasswordResetLink(email: email));
                             },
                           )),
                       SizedBox(height: 30),

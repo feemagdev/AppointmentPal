@@ -28,15 +28,10 @@ class Person{
     await firebaseAuth.signOut();
   }
 
-  Future<bool> isSignedIn() async{
-    FirebaseUser currentUser = await firebaseAuth.currentUser();
-    print("in person model " + currentUser.uid);
-    return currentUser.uid.isNotEmpty;
-  }
+
 
   Future<FirebaseUser> getCurrentUser() async {
     FirebaseUser currentUser = await firebaseAuth.currentUser();
-    print(currentUser.uid);
     return currentUser;
 
   }

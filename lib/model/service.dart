@@ -27,7 +27,7 @@ class Service {
     });
     if (need != null) {
       for (int index = 0; index < servicesList.length; index++) {
-        if (servicesList[index].name == need) {
+        if (servicesList[index].getName() == need) {
           Service tempObject = servicesList[0];
           servicesList[0] = servicesList[index];
           servicesList[index] = tempObject;
@@ -47,22 +47,27 @@ class Service {
 
   }
 
-
-  String get serviceID => _serviceID;
-
-  set serviceID(String value) {
-    _serviceID = value;
+  String getServiceID(){
+    return _serviceID;
   }
 
-  String get name => _name;
-
-  set name(String value) {
-    _name = value;
+  String getName(){
+    return _name;
   }
 
-  String get image => _image;
-
-  set image(String value) {
-    _image = value;
+  void setName(String name){
+    _name = name;
   }
+
+  String getImage(){
+    return _image;
+  }
+
+  void setImage(String image){
+    _image = image;
+  }
+
+
+
+
 }

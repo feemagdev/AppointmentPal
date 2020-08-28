@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/repository/sub_services_repository.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import './bloc.dart';
 
@@ -20,7 +21,6 @@ class AddAppointmentBloc
           subServicesList: await SubServiceRepository.defaultConstructor()
               .getSubServicesList(event.serviceID));
     } else if (event is TapOnSubServiceEvent) {
-      print(event.subServiceID);
       yield TapOnSubServiceState(
         professionals: await Professional.defaultConstructor()
             .getListOfProfessionalsBySubService(event.subServiceID),
@@ -30,16 +30,30 @@ class AddAppointmentBloc
         selectedSubService: event.subServiceID,
       );
     } else if (event is NearByProfessionalsEvent) {
-      List<double> distances = await getDistance(event.professionals);
-      // now run sorting
-      sorting(event.professionals, distances);
-      // sorting done
-      yield NearByProfessionalsState(
-          professionals: event.professionals,
-          subServices: event.subServices,
-          selectedService: event.selectedService,
-          selectedSubService: event.selectedSubService,
-          distances: distances);
+      try{
+        List<double> distances = await getDistance(event.professionals);
+        // now run sorting
+        sorting(event.professionals, distances);
+        // sorting done
+        yield NearByProfessionalsState(
+            professionals: event.professionals,
+            subServices: event.subServices,
+            selectedService: event.selectedService,
+            selectedSubService: event.selectedSubService,
+            distances: distances);
+      }catch(exception){
+        if(exception is PlatformException){
+          if(exception.code == "PERMISSION_DENIED"){
+            yield LocationPermissionDeniedState(
+              subServices: event.subServices,
+              selectedService: event.selectedService,
+              selectedSubService: event.selectedSubService,
+              professionals: event.professionals
+            );
+          }
+        }
+      }
+
     }
     else if(event is AllProfessionalsEvent){
       event.professionals.shuffle();
@@ -54,7 +68,7 @@ class AddAppointmentBloc
 
   Future<Position> getCurrentPosition() async {
     return await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
   }
 
   Future<List<double>> getDistance(List<Professional> professionals) async {
@@ -64,7 +78,7 @@ class AddAppointmentBloc
     Position position = await getCurrentPosition();
     await Future.forEach(professionals, (element) async{
       double distanceInMeters = await Geolocator().distanceBetween(
-          position.latitude, position.longitude, element.appointmentLocation.latitude, element.appointmentLocation.longitude);
+          position.latitude, position.longitude, element.getAppointmentLocation().latitude, element.getAppointmentLocation().longitude);
       distanceInMeters = double.parse((distanceInMeters/1000).toStringAsFixed(2));
       distances[distancesIndex] = distanceInMeters;
       distancesIndex++;
@@ -77,24 +91,11 @@ class AddAppointmentBloc
   sorting(List<Professional> professional,List<double> distances){
     QuickSort qs = QuickSort(professional);
     qs.sort(distances, 0, distances.length-1);
-    qs.printArray(distances);
   }
 
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -172,7 +173,7 @@ class QuickSort
     print("distance name function");
 
     for(int i=0;i<professional.length;i++)
-      print(professional[i].name);
+      print(professional[i].getName());
 
   }
 
