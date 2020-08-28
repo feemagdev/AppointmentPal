@@ -1,52 +1,36 @@
 
+
 import 'package:appointmentproject/BLoC/AuthBloc/auth_bloc.dart';
 import 'package:appointmentproject/BLoC/AuthBloc/auth_event.dart';
-import 'package:appointmentproject/BLoC/ProfessionalBloc/bloc.dart';
-import 'package:appointmentproject/BLoC/SplashScreen/splash_screen_bloc.dart';
 import 'package:appointmentproject/ui/Welcome/components/background.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
 import 'package:appointmentproject/ui/helpers/login_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class Body extends StatelessWidget {
+class Body extends StatefulWidget{
+
+  _Home createState() => _Home();
+}
 
 
+class _Home extends State<Body> {
+
+  void initState (){
+    super.initState();
+    new Future.delayed(const Duration(seconds: 10),(){
+      navigateToLoginHelper(context);
+    });
+  }
   @override
   Widget build(BuildContext context){
     Size size = MediaQuery.of(context).size;
     double titleSize = size.height*0.03;
     double subTitleSize = size.height*0.02;
-    // ignore: close_sinks
-    final SplashScreenBloc splashScreenBloc = BlocProvider.of(context);
     return Background(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-
-          BlocListener<SplashScreenBloc, SplashScreenState>(
-            listener: (context, state) {
-              if (state is SplashScreenEndedState) {
-                navigateToLoginHelper(context);
-              }
-            },
-            child: BlocBuilder<SplashScreenBloc, SplashScreenState>(
-                builder: (context, state) {
-                  if(state is SplashScreenStartState){
-                    Timer(Duration(seconds: 10),()=>{
-                      print("10 seconds over"),
-                      splashScreenBloc.add(SplashScreenEndedEvent())
-                    });
-                  }
-                  else if(state is SplashScreenEndedState){
-                    return Container();
-                  }
-                  return Container();
-                }),
-          ),
-
-
-
           Center(child: FadeAnimation(1,Image.asset("assets/images/logo2.png",height: size.height*.15,width:size.height*.15 ,))),
           FadeAnimation(
               1,
@@ -75,9 +59,9 @@ class Body extends StatelessWidget {
 
 
   void navigateToLoginHelper(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context){
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context){
       return BlocProvider(
-        create: (context) => AuthBloc()..add(AppStartedEvent()),
+        create: (context)=>AuthBloc()..add(AppStartedEvent()),
         child: LoginHelper(),
       );
     }));

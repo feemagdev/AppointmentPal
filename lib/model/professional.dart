@@ -50,7 +50,6 @@ class Professional {
         listOfProfessionals.add(professional);
       });
     });
-    print("length of professionals" + listOfProfessionals.length.toString());
     return listOfProfessionals;
   }
 

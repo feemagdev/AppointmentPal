@@ -21,7 +21,6 @@ class AddAppointmentBloc
           subServicesList: await SubServiceRepository.defaultConstructor()
               .getSubServicesList(event.serviceID));
     } else if (event is TapOnSubServiceEvent) {
-      print(event.subServiceID);
       yield TapOnSubServiceState(
         professionals: await Professional.defaultConstructor()
             .getListOfProfessionalsBySubService(event.subServiceID),
@@ -79,7 +78,7 @@ class AddAppointmentBloc
     Position position = await getCurrentPosition();
     await Future.forEach(professionals, (element) async{
       double distanceInMeters = await Geolocator().distanceBetween(
-          position.latitude, position.longitude, element.appointmentLocation.latitude, element.appointmentLocation.longitude);
+          position.latitude, position.longitude, element.getAppointmentLocation().latitude, element.getAppointmentLocation().longitude);
       distanceInMeters = double.parse((distanceInMeters/1000).toStringAsFixed(2));
       distances[distancesIndex] = distanceInMeters;
       distancesIndex++;
@@ -92,24 +91,11 @@ class AddAppointmentBloc
   sorting(List<Professional> professional,List<double> distances){
     QuickSort qs = QuickSort(professional);
     qs.sort(distances, 0, distances.length-1);
-    qs.printArray(distances);
   }
 
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
