@@ -7,6 +7,7 @@ import 'package:appointmentproject/model/sub_services.dart';
 import 'package:appointmentproject/ui/AddAppointmentScreen/components/backgound.dart';
 import 'package:appointmentproject/ui/AddAppointmentScreen/components/custom_professional_showcase.dart';
 import 'package:appointmentproject/ui/AddAppointmentScreen/components/services.dart';
+import 'package:appointmentproject/ui/SelectDateTime/select_date_time.dart';
 import 'package:appointmentproject/ui/components/rounded_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,8 +26,8 @@ class Body extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Professional> listOfProfessionals = [];
     List<SubServices> listOfSubServices = [];
-    String selectedService;
-    String selectedSubService;
+    Service selectedService;
+    SubServices selectedSubService;
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
     return Background(
@@ -37,6 +38,17 @@ class Body extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
+                BlocListener<AddAppointmentBloc, AddAppointmentState>(
+                  listener: (context, state) {
+                    if (state is NavigateToBookAppointmentState){
+                      navigateToAppointmentDateTimeScreen(context, state.professional, state.selectedService, state.selectedSubServices);
+                    }
+                  },
+                  child: BlocBuilder<AddAppointmentBloc, AddAppointmentState>(
+                      builder: (context, state) {
+                        return Container();
+                      }),
+                ),
                 SizedBox(height: 25),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -90,7 +102,7 @@ class Body extends StatelessWidget {
                 BlocBuilder<AddAppointmentBloc, AddAppointmentState>(
                     builder: (context, state) {
                   if (state is TapOnServiceState) {
-                    selectedSubService = "";
+                    selectedSubService = null;
                     return selectSubServiceText(deviceWidth);
                   } else if (state is TapOnSubServiceState) {
                     return selectSubServiceText(deviceWidth);
@@ -164,8 +176,7 @@ class Body extends StatelessWidget {
                           ? deviceHeight * 0.05
                           : deviceHeight * 0.055,
                       press: () {
-                        if (selectedSubService == null ||
-                            selectedSubService.isEmpty) {
+                        if (selectedSubService == null) {
                           showErrorDialog(
                               "Please select a sub service", context);
                           return;
@@ -193,8 +204,7 @@ class Body extends StatelessWidget {
                             ? deviceHeight * 0.055
                             : deviceHeight * 0.055,
                         press: () {
-                          if (selectedSubService == null ||
-                              selectedSubService.isEmpty) {
+                          if (selectedSubService == null) {
                             showErrorDialog(
                                 "Please select a sub service", context);
                             return;
@@ -223,14 +233,18 @@ class Body extends StatelessWidget {
                           state.professionals,
                           nullDistance,
                           deviceHeight,
-                          deviceWidth);
+                          deviceWidth,
+                      selectedService,
+                      selectedSubService);
                     } else if (state is NearByProfessionalsState) {
                       return professionalListBuilder(
                           context,
                           state.professionals,
                           state.distances,
                           deviceHeight,
-                          deviceWidth);
+                          deviceWidth,
+                          selectedService,
+                          selectedSubService);
                     } else if (state is AllProfessionalsState) {
                       List<double> distances =
                           new List(state.professionals.length);
@@ -239,7 +253,9 @@ class Body extends StatelessWidget {
                           state.professionals,
                           distances,
                           deviceHeight,
-                          deviceWidth);
+                          deviceWidth,
+                          selectedService,
+                          selectedSubService);
                     } else if (state is LocationPermissionDeniedState) {
                       List<double> distances =
                           new List(state.professionals.length);
@@ -248,7 +264,9 @@ class Body extends StatelessWidget {
                           state.professionals,
                           distances,
                           deviceHeight,
-                          deviceWidth);
+                          deviceWidth,
+                          selectedService,
+                          selectedSubService);
                     }
                     return Container();
                   },
@@ -274,9 +292,8 @@ class Body extends StatelessWidget {
             svgSrc: servicesList[index].getImage(),
             title: servicesList[index].getName(),
             onTap: () {
-              BlocProvider.of<AddAppointmentBloc>(context).add(
-                  TapOnServiceEvent(
-                      serviceID: servicesList[index].getServiceID()));
+              BlocProvider.of<AddAppointmentBloc>(context)
+                  .add(TapOnServiceEvent(selectedService: servicesList[index]));
             },
           ),
         ),
@@ -285,7 +302,7 @@ class Body extends StatelessWidget {
   }
 
   Widget subServiceListBuilder(BuildContext context, List<SubServices> list,
-      String selectedService, double deviceHeight) {
+      Service selectedService, double deviceHeight) {
     return Container(
       height: deviceHeight * 0.1,
       child: ListView.builder(
@@ -300,8 +317,8 @@ class Body extends StatelessWidget {
             onTap: () {
               BlocProvider.of<AddAppointmentBloc>(context).add(
                   TapOnSubServiceEvent(
-                      serviceID: selectedService,
-                      subServiceID: list[index].getSubServiceID()));
+                      selectedService: selectedService,
+                      selectedSubService: list[index]));
             },
           ),
         ),
@@ -309,8 +326,14 @@ class Body extends StatelessWidget {
     );
   }
 
-  Widget professionalListBuilder(BuildContext context, List<Professional> list,
-      List<double> distance, double deviceHeight, double deviceWidth) {
+  Widget professionalListBuilder(
+      BuildContext context,
+      List<Professional> list,
+      List<double> distance,
+      double deviceHeight,
+      double deviceWidth,
+      Service selectedService,
+      SubServices selectedSubService) {
     if (list.length == 0) {
       return Container(
         child: Center(
@@ -334,6 +357,14 @@ class Body extends StatelessWidget {
                     experience: list[index].getExperience(),
                     professionalImage: list[index].getImage(),
                     distance: distance[index],
+                    onTap: () {
+                      print("tap on book appointment");
+                      BlocProvider.of<AddAppointmentBloc>(context).add(
+                          NavigateToBookAppointmentEvent(
+                              professional: list[index],
+                              selectedService: selectedService,
+                              selectedSubServices: selectedSubService));
+                    },
                   ),
                 )),
       );
@@ -368,5 +399,11 @@ class Body extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  navigateToAppointmentDateTimeScreen(BuildContext context,Professional professional,Service service,SubServices subService) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return SelectDateTime(professional: professional,service: service,subService: subService);
+    }));
   }
 }

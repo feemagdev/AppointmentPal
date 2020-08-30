@@ -17,20 +17,21 @@ class AddAppointmentBloc
   ) async* {
     if (event is TapOnServiceEvent) {
       yield TapOnServiceState(
-          selectedService: event.serviceID,
+          selectedService: event.selectedService,
           subServicesList: await SubServiceRepository.defaultConstructor()
-              .getSubServicesList(event.serviceID));
+              .getSubServicesList(event.selectedService.getServiceID()));
     } else if (event is TapOnSubServiceEvent) {
       yield TapOnSubServiceState(
         professionals: await Professional.defaultConstructor()
-            .getListOfProfessionalsBySubService(event.subServiceID),
+            .getListOfProfessionalsBySubService(
+                event.selectedSubService.getSubServiceID()),
         subServicesList: await SubServiceRepository.defaultConstructor()
-            .getSubServicesList(event.serviceID),
-        selectedService: event.serviceID,
-        selectedSubService: event.subServiceID,
+            .getSubServicesList(event.selectedService.getServiceID()),
+        selectedService: event.selectedService,
+        selectedSubService: event.selectedSubService,
       );
     } else if (event is NearByProfessionalsEvent) {
-      try{
+      try {
         List<double> distances = await getDistance(event.professionals);
         // now run sorting
         sorting(event.professionals, distances);
@@ -41,28 +42,29 @@ class AddAppointmentBloc
             selectedService: event.selectedService,
             selectedSubService: event.selectedSubService,
             distances: distances);
-      }catch(exception){
-        if(exception is PlatformException){
-          if(exception.code == "PERMISSION_DENIED"){
+      } catch (exception) {
+        if (exception is PlatformException) {
+          if (exception.code == "PERMISSION_DENIED") {
             yield LocationPermissionDeniedState(
-              subServices: event.subServices,
-              selectedService: event.selectedService,
-              selectedSubService: event.selectedSubService,
-              professionals: event.professionals
-            );
+                subServices: event.subServices,
+                selectedService: event.selectedService,
+                selectedSubService: event.selectedSubService,
+                professionals: event.professionals);
           }
         }
       }
-
-    }
-    else if(event is AllProfessionalsEvent){
+    } else if (event is AllProfessionalsEvent) {
       event.professionals.shuffle();
       yield AllProfessionalsState(
-        professionals: event.professionals,
-        subServices: event.subServices,
-        selectedService: event.selectedService,
-        selectedSubService: event.selectedSubService
-      );
+          professionals: event.professionals,
+          subServices: event.subServices,
+          selectedService: event.selectedService,
+          selectedSubService: event.selectedSubService);
+    } else if (event is NavigateToBookAppointmentEvent) {
+      yield NavigateToBookAppointmentState(
+          professional: event.professional,
+          selectedService: event.selectedService,
+          selectedSubServices: event.selectedSubServices);
     }
   }
 
@@ -72,57 +74,50 @@ class AddAppointmentBloc
   }
 
   Future<List<double>> getDistance(List<Professional> professionals) async {
-
     List<double> distances = new List(professionals.length);
-    int distancesIndex=0;
+    int distancesIndex = 0;
     Position position = await getCurrentPosition();
-    await Future.forEach(professionals, (element) async{
+    await Future.forEach(professionals, (element) async {
       double distanceInMeters = await Geolocator().distanceBetween(
-          position.latitude, position.longitude, element.getAppointmentLocation().latitude, element.getAppointmentLocation().longitude);
-      distanceInMeters = double.parse((distanceInMeters/1000).toStringAsFixed(2));
+          position.latitude,
+          position.longitude,
+          element.getAppointmentLocation().latitude,
+          element.getAppointmentLocation().longitude);
+      distanceInMeters =
+          double.parse((distanceInMeters / 1000).toStringAsFixed(2));
       distances[distancesIndex] = distanceInMeters;
       distancesIndex++;
     });
-    return  distances;
+    return distances;
   }
 
-
-
-  sorting(List<Professional> professional,List<double> distances){
+  sorting(List<Professional> professional, List<double> distances) {
     QuickSort qs = QuickSort(professional);
-    qs.sort(distances, 0, distances.length-1);
+    qs.sort(distances, 0, distances.length - 1);
   }
-
-
-
 }
 
-
-
-class QuickSort
-{
-
+class QuickSort {
   List<Professional> professional;
+
   QuickSort(this.professional);
-  /* This function takes last element as pivot, 
-       places the pivot element at its correct 
-       position in sorted array, and places all 
-       smaller (smaller than pivot) to left of 
-       pivot and all greater elements to right 
+
+  /* This function takes last element as pivot,
+       places the pivot element at its correct
+       position in sorted array, and places all
+       smaller (smaller than pivot) to left of
+       pivot and all greater elements to right
        of pivot */
-  int partition(List<double> arr, int low, int high)
-  {
+  int partition(List<double> arr, int low, int high) {
     double pivot = arr[high];
-    int i = (low-1); // index of smaller element 
-    for (int j=low; j<high; j++)
-    {
-      // If current element is smaller than or 
-      // equal to pivot 
-      if (arr[j] <= pivot)
-      {
+    int i = (low - 1); // index of smaller element
+    for (int j = low; j < high; j++) {
+      // If current element is smaller than or
+      // equal to pivot
+      if (arr[j] <= pivot) {
         i++;
 
-        // swap arr[i] and arr[j] 
+        // swap arr[i] and arr[j]
         double temp = arr[i];
         arr[i] = arr[j];
         arr[j] = temp;
@@ -132,51 +127,42 @@ class QuickSort
       }
     }
 
-    // swap arr[i+1] and arr[high] (or pivot) 
-    double temp = arr[i+1];
-    arr[i+1] = arr[high];
+    // swap arr[i+1] and arr[high] (or pivot)
+    double temp = arr[i + 1];
+    arr[i + 1] = arr[high];
     arr[high] = temp;
-    Professional tem = professional[i+1];
-    professional[i+1] = professional[high];
+    Professional tem = professional[i + 1];
+    professional[i + 1] = professional[high];
     professional[high] = tem;
 
-    return i+1;
+    return i + 1;
   }
 
-
-  /* The main function that implements QuickSort() 
-      arr[] --> Array to be sorted, 
-      low  --> Starting index, 
+  /* The main function that implements QuickSort()
+      arr[] --> Array to be sorted,
+      low  --> Starting index,
       high  --> Ending index */
-  void sort(List<double> arr, int low, int high)
-  {
-    if (low < high)
-    {
-      /* pi is partitioning index, arr[pi] is  
+  void sort(List<double> arr, int low, int high) {
+    if (low < high) {
+      /* pi is partitioning index, arr[pi] is
               now at right place */
       int pi = partition(arr, low, high);
 
-      // Recursively sort elements before 
-      // partition and after partition 
-      sort(arr, low, pi-1);
-      sort(arr, pi+1, high);
+      // Recursively sort elements before
+      // partition and after partition
+      sort(arr, low, pi - 1);
+      sort(arr, pi + 1, high);
     }
   }
 
-  void printArray(List<double> arr)
-  {
+  void printArray(List<double> arr) {
     print("distance sorting function");
     int n = arr.length;
-    for (int i=0; i<n; ++i)
-      print(arr[i]);
+    for (int i = 0; i < n; ++i) print(arr[i]);
 
     print("distance name function");
 
-    for(int i=0;i<professional.length;i++)
+    for (int i = 0; i < professional.length; i++)
       print(professional[i].getName());
-
   }
-
 }
-
-

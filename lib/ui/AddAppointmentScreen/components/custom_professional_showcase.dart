@@ -184,6 +184,7 @@ class ProfessionalShowcase extends StatelessWidget {
                   height: deviceWidth < 400
                       ? deviceHeight * 0.05
                       : deviceHeight * 0.05,
+                  press: onTap,
                 ),
                 SizedBox(
                   width: 5,
