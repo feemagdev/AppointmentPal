@@ -3,6 +3,7 @@ import 'package:appointmentproject/model/sub_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Professional {
+  String _professionalID;
   String _name;
   String _phone;
   String _country;
@@ -45,8 +46,9 @@ class Professional {
         .getDocuments()
         .then((value) {
       value.documents.forEach((element)  {
-        Professional professional =
-            Professional.fromMap(element.data, subServices);
+        Professional professional;
+        professional = Professional.fromMap(element.data, subServices);
+        professional.setProfessionalID(element.documentID);
         listOfProfessionals.add(professional);
       });
     });
@@ -150,6 +152,14 @@ class Professional {
 
   void setAppointmentLocation(GeoPoint appointmentLocation) {
     _appointmentLocation = appointmentLocation;
+  }
+
+  String getProfessionalID (){
+    return _professionalID;
+  }
+
+  void setProfessionalID (String professionalID){
+    _professionalID = professionalID;
   }
 
 
