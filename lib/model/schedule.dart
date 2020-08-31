@@ -1,9 +1,13 @@
 class Schedule {
   String _professionalID;
   int _startTime;
+  int _startTimeMinutes;
   int _endTime;
+  int _endTimeMinutes;
   int _breakStartTime;
+  int _breakStartTimeMinutes;
   int _breakEndTime;
+  int _breakEndTimeMinutes;
   int _duration;
   String _dayOfWeek;
 
@@ -12,7 +16,11 @@ class Schedule {
         _endTime = snapshot['end_time'],
         _breakStartTime = snapshot['break_start_time'],
         _breakEndTime = snapshot['break_end_time'],
-        _duration = snapshot['duration'];
+        _duration = snapshot['duration'],
+        _startTimeMinutes = snapshot['start_time_minutes'],
+        _endTimeMinutes = snapshot['end_time_minutes'],
+        _breakStartTimeMinutes = snapshot['break_start_time_minutes'],
+        _breakEndTimeMinutes = snapshot['break_end_time_minutes'];
 
   String getProfessionalID() {
     return _professionalID;
@@ -38,6 +46,22 @@ class Schedule {
     _endTime = endTime;
   }
 
+  int getStartTimeMinutes() {
+    return _startTimeMinutes;
+  }
+
+  void setStartTimeMinutes(int startTimeMinutes) {
+    _startTimeMinutes = startTimeMinutes;
+  }
+
+  int getEndTimeMinutes() {
+    return _endTimeMinutes;
+  }
+
+  void setEndTimeMinutes(int endTimeMinutes) {
+    _endTimeMinutes = endTimeMinutes;
+  }
+
   int getBreakStartTime() {
     return _breakStartTime;
   }
@@ -52,6 +76,22 @@ class Schedule {
 
   void setBreakEndTime(int breakEndTime) {
     _breakEndTime = breakEndTime;
+  }
+
+  int getBreakStartTimeMinutes() {
+    return _breakStartTimeMinutes;
+  }
+
+  void setBreakStartTimeMinutes(int breakStartTimeMinutes) {
+    _breakStartTimeMinutes = breakStartTimeMinutes;
+  }
+
+  int getBreakEndTimeMinutes() {
+    return _breakEndTimeMinutes;
+  }
+
+  void setBreakEndTimeMinutes(int breakEndTimeMinutes) {
+    _breakEndTimeMinutes = breakEndTimeMinutes;
   }
 
   int getDuration() {

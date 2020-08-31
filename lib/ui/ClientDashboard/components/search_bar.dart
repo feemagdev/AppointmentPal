@@ -14,7 +14,10 @@ class SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.width;
     return Container(
+      height: deviceWidth < 400 ? 50:50,
       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 5),
       decoration: BoxDecoration(
         color: Color.fromRGBO(234, 245, 245, .23),

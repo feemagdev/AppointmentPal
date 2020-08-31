@@ -22,7 +22,11 @@ class SelectDateTime extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => SelectDateTimeBloc(professional:professional),
-      child: Body(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Book Appointment"),
+        ),
+          body: Body()),
     );
   }
 }

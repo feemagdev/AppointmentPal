@@ -13,5 +13,14 @@ class ShowAvailableTimeEvent extends SelectDateTimeEvent{
 }
 
 
+class TimeSlotSelectedEvent extends SelectDateTimeEvent{
+  final Professional professional;
+  final List<DateTime> schedules;
+  final int scheduleIndex;
+  final Schedule schedule;
+  TimeSlotSelectedEvent({@required this.professional, @required this.schedules, @required this.scheduleIndex,@required this.schedule});
+}
+
+
 
 

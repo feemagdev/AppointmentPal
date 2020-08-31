@@ -21,9 +21,9 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
-    print(width);
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.width;
+    print(deviceWidth);
     return Background(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,7 +45,7 @@ class Body extends StatelessWidget {
                   return Container();
                 }),
           ),
-          SizedBox(height: height * 0.10,),
+          SizedBox(height: deviceHeight * 0.10,),
           Padding(
             padding: EdgeInsets.all(20),
             child: Column(
@@ -56,7 +56,7 @@ class Body extends StatelessWidget {
                       "welcome "+ client.getName(),
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: deviceWidth < 400 ? 15:20,
                       fontWeight: FontWeight.w600,
                       color: Colors.white
                     ),

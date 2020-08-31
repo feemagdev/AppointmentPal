@@ -11,9 +11,26 @@ class SelectDateTimeInitial extends SelectDateTimeState {
 class ShowAvailableTimeState extends SelectDateTimeState{
   final Professional professional;
   final Schedule schedule;
+  final List<DateTime> timeSlots;
 
-  ShowAvailableTimeState({@required this.professional,@required this.schedule});
+  ShowAvailableTimeState({@required this.professional,@required this.schedule,@required this.timeSlots});
 
+}
+
+
+class NoScheduleAvailable extends SelectDateTimeState {
+  final Professional professional;
+  NoScheduleAvailable({@required this.professional});
+}
+
+
+class TimeSlotSelectedState extends SelectDateTimeState{
+  final Professional professional;
+  final Schedule schedule;
+  final List<DateTime> timeSlots;
+  final int selectedIndex;
+
+  TimeSlotSelectedState({@required this.professional,this.schedule,this.timeSlots,this.selectedIndex});
 }
 
 

@@ -57,7 +57,7 @@ class Body extends StatelessWidget {
                   return Container();
                 }),
           ),
-          SizedBox(height: deviceHeight * 0.15,),
+          SizedBox(height: deviceHeight * 0.20,),
           Padding(
             padding: EdgeInsets.all(20),
             child: Column(
@@ -67,19 +67,19 @@ class Body extends StatelessWidget {
                     1,
                     Text(
                       "Sign Up ",
-                      style: TextStyle(fontFamily:'Raleway',color: Colors.white, fontSize: 35),
+                      style: TextStyle(fontFamily:'Raleway',color: Colors.white, fontSize: deviceWidth < 400 ? 20 : 25,)
                     )),
                 SizedBox(height: 10),
                 FadeAnimation(
                     1.3,
                     Text(
                       "Make your life easy",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: TextStyle(color: Colors.white, fontSize: deviceWidth < 400 ? 15 : 20,),
                     )),
               ],
             ),
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 10),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -87,100 +87,102 @@ class Body extends StatelessWidget {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(60),
                       topRight: Radius.circular(60))),
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.all(30),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 60,
-                      ),
-                      FadeAnimation(
-                          1.4,
-                          Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Color.fromRGBO(59, 193, 226, 0.7),
-                                      blurRadius: 20,
-                                      offset: Offset(0, 10))
-                                ]),
-                            child: Column(
-                              children: <Widget>[
-                                RoundedInputField(
-                                  icon: Icon(Icons.email),
-                                  hintText: "Email",
-                                  onChanged: (value) {
-                                    email = value;
-                                  },
-                                ),
-                                RoundedPasswordField(
-                                  onChanged: (value) async {
-                                    password = value;
-                                  },
-                                )
-                              ],
-                            ),
-                          )),
-                      SizedBox(
-                        height: 40,
-                      ),
-                      FadeAnimation(
-                          1.6,
-                          RoundedButton(
-                              height: deviceWidth < 400 ? deviceHeight * 0.09:deviceHeight * 0.06,
-                            color: Color.fromRGBO(56, 178, 227,1),
-                            textColor: Colors.white,
-                            text: "Sign up",
-                            press: ()  {
-                              print('button pressed');
-                              print(email);
-                              if (email == null ||
-                                  !EmailValidator.validate(email)) {
-                                String message = "invalid email";
-                                showErrorDialog(message, context);
-                                return;
-                              }
-                              if (password == null) {
-                                String message = "please write password again";
-                                showErrorDialog(message, context);
-                                return;
-                              }
-                              if(password.length <= 5){
-                                String message = "please use strong password";
-                                showErrorDialog(message, context);
-                                return;
-                              }
-                              BlocProvider.of<SignUpBloc>(context).add(SignUpButtonPressedEvent(
-                                  email: email, password: password));
-                            },
-                          )),
-                      SizedBox(
-                        height: 50,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: FadeAnimation(
-                                1.9,
-                                Container(
-                                  child: Column(
-                                    children: <Widget>[
-                                      AlreadyHaveAnAccountCheck(
-                                        text:"Already have an account ? sign in",
-                                        press: ()  {
-                                          BlocProvider.of<SignUpBloc>(context).add(AlreadyHaveAnAccountEvent());
-                                        },
-                                      ),
-                                    ],
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.all(30),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          height: deviceWidth < 400 ? 30 : 60,
+                        ),
+                        FadeAnimation(
+                            1.4,
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Color.fromRGBO(59, 193, 226, 0.7),
+                                        blurRadius: 20,
+                                        offset: Offset(0, 10))
+                                  ]),
+                              child: Column(
+                                children: <Widget>[
+                                  RoundedInputField(
+                                    icon: Icon(Icons.email),
+                                    hintText: "Email",
+                                    onChanged: (value) {
+                                      email = value;
+                                    },
                                   ),
-                                )),
-                          )
-                        ],
-                      )
-                    ],
+                                  RoundedPasswordField(
+                                    onChanged: (value) async {
+                                      password = value;
+                                    },
+                                  )
+                                ],
+                              ),
+                            )),
+                        SizedBox(
+                          height: 40,
+                        ),
+                        FadeAnimation(
+                            1.6,
+                            RoundedButton(
+                                height: deviceWidth < 400 ? deviceHeight * 0.09:deviceHeight * 0.07,
+                              color: Color.fromRGBO(56, 178, 227,1),
+                              textColor: Colors.white,
+                              text: "Sign up",
+                              press: ()  {
+                                print('button pressed');
+                                print(email);
+                                if (email == null ||
+                                    !EmailValidator.validate(email)) {
+                                  String message = "invalid email";
+                                  showErrorDialog(message, context);
+                                  return;
+                                }
+                                if (password == null) {
+                                  String message = "please write password again";
+                                  showErrorDialog(message, context);
+                                  return;
+                                }
+                                if(password.length <= 5){
+                                  String message = "please use strong password";
+                                  showErrorDialog(message, context);
+                                  return;
+                                }
+                                BlocProvider.of<SignUpBloc>(context).add(SignUpButtonPressedEvent(
+                                    email: email, password: password));
+                              },
+                            )),
+                        SizedBox(
+                          height: 50,
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: FadeAnimation(
+                                  1.9,
+                                  Container(
+                                    child: Column(
+                                      children: <Widget>[
+                                        AlreadyHaveAnAccountCheck(
+                                          text:"Already have an account ? sign in",
+                                          press: ()  {
+                                            BlocProvider.of<SignUpBloc>(context).add(AlreadyHaveAnAccountEvent());
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),

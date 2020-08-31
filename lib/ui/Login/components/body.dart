@@ -83,7 +83,7 @@ class Body extends StatelessWidget {
               return Container();
             }),
           ),
-          SizedBox(height: size.height * 0.15),
+          SizedBox(height: size.height * 0.20),
           Padding(
             padding: EdgeInsets.all(20),
             child: Column(
@@ -93,19 +93,19 @@ class Body extends StatelessWidget {
                     1,
                     Text(
                       "Login",
-                      style: TextStyle(color: Colors.white, fontSize: 35),
-                    )),
+                      style: TextStyle(color: Colors.white, fontSize: deviceWidth < 400 ? 20 : 25,)),
+                    ),
                 SizedBox(height: 10),
                 FadeAnimation(
                     1.3,
                     Text(
                       "Welcome Back",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: TextStyle(color: Colors.white, fontSize: deviceWidth < 400 ? 15 : 20,),
                     )),
               ],
             ),
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 10),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -113,103 +113,105 @@ class Body extends StatelessWidget {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(60),
                       topRight: Radius.circular(60))),
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.all(30),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(height: 60,),
-                      FadeAnimation(
-                          1.4,
-                          Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Color.fromRGBO(59, 193, 226, 0.7),
-                                      blurRadius: 20,
-                                      offset: Offset(0, 10))
-                                ]),
-                            child: Column(
-                              children: <Widget>[
-                                RoundedInputField(
-                                  icon: Icon(Icons.email),
-                                  hintText: "Email",
-                                  onChanged: (value) {
-                                    email = value;
-                                  },
-                                ),
-                                RoundedPasswordField(
-                                  onChanged: (value) {
-                                    password = value;
-                                  },
-                                )
-                              ],
-                            ),
-                          )),
-                      SizedBox(height: 40),
-                      FadeAnimation(
-                          1.5,
-                          GestureDetector(
-                            child: Text(
-                              "Forgot Password?",
-                              style: TextStyle(color: Colors.grey),
-
-                            ),
-                            onTap: (){
-                              print("forgot button tap");
-                              BlocProvider.of<LoginBloc>(context).add(ForgotPasswordButtonPressedEvent());
-                            },
-                          )),
-                      SizedBox(height: 40),
-                      FadeAnimation(
-                          1.6,
-                          RoundedButton(
-                            height: deviceWidth < 400 ? deviceHeight * 0.09:deviceHeight * 0.07,
-                            width: deviceWidth < 400 ? deviceHeight * 0.3:deviceHeight * 0.5,
-                            color: Color.fromRGBO(56, 178,227, 1),
-                            textColor: Colors.white,
-                            text: "Login",
-                            press: ()  {
-                              if (email == null ||
-                                  !EmailValidator.validate(email)) {
-                                String message = "invalid email";
-                                showErrorDialog(message, context);
-                                return;
-                              }
-                              if (password.length <= 5) {
-                                String message = "too short";
-                                showErrorDialog(message, context);
-                                return;
-                              }
-                              BlocProvider.of<LoginBloc>(context).add(LoginButtonPressedEvent(
-                                    email: email, password: password));
-
-                            },
-                          )),
-                      SizedBox(height: 30),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: FadeAnimation(
-                                1.8,
-                                Container(
-                                  child: Column(
-                                    children: <Widget>[
-                                      AlreadyHaveAnAccountCheck(
-                                        text:"Don't have an account ? sign Up",
-                                        press: ()  {
-                                          BlocProvider.of<LoginBloc>(context).add(DoNotHaveAnAccountEvent());
-                                        },
-                                      ),
-                                    ],
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.all(30),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(height: 60,),
+                        FadeAnimation(
+                            1.4,
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Color.fromRGBO(59, 193, 226, 0.7),
+                                        blurRadius: 20,
+                                        offset: Offset(0, 10))
+                                  ]),
+                              child: Column(
+                                children: <Widget>[
+                                  RoundedInputField(
+                                    icon: Icon(Icons.email),
+                                    hintText: "Email",
+                                    onChanged: (value) {
+                                      email = value;
+                                    },
                                   ),
-                                )),
-                          ),
-                        ],
-                      )
-                    ],
+                                  RoundedPasswordField(
+                                    onChanged: (value) {
+                                      password = value;
+                                    },
+                                  )
+                                ],
+                              ),
+                            )),
+                        SizedBox(height: 40),
+                        FadeAnimation(
+                            1.5,
+                            GestureDetector(
+                              child: Text(
+                                "Forgot Password?",
+                                style: TextStyle(color: Colors.grey),
+
+                              ),
+                              onTap: (){
+                                print("forgot button tap");
+                                BlocProvider.of<LoginBloc>(context).add(ForgotPasswordButtonPressedEvent());
+                              },
+                            )),
+                        SizedBox(height: 40),
+                        FadeAnimation(
+                            1.6,
+                            RoundedButton(
+                              height: deviceWidth < 400 ? deviceHeight * 0.09:deviceHeight * 0.07,
+                              width: deviceWidth < 400 ? deviceHeight * 0.3:deviceHeight * 0.5,
+                              color: Color.fromRGBO(56, 178,227, 1),
+                              textColor: Colors.white,
+                              text: "Login",
+                              press: ()  {
+                                if (email == null ||
+                                    !EmailValidator.validate(email)) {
+                                  String message = "invalid email";
+                                  showErrorDialog(message, context);
+                                  return;
+                                }
+                                if (password.length <= 5) {
+                                  String message = "too short";
+                                  showErrorDialog(message, context);
+                                  return;
+                                }
+                                BlocProvider.of<LoginBloc>(context).add(LoginButtonPressedEvent(
+                                      email: email, password: password));
+
+                              },
+                            )),
+                        SizedBox(height: 30),
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: FadeAnimation(
+                                  1.8,
+                                  Container(
+                                    child: Column(
+                                      children: <Widget>[
+                                        AlreadyHaveAnAccountCheck(
+                                          text:"Don't have an account ? sign Up",
+                                          press: ()  {
+                                            BlocProvider.of<LoginBloc>(context).add(DoNotHaveAnAccountEvent());
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
