@@ -155,50 +155,23 @@ class Body extends StatelessWidget {
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(60),
                     topRight: Radius.circular(60))),
-            child: Column(
-              children: <Widget>[
-                SizedBox(
-                  height: 50,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    RoundedButton(
-                      text: "all professionals",
-                      color: Color.fromRGBO(234, 245, 245, 1),
-                      textColor: Color.fromRGBO(56, 178, 227, 1),
-                      fontSize: deviceWidth < 400 ? 10 : 15,
-                      width: deviceWidth < 400
-                          ? deviceWidth * 0.4
-                          : deviceWidth * 0.4,
-                      height: deviceWidth < 400
-                          ? deviceHeight * 0.05
-                          : deviceHeight * 0.055,
-                      press: () {
-                        if (selectedSubService == null) {
-                          showErrorDialog(
-                              "Please select a sub service", context);
-                          return;
-                        }
-                        BlocProvider.of<AddAppointmentBloc>(context).add(
-                            AllProfessionalsEvent(
-                                professionals: listOfProfessionals,
-                                subServices: listOfSubServices,
-                                selectedService: selectedService,
-                                selectedSubService: selectedSubService));
-                      },
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    RoundedButton(
-                        text: "nearby professionals",
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: 50,
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      RoundedButton(
+                        text: "all professionals",
                         color: Color.fromRGBO(234, 245, 245, 1),
                         textColor: Color.fromRGBO(56, 178, 227, 1),
                         fontSize: deviceWidth < 400 ? 10 : 15,
                         width: deviceWidth < 400
-                            ? deviceWidth * 0.35
+                            ? deviceWidth * 0.4
                             : deviceWidth * 0.4,
                         height: deviceWidth < 400
                             ? deviceHeight * 0.055
@@ -210,68 +183,97 @@ class Body extends StatelessWidget {
                             return;
                           }
                           BlocProvider.of<AddAppointmentBloc>(context).add(
-                              NearByProfessionalsEvent(
+                              AllProfessionalsEvent(
                                   professionals: listOfProfessionals,
                                   subServices: listOfSubServices,
                                   selectedService: selectedService,
                                   selectedSubService: selectedSubService));
-                        }),
-                  ],
-                ),
-                SizedBox(
-                  height: 40,
-                ),
-                BlocBuilder<AddAppointmentBloc, AddAppointmentState>(
-                  builder: (context, state) {
-                    if (state is TapOnSubServiceState) {
-                      listOfProfessionals = state.professionals;
-                      listOfSubServices = state.subServicesList;
-                      List<double> nullDistance =
-                          new List(listOfProfessionals.length);
-                      return professionalListBuilder(
-                          context,
-                          state.professionals,
-                          nullDistance,
-                          deviceHeight,
-                          deviceWidth,
-                      selectedService,
-                      selectedSubService);
-                    } else if (state is NearByProfessionalsState) {
-                      return professionalListBuilder(
-                          context,
-                          state.professionals,
-                          state.distances,
-                          deviceHeight,
-                          deviceWidth,
-                          selectedService,
-                          selectedSubService);
-                    } else if (state is AllProfessionalsState) {
-                      List<double> distances =
-                          new List(state.professionals.length);
-                      return professionalListBuilder(
-                          context,
-                          state.professionals,
-                          distances,
-                          deviceHeight,
-                          deviceWidth,
-                          selectedService,
-                          selectedSubService);
-                    } else if (state is LocationPermissionDeniedState) {
-                      List<double> distances =
-                          new List(state.professionals.length);
-                      return professionalListBuilder(
-                          context,
-                          state.professionals,
-                          distances,
-                          deviceHeight,
-                          deviceWidth,
-                          selectedService,
-                          selectedSubService);
-                    }
-                    return Container();
-                  },
-                ),
-              ],
+                        },
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      RoundedButton(
+                          text: "nearby professionals",
+                          color: Color.fromRGBO(234, 245, 245, 1),
+                          textColor: Color.fromRGBO(56, 178, 227, 1),
+                          fontSize: deviceWidth < 400 ? 10 : 15,
+                          width: deviceWidth < 400
+                              ? deviceWidth * 0.35
+                              : deviceWidth * 0.4,
+                          height: deviceWidth < 400
+                              ? deviceHeight * 0.055
+                              : deviceHeight * 0.055,
+                          press: () {
+                            if (selectedSubService == null) {
+                              showErrorDialog(
+                                  "Please select a sub service", context);
+                              return;
+                            }
+                            BlocProvider.of<AddAppointmentBloc>(context).add(
+                                NearByProfessionalsEvent(
+                                    professionals: listOfProfessionals,
+                                    subServices: listOfSubServices,
+                                    selectedService: selectedService,
+                                    selectedSubService: selectedSubService));
+                          }),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  BlocBuilder<AddAppointmentBloc, AddAppointmentState>(
+                    builder: (context, state) {
+                      if (state is TapOnSubServiceState) {
+                        listOfProfessionals = state.professionals;
+                        listOfSubServices = state.subServicesList;
+                        List<double> nullDistance =
+                            new List(listOfProfessionals.length);
+                        return professionalListBuilder(
+                            context,
+                            state.professionals,
+                            nullDistance,
+                            deviceHeight,
+                            deviceWidth,
+                        selectedService,
+                        selectedSubService);
+                      } else if (state is NearByProfessionalsState) {
+                        return professionalListBuilder(
+                            context,
+                            state.professionals,
+                            state.distances,
+                            deviceHeight,
+                            deviceWidth,
+                            selectedService,
+                            selectedSubService);
+                      } else if (state is AllProfessionalsState) {
+                        List<double> distances =
+                            new List(state.professionals.length);
+                        return professionalListBuilder(
+                            context,
+                            state.professionals,
+                            distances,
+                            deviceHeight,
+                            deviceWidth,
+                            selectedService,
+                            selectedSubService);
+                      } else if (state is LocationPermissionDeniedState) {
+                        List<double> distances =
+                            new List(state.professionals.length);
+                        return professionalListBuilder(
+                            context,
+                            state.professionals,
+                            distances,
+                            deviceHeight,
+                            deviceWidth,
+                            selectedService,
+                            selectedSubService);
+                      }
+                      return Container();
+                    },
+                  ),
+                ],
+              ),
             ),
           )),
         ],

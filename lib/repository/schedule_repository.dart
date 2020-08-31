@@ -22,7 +22,9 @@ class ScheduleRepository {
         .document(dayOfWeek)
         .get()
         .then((value) {
-          print(value.data);
+          if(value.data == null){
+            return null;
+          }
       schedule = Schedule.professionalSchedule(value.data);
     });
     print("Repository end");

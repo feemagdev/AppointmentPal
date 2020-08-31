@@ -4,116 +4,153 @@ import 'package:appointmentproject/BLoC/ProfessionalBloc/bloc.dart';
 import 'package:appointmentproject/BLoC/SelectDateTime/select_date_time_bloc.dart';
 import 'package:appointmentproject/model/schedule.dart';
 import 'package:appointmentproject/ui/SelectDateTime/components/backgound.dart';
+import 'package:appointmentproject/ui/SelectDateTime/components/custom_date.dart';
+import 'package:appointmentproject/ui/components/rounded_button.dart';
+import 'package:appointmentproject/ui/components/rounded_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:horizontal_calendar_widget/date_helper.dart';
-import 'package:horizontal_calendar_widget/horizontal_calendar.dart';
-import '';
 import 'package:intl/intl.dart';
 
-const labelMonth = 'Month';
-const labelDate = 'Date';
-const labelWeekDay = 'Week Day';
-
-class Body extends StatefulWidget {
-  const Body({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  _DemoWidgetState createState() => _DemoWidgetState();
-}
-
-class _DemoWidgetState extends State<Body> {
-  DateTime firstDate;
-  DateTime lastDate;
-  String dateFormat = 'dd';
-  String monthFormat = 'MMM';
-  String weekDayFormat = 'EEE';
-  List<String> order = [labelMonth, labelDate, labelWeekDay];
-  bool forceRender = false;
-
-  Color defaultDecorationColor = Color.fromRGBO(234, 245, 245, 1);
-  BoxShape defaultDecorationShape = BoxShape.rectangle;
-  bool isCircularRadiusDefault = true;
-
-  Color selectedDecorationColor = Colors.blue[400];
-  BoxShape selectedDecorationShape = BoxShape.rectangle;
-  bool isCircularRadiusSelected = true;
-
-  Color disabledDecorationColor = Colors.grey;
-  BoxShape disabledDecorationShape = BoxShape.rectangle;
-  bool isCircularRadiusDisabled = true;
-
-  int minSelectedDateCount = 0;
-  int maxSelectedDateCount = 1;
-  RangeValues selectedDateCount;
-
-  List<DateTime> initialSelectedDates;
-
-  Professional professional;
-  Schedule schedule;
-
-  @override
-  void initState() {
-    super.initState();
-    const int days = 7;
-    firstDate = toDateMonthYear(DateTime.now());
-    lastDate = toDateMonthYear(firstDate.add(Duration(days: days - 1)));
-    selectedDateCount = RangeValues(
-      minSelectedDateCount.toDouble(),
-      maxSelectedDateCount.toDouble(),
-    );
-    initialSelectedDates = feedInitialSelectedDates(minSelectedDateCount, days);
-  }
-
-  List<DateTime> feedInitialSelectedDates(int target, int calendarDays) {
-    List<DateTime> selectedDates = List();
-
-    for (int i = 0; i < calendarDays; i++) {
-      if (selectedDates.length == target) {
-        break;
-      }
-      DateTime date = firstDate.add(Duration(days: i));
-      if (date.weekday != DateTime.sunday) {
-        selectedDates.add(date);
-      }
-    }
-
-    return selectedDates;
-  }
+class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.width;
+    Professional professional;
+    Schedule schedule;
+    List<DateTime> timeSlots;
+    int selectedIndex;
+    String name;
+    String phone;
     return Background(
-      child: Column(
-        children: <Widget>[
-          SizedBox(height: 50),
-          Text("Select date and time",
-          style: TextStyle(
-            fontSize: 25
-          ),),
-          SizedBox(height: 20),
-          BlocListener<SelectDateTimeBloc, SelectDateTimeState>(
-            listener: (context, state) {},
-            child: BlocBuilder<SelectDateTimeBloc, SelectDateTimeState>(
-              builder: (context, state) {
-                if (state is ShowAvailableTimeState) {
-                  print("in show available time");
-                  return calendar();
-                } else if (state is SelectDateTimeInitial) {
-                  print("initial state ");
-                  return loadingState(context, state.professional);
-                }
-                return Container(
-                  child: Text("irfan danish"),
-                );
-              },
-            ),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(height: 20),
+              Text(
+                "Select date",
+                style: TextStyle(fontSize: deviceWidth < 400 ? 15:20),
+              ),
+              SizedBox(height: 20),
+              CustomDateView(
+                onTap: (DateTime dateTime) {
+                  BlocProvider.of<SelectDateTimeBloc>(context).add(
+                      ShowAvailableTimeEvent(
+                          professional: professional, dateTime: dateTime));
+                },
+              ),
+              BlocListener<SelectDateTimeBloc, SelectDateTimeState>(
+                listener: (context, state) {},
+                child: BlocBuilder<SelectDateTimeBloc, SelectDateTimeState>(
+                  builder: (context, state) {
+                    if (state is SelectDateTimeInitial) {
+                      professional = state.professional;
+                      return loadingState(context, state.professional);
+                    } else if (state is ShowAvailableTimeState) {
+                      professional = state.professional;
+                      schedule = state.schedule;
+                      timeSlots = state.timeSlots;
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Text(
+                          "Select time",
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      );
+                    } else if (state is TimeSlotSelectedState) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Text(
+                          "Select time",
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      );
+                    }
+                    return Container();
+                  },
+                ),
+              ),
+              BlocBuilder<SelectDateTimeBloc, SelectDateTimeState>(
+                builder: (context, state) {
+                  if (state is ShowAvailableTimeState) {
+                    return timeSlotBuilder(context, state.timeSlots, null,
+                        state.professional, state.schedule);
+                  } else if (state is NoScheduleAvailable) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: Text(
+                        "sorry no schedule available for this date",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 15,
+                        ),
+                      ),
+                    );
+                  }else if(state is TimeSlotSelectedState){
+                    return timeSlotBuilder(context, state.timeSlots, state.selectedIndex, state.professional, state.schedule);
+                  }
+                  return Container();
+                },
+              ),
+              Column(
+                children: [
+                  SizedBox(height: 20),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Enter Name"),
+                      SizedBox(height: 5),
+                      TextField(
+                        decoration:InputDecoration(
+                            hintText: "Name",
+                            enabledBorder: OutlineInputBorder()
+                        ) ,
+                        onChanged: (text){
+                          name = text;
+                        },
+                      ),
+                      SizedBox(height: 15),
+                      Text("Enter your phone number"),
+                      SizedBox(height: 5),
+                      TextField(
+                        keyboardType: TextInputType.phone,
+                        decoration:InputDecoration(
+                            hintText: "Phone",
+                            enabledBorder: OutlineInputBorder()
+                        ) ,
+                        onChanged: (text){
+                          phone = text;
+                        },
+                      ),
+                      SizedBox(height: 15),
+                    ],
+                  ),
+
+                  RoundedButton(
+                    text: "Book appointment",
+                    width: 300,
+                    height: 55,
+                    fontSize: 20,
+                    color: Colors.blue,
+                    textColor: Colors.white,
+                    press: (){
+                    print("button pressed");
+                    print(name);
+                    print(phone);
+                  },)
+                ],
+              ),
+
+
+            ],
           ),
-
-
-        ],
+        ),
       ),
     );
   }
@@ -124,139 +161,55 @@ class _DemoWidgetState extends State<Body> {
     return Container();
   }
 
-  void showMessage(String message) {
-    Scaffold.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
-
-  Widget calendar() {
-    return HorizontalCalendar(
-      onDateSelected: (dateSw) {
-        print(dateSw.toString());
+  Widget timeSlotsUI(
+      DateTime time,
+      Color color,
+      BuildContext context,
+      int selectedIndex,
+      Professional professional,
+      List<DateTime> timeSlots,
+      Schedule schedule) {
+    return InkWell(
+      onTap: () {
+        BlocProvider.of<SelectDateTimeBloc>(context).add(TimeSlotSelectedEvent(
+            professional: professional,
+            scheduleIndex: selectedIndex,
+            schedules: timeSlots,
+            schedule: schedule));
       },
-      key: UniqueKey(),
-      height: 120,
-      padding: EdgeInsets.all(22),
-      firstDate: firstDate,
-      lastDate: lastDate,
-      dateFormat: dateFormat,
-      weekDayFormat: weekDayFormat,
-      monthFormat: monthFormat,
-      defaultDecoration: BoxDecoration(
-        color: defaultDecorationColor,
-        shape: defaultDecorationShape,
-        borderRadius: defaultDecorationShape == BoxShape.rectangle &&
-                isCircularRadiusDefault
-            ? BorderRadius.circular(8)
-            : null,
+      child: Container(
+        width: 72,
+        height: 50,
+        decoration: BoxDecoration(
+          color: color,
+          border: Border.all(color: Colors.blue),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Center(child: Text(DateFormat.jm().format(time))),
       ),
-      selectedDecoration: BoxDecoration(
-        color: selectedDecorationColor,
-        shape: selectedDecorationShape,
-        borderRadius: selectedDecorationShape == BoxShape.rectangle &&
-                isCircularRadiusSelected
-            ? BorderRadius.circular(8)
-            : null,
+    );
+  }
+
+  Widget timeSlotBuilder(BuildContext context, List<DateTime> timeSlots,
+      int selectedIndex, Professional professional, Schedule schedule) {
+    return Container(
+      height: 50,
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: timeSlots.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context, index) => Padding(
+          padding: const EdgeInsets.only(right: 7, top: 10),
+          child: timeSlotsUI(
+              timeSlots[index],
+              selectedIndex == index ? Colors.blue : Colors.white,
+              context,
+              index,
+              professional,
+              timeSlots,
+              schedule),
+        ),
       ),
-      disabledDecoration: BoxDecoration(
-        color: disabledDecorationColor,
-        shape: disabledDecorationShape,
-        borderRadius: disabledDecorationShape == BoxShape.rectangle &&
-                isCircularRadiusDisabled
-            ? BorderRadius.circular(8)
-            : null,
-      ),
-      labelOrder: order.map(toLabelType).toList(),
-      minSelectedDateCount: minSelectedDateCount,
-      maxSelectedDateCount: maxSelectedDateCount,
-      initialSelectedDates: initialSelectedDates,
     );
   }
-
-  bool isRangeValid(DateTime first, DateTime last, int minSelection) {
-    int availableDays = availableDaysCount(
-      getDateList(first, last),
-      [DateTime.sunday],
-    );
-
-    return availableDays >= minSelection;
-  }
-
-  int availableDaysCount(List<DateTime> dates, List<int> disabledDays) =>
-      dates.where((date) => !disabledDays.contains(date.weekday)).length;
-
-  void dateRangeChange(DateTime first, DateTime last) {
-    firstDate = first;
-    lastDate = last;
-    initialSelectedDates = feedInitialSelectedDates(
-      minSelectedDateCount,
-      daysCount(first, last),
-    );
-    selectedDateCount = RangeValues(
-      minSelectedDateCount.toDouble(),
-      maxSelectedDateCount.toDouble(),
-    );
-  }
-}
-
-Future<DateTime> datePicker(
-  BuildContext context,
-  DateTime initialDate,
-) async {
-  final selectedDate = await showDatePicker(
-    context: context,
-    initialDate: initialDate,
-    firstDate: DateTime.now().subtract(
-      Duration(days: 365),
-    ),
-    lastDate: DateTime.now().add(
-      Duration(days: 365),
-    ),
-  );
-  print(selectedDate.toString());
-  return toDateMonthYear(selectedDate);
-}
-
-LabelType toLabelType(String label) {
-  LabelType type;
-  switch (label) {
-    case labelMonth:
-      type = LabelType.month;
-      break;
-    case labelDate:
-      type = LabelType.date;
-      break;
-    case labelWeekDay:
-      type = LabelType.weekday;
-      break;
-  }
-  return type;
-}
-
-String fromLabelType(LabelType label) {
-  String labelString;
-  switch (label) {
-    case LabelType.month:
-      labelString = labelMonth;
-      break;
-    case LabelType.date:
-      labelString = labelDate;
-      break;
-    case LabelType.weekday:
-      labelString = labelWeekDay;
-      break;
-  }
-  return labelString;
-}
-
-
-
-Widget customTimeSlot(String time){
-  return InkWell(
-    onTap: (){
-      print("date selected");
-
-    },
-  );
 }

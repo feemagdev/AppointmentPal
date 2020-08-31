@@ -15,6 +15,8 @@ class CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.width;
     return Material(
       type: MaterialType.card,
       borderRadius: BorderRadius.circular(25),
@@ -28,13 +30,16 @@ class CategoryCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SvgPicture.asset(svgSrc,),
+              SvgPicture.asset(
+                svgSrc,
+                width: deviceHeight * 0.05,
+                height: deviceHeight * 0.05,),
               SizedBox(height: 10,),
               Text(title,
                   textAlign: TextAlign.center,
                   style:
                   TextStyle(
-                      fontSize: 12.0,
+                      fontSize: deviceWidth < 400 ? 12:15,
                       fontWeight: FontWeight.w600,
                       color:Color.fromRGBO(56, 178, 227, 1),
                   )),

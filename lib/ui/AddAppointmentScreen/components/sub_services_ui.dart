@@ -21,7 +21,7 @@ class SubServicesUI extends StatelessWidget {
     return Column(
       children: <Widget>[
         SizedBox(
-          height: deviceWidth < 400 ? deviceHeight* 0.075: deviceHeight* 0.08,
+          height: deviceWidth < 400 ? deviceHeight* 0.08: deviceHeight* 0.08,
           width: deviceWidth < 400 ? deviceWidth* 0.29: deviceWidth* 0.35,
           child: Material(
               type: MaterialType.card,

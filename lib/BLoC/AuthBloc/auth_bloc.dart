@@ -16,7 +16,7 @@ class AuthBloc extends Bloc<AuthEvent,AuthState>{
   @override
   Stream<AuthState> mapEventToState(AuthEvent event) async*{
       if(event is AppStartedEvent){
-        //PersonRepository.defaultConstructor().signOut();
+        PersonRepository.defaultConstructor().signOut();
         FirebaseUser user;
         try{
           user = await PersonRepository.defaultConstructor().getCurrentUser();
