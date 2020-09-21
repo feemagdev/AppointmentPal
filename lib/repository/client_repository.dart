@@ -47,4 +47,10 @@ class ClientRepository {
   Future<Client> getClientData(String uid) async {
     return  await Client.defaultConstructor().getClientData(uid);
   }
+
+  DocumentReference getClientReference (String clientID){
+    final dbReference  = Firestore.instance;
+    return dbReference.collection("client").document(clientID);
+  }
+
 }

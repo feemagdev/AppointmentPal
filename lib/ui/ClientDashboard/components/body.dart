@@ -32,7 +32,7 @@ class Body extends StatelessWidget {
             listener: (context, state) {
               if (state is AddAppointmentScreenState) {
                 List<Service> servicesList = state.serviceList;
-                navigateToAddAppointmentScreen(context,servicesList);
+                navigateToAddAppointmentScreen(context,servicesList,client,user);
               }
             },
             child: BlocBuilder<ClientDashboardBloc, ClientDashboardState>(
@@ -130,9 +130,9 @@ class Body extends StatelessWidget {
     BlocProvider.of<ClientDashboardBloc>(context).add(AddAppointmentEvent(client:client));
   }
 
-  void navigateToAddAppointmentScreen(BuildContext context,List<Service> services) {
+  void navigateToAddAppointmentScreen(BuildContext context,List<Service> services,Client client,FirebaseUser user) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return AddAppointmentScreen(servicesList: services);
+      return AddAppointmentScreen(servicesList: services,client:client,user:user);
     }));
   }
 

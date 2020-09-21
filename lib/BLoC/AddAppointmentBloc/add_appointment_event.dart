@@ -1,5 +1,4 @@
 import 'package:appointmentproject/model/professional.dart';
-import 'package:appointmentproject/model/schedule.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/model/sub_services.dart';
 import 'package:meta/meta.dart';

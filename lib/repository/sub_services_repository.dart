@@ -1,4 +1,5 @@
 import 'package:appointmentproject/model/sub_services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
 
 class SubServiceRepository {
@@ -13,5 +14,10 @@ class SubServiceRepository {
 
   Future<List<SubServices>> getSubServicesList(String serviceID) async {
     return await SubServices.defaultConstructor().getSubServices(serviceID);
+  }
+
+  DocumentReference getSubServicesReference(String subServiceID){
+    final dbReference = Firestore.instance;
+    return dbReference.collection('sub_service').document(subServiceID);
   }
 }

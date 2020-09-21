@@ -15,3 +15,9 @@ class EmailNotVerified extends EmailVerificationState {}
 
 
 class VerificationEmailSent extends EmailVerificationState {}
+
+
+class VerificationSentFailedState extends EmailVerificationState {
+  final String errorMessage;
+  VerificationSentFailedState({@required this.errorMessage});
+}

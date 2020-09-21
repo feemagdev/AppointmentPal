@@ -47,6 +47,10 @@ class Body extends StatelessWidget {
                 WidgetsBinding.instance.addPostFrameCallback((_){
                   showErrorDialog("email not verified", context);
                 });
+              }else if(state is VerificationSentFailedState){
+                WidgetsBinding.instance.addPostFrameCallback((_){
+                  showErrorDialog(state.errorMessage, context);
+                });
               }
               return Container();
             }),

@@ -11,7 +11,6 @@ class Person{
   Person.defaultConstructor();
 
   Future<FirebaseUser> registerUser() async{
-      print(this._email);
       await firebaseAuth.createUserWithEmailAndPassword(email: this._email,password: this._password);
       return await firebaseAuth.currentUser();
   }

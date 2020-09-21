@@ -109,4 +109,8 @@ class Schedule {
   void setDayOfWeek(String dayOfWeek) {
     _dayOfWeek = dayOfWeek;
   }
+
+
+
+
 }

@@ -34,3 +34,6 @@ class TimeSlotSelectedState extends SelectDateTimeState{
 }
 
 
+class AppointmentIsBookedState extends SelectDateTimeState {}
+
+
