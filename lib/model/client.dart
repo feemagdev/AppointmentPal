@@ -1,5 +1,4 @@
-
-
+import 'package:appointmentproject/model/person.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,27 +16,26 @@ class Client {
   final db = Firestore.instance;
   final path = "client";
 
-  Client.register(this._name, this._phone,this._country, this._city, this._address, this._dob,
-      this._need,this._user);
+  Client.register(this._name, this._phone, this._country, this._city,
+      this._address, this._dob, this._need, this._user);
 
   Client.defaultConstructor();
 
-
-
-  Client.fromMap(Map snapshot,Service service)
+  Client.fromMap(Map snapshot, Service service, FirebaseUser user)
       : _name = snapshot['name'],
         _phone = snapshot['phone'],
         _country = snapshot['country'],
         _city = snapshot['city'],
         _address = snapshot['address'],
         _dob = snapshot['dob'],
-        _need = service;
+        _need = service,
+        _user = user;
 
   Map<String, dynamic> toMap([DocumentReference needReference]) {
     return {
       'name': _name,
       'phone': _phone,
-      'country':_country,
+      'country': _country,
       'city': _city,
       'address': _address,
       'dob': _dob,
@@ -47,8 +45,12 @@ class Client {
 
   Future<void> registerClient() async {
     final dbReference = Firestore.instance;
-    DocumentReference serviceReference = dbReference.collection('service').document(_need.getServiceID());
-    await db.collection(path).document(_user.uid).setData(toMap(serviceReference));
+    DocumentReference serviceReference =
+        dbReference.collection('service').document(_need.getServiceID());
+    await db
+        .collection(path)
+        .document(_user.uid)
+        .setData(toMap(serviceReference));
   }
 
   Future<void> updateClient() async {
@@ -60,76 +62,80 @@ class Client {
     return data.exists;
   }
 
-  Future<Client> getClientData(String uid) async{
+  Future<Client> getClientData(FirebaseUser user) async {
     print("in client get data");
-    DocumentSnapshot documentSnapshot = await db.collection(path).document(uid).get();
+    DocumentSnapshot documentSnapshot =
+        await db.collection(path).document(user.uid).get();
     DocumentReference serviceReference = documentSnapshot.data['need'];
-    Service service = await Service.defaultConstructor().getService(serviceReference);
-    Client client = Client.fromMap(documentSnapshot.data,service);
+    Service service =
+        await Service.defaultConstructor().getService(serviceReference);
+
+    Client client = Client.fromMap(documentSnapshot.data, service,user);
     print("map created");
-    return  client;
+    return client;
   }
 
-  FirebaseUser getFirebaseUser(){
+  FirebaseUser getFirebaseUser() {
     return _user;
   }
-  void setFirebaseUser(FirebaseUser user){
+
+  void setFirebaseUser(FirebaseUser user) {
     _user = user;
   }
 
-  Service getNeed(){
+  Service getNeed() {
     return _need;
   }
 
-  void setNeed(Service need){
+  void setNeed(Service need) {
     _need = need;
   }
 
-  Timestamp getDob(){
+  Timestamp getDob() {
     return _dob;
   }
 
-  void setDob(Timestamp dob){
+  void setDob(Timestamp dob) {
     _dob = dob;
   }
 
-  String getCity(){
+  String getCity() {
     return _city;
   }
 
-  void setCity(String city){
+  void setCity(String city) {
     _city = city;
   }
-  String getCountry(){
+
+  String getCountry() {
     return _country;
   }
 
-  void setCountry(String country){
+  void setCountry(String country) {
     _country = country;
   }
-  String getAddress(){
+
+  String getAddress() {
     return _address;
   }
 
-  void setAddress(String address){
+  void setAddress(String address) {
     _address = address;
   }
 
-  String getPhone(){
+  String getPhone() {
     return _phone;
   }
 
-  void setPhone(String phone){
+  void setPhone(String phone) {
     _address = phone;
   }
 
-  String getName(){
+  String getName() {
     return _name;
   }
 
-  void setName(String name){
+  void setName(String name) {
     _name = name;
   }
-
-
 }

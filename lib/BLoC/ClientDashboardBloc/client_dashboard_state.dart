@@ -1,5 +1,6 @@
 
 
+import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:meta/meta.dart';
 
@@ -13,3 +14,9 @@ class AddAppointmentScreenState extends ClientDashboardState{
   List<Service> serviceList;
   AddAppointmentScreenState({@required this.serviceList});
 }
+
+class EditAppointmentScreenState extends ClientDashboardState{
+  final Client client;
+  EditAppointmentScreenState({@required this.client});
+}
+

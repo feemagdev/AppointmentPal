@@ -4,6 +4,7 @@ import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/repository/client_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import './bloc.dart';
 
 class CompleteRegistrationBloc
@@ -30,7 +31,7 @@ class CompleteRegistrationBloc
             need: event.need,
             user: event.user);
         clientRepository.registerClient();
-        yield SuccessfulCompleteRegistrationBlocState(user: event.user,client: await getClientData(event.user.uid));
+        yield SuccessfulCompleteRegistrationBlocState(user: event.user,client: await getClientData(event.user));
       } catch (Exception) {
         print("user not registered completely " + Exception.toString());
         yield FailureCompleteRegistrationBlocState(
@@ -51,8 +52,8 @@ class CompleteRegistrationBloc
 
   }
 
-  Future<Client> getClientData(String uid) async {
-    return await ClientRepository.defaultConstructor().getClientData(uid);
+  Future<Client> getClientData(FirebaseUser user) async {
+    return await ClientRepository.defaultConstructor().getClientData(user);
   }
 
 }

@@ -1,4 +1,3 @@
-
 import 'package:appointmentproject/model/sub_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -19,8 +18,7 @@ class Professional {
   Professional.defaultConstructor();
 
   Professional.fromMap(Map snapshot, SubServices subServices)
-      :
-        _name = snapshot['name'],
+      : _name = snapshot['name'],
         _phone = snapshot['phone'],
         _country = snapshot['country'],
         _city = snapshot['city'],
@@ -40,12 +38,12 @@ class Professional {
         getSubServiceReference(subServiceID);
     SubServices subServices = await SubServices.defaultConstructor()
         .getSubService(subServiceReference);
-     dbReference
+    dbReference
         .collection('professional')
         .where('sub_serviceID', isEqualTo: subServiceReference)
         .getDocuments()
         .then((value) {
-      value.documents.forEach((element)  {
+      value.documents.forEach((element) {
         Professional professional;
         professional = Professional.fromMap(element.data, subServices);
         professional.setProfessionalID(element.documentID);
@@ -54,7 +52,6 @@ class Professional {
     });
     return listOfProfessionals;
   }
-
 
   Future<SubServices> getSubService(DocumentReference documentReference) async {
     return await SubServices.defaultConstructor()
@@ -65,7 +62,6 @@ class Professional {
     return SubServices.defaultConstructor()
         .getSubServiceReference(subServiceID);
   }
-
 
   Timestamp getDob() {
     return _dob;
@@ -115,38 +111,39 @@ class Professional {
     _name = name;
   }
 
-  String getImage(){
+  String getImage() {
     return _image;
   }
 
-  void setImage(String image){
+  void setImage(String image) {
     _image = image;
   }
 
-  int getAppointmentCharges(){
+  int getAppointmentCharges() {
     return _appointmentCharges;
   }
 
-  void setAppointmentCharges(int appointmentCharges){
+  void setAppointmentCharges(int appointmentCharges) {
     _appointmentCharges = appointmentCharges;
   }
-  int getExperience(){
+
+  int getExperience() {
     return _experience;
   }
 
-  void setExperience(int experience){
+  void setExperience(int experience) {
     _experience = experience;
   }
 
-  SubServices getSubServices(){
+  SubServices getSubServices() {
     return _subServices;
   }
 
-  void setSubServices(SubServices subServices){
+  void setSubServices(SubServices subServices) {
     _subServices = subServices;
   }
 
-  GeoPoint getAppointmentLocation(){
+  GeoPoint getAppointmentLocation() {
     return _appointmentLocation;
   }
 
@@ -154,13 +151,11 @@ class Professional {
     _appointmentLocation = appointmentLocation;
   }
 
-  String getProfessionalID (){
+  String getProfessionalID() {
     return _professionalID;
   }
 
-  void setProfessionalID (String professionalID){
+  void setProfessionalID(String professionalID) {
     _professionalID = professionalID;
   }
-
-
 }

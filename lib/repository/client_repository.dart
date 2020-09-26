@@ -44,8 +44,8 @@ class ClientRepository {
     return Client.defaultConstructor().checkClientDetails(uid);
   }
 
-  Future<Client> getClientData(String uid) async {
-    return  await Client.defaultConstructor().getClientData(uid);
+  Future<Client> getClientData(FirebaseUser user) async {
+    return  await Client.defaultConstructor().getClientData(user);
   }
 
   DocumentReference getClientReference (String clientID){

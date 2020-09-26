@@ -37,7 +37,7 @@ class UserRoleBloc extends Bloc<UserRoleEvent, UserRoleState> {
       }
       else if(await checkClientRole(user)){
         print("check client true");
-        yield ClientState(user: user,client: await getClientData(user.uid));
+        yield ClientState(user: user,client: await getClientData(user));
       }
       else{
         print("client details not filled state");
@@ -64,8 +64,8 @@ class UserRoleBloc extends Bloc<UserRoleEvent, UserRoleState> {
   }
 
 
-  Future<Client> getClientData(String uid) async {
-    return await ClientRepository.defaultConstructor().getClientData(uid);
+  Future<Client> getClientData(FirebaseUser user) async {
+    return await ClientRepository.defaultConstructor().getClientData(user);
   }
 
 

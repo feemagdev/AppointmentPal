@@ -20,6 +20,9 @@ class ClientDashboardBloc extends Bloc<ClientDashboardEvent, ClientDashboardStat
     if(event is AddAppointmentEvent){
       yield AddAppointmentScreenState(serviceList: await ServiceRepository.defaultConstructor().getServicesList(event.client.getNeed().getName()));
     }
+    if(event is EditAppointmentEvent){
+      yield EditAppointmentScreenState(client: event.client);
+    }
   }
 
 

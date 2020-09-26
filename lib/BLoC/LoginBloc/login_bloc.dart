@@ -37,7 +37,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             print("check client true");
             try{
               yield ClientLoginSuccessState(
-                  user: user, client: await getClientData(user.uid));
+                  user: user, client: await getClientData(user));
             }catch(e){
               print(e);
             }
@@ -75,8 +75,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     return await ServiceRepository.defaultConstructor().getServicesList(null);
   }
 
-  Future<Client> getClientData(String uid) async {
-    return await ClientRepository.defaultConstructor().getClientData(uid);
+  Future<Client> getClientData(FirebaseUser user) async {
+    return await ClientRepository.defaultConstructor().getClientData(user);
   }
 
   Future<bool> checkProfessionalRole(FirebaseUser user) async {

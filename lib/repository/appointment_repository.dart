@@ -1,5 +1,6 @@
 
 
+import 'package:appointmentproject/BLoC/ProfessionalBloc/bloc.dart';
 import 'package:appointmentproject/model/appointment.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -14,7 +15,11 @@ class AppointmentRepository {
       Timestamp dateTime,
       String appointmentStatus,
       String name,
-      String phone) {
+      String phone,
+      String professionalName,
+      String professionalContact,
+      String serviceName,
+      String subServiceName) {
     final dbReference = Firestore.instance;
     Appointment appointment = Appointment.bookAppointment();
 
@@ -27,7 +32,11 @@ class AppointmentRepository {
         changeTime(dateTime),
         appointmentStatus,
         name,
-        phone));
+        phone,
+    professionalName,
+    professionalContact,
+    serviceName,
+    subServiceName));
   }
 
   Future<List<Appointment>> getNotAvailableTime(
@@ -64,6 +73,23 @@ class AppointmentRepository {
     DateTime dateTime = timestamp.toDate();
     DateTime newDateTime = DateTime(dateTime.year,dateTime.month,dateTime.day);
     return Timestamp.fromDate(newDateTime);
+  }
+
+
+  Future<List<Appointment>> getClientSelectedDayAppointments(DocumentReference clientID,Timestamp timestamp) async{
+    final dbReference = Firestore.instance;
+    List<Appointment> appointments = List();
+    Timestamp newTimeStamp = changeTime(timestamp);
+    await dbReference.collection('appointment')
+        .where('appointment_date',isEqualTo: newTimeStamp)
+        .where('clientID',isEqualTo: clientID)
+        .getDocuments().then((value){
+          value.documents.forEach((element) {
+            Appointment appointment = Appointment.getClientAppointments(element.data,element.documentID);
+            appointments.add(appointment);
+          });
+    });
+    return appointments;
   }
 
 }

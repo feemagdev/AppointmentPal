@@ -12,3 +12,9 @@ class AddAppointmentEvent extends ClientDashboardEvent{
   final Client client;
   AddAppointmentEvent({@required this.client});
 }
+
+
+class EditAppointmentEvent extends ClientDashboardEvent{
+  final Client client;
+  EditAppointmentEvent({@required this.client});
+}
