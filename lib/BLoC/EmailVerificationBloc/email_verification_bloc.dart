@@ -5,6 +5,7 @@ import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/repository/service_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
 part 'email_verification_event.dart';
@@ -20,8 +21,18 @@ class EmailVerificationBloc extends Bloc<EmailVerificationEvent, EmailVerificati
     EmailVerificationEvent event,
   ) async* {
     if(event is SendEmailVerificationEvent){
-      await PersonRepository.defaultConstructor().sendVerificationEmail(event.user);
-      yield VerificationEmailSent();
+      try{
+        await PersonRepository.defaultConstructor().sendVerificationEmail(event.user);
+        yield VerificationEmailSent();
+      }
+      catch(e){
+        if(e is PlatformException){
+          if(e.code ==  "ERROR_TOO_MANY_REQUESTS"){
+            yield VerificationSentFailedState(errorMessage:"TOO MANY REQUESTS PLEASE TRY AGAIN LATER");
+          }
+        }
+      }
+
     }
     if(event is CheckEmailVerification){
       await  event.user.reload();

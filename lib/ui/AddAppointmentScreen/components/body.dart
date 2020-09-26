@@ -1,6 +1,7 @@
 import 'package:appointmentproject/BLoC/AddAppointmentBloc/add_appointment_bloc.dart';
 import 'package:appointmentproject/BLoC/AddAppointmentBloc/add_appointment_event.dart';
 import 'package:appointmentproject/BLoC/AddAppointmentBloc/add_appointment_state.dart';
+import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/model/sub_services.dart';
@@ -9,6 +10,7 @@ import 'package:appointmentproject/ui/AddAppointmentScreen/components/custom_pro
 import 'package:appointmentproject/ui/AddAppointmentScreen/components/services.dart';
 import 'package:appointmentproject/ui/SelectDateTime/select_date_time.dart';
 import 'package:appointmentproject/ui/components/rounded_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,9 +19,13 @@ import 'package:appointmentproject/ui/AddAppointmentScreen/components/sub_servic
 
 class Body extends StatelessWidget {
   final List<Service> servicesList;
+  final Client client;
+  final FirebaseUser user;
 
   Body({
     @required this.servicesList,
+    @required this.client,
+    @required this.user
   });
 
   @override
@@ -41,7 +47,7 @@ class Body extends StatelessWidget {
                 BlocListener<AddAppointmentBloc, AddAppointmentState>(
                   listener: (context, state) {
                     if (state is NavigateToBookAppointmentState){
-                      navigateToAppointmentDateTimeScreen(context, state.professional, state.selectedService, state.selectedSubServices);
+                      navigateToAppointmentDateTimeScreen(context, state.professional, state.selectedService, state.selectedSubServices,client,user);
                     }
                   },
                   child: BlocBuilder<AddAppointmentBloc, AddAppointmentState>(
@@ -403,9 +409,9 @@ class Body extends StatelessWidget {
     );
   }
 
-  navigateToAppointmentDateTimeScreen(BuildContext context,Professional professional,Service service,SubServices subService) {
+  navigateToAppointmentDateTimeScreen(BuildContext context,Professional professional,Service service,SubServices subService,Client client,FirebaseUser user) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return SelectDateTime(professional: professional,service: service,subService: subService);
+      return SelectDateTime(professional: professional,service: service,subService: subService,client:client,user:user);
     }));
   }
 }

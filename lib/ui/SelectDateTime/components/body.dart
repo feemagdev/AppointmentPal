@@ -1,21 +1,33 @@
-import 'dart:ui';
-
 import 'package:appointmentproject/BLoC/ProfessionalBloc/bloc.dart';
 import 'package:appointmentproject/BLoC/SelectDateTime/select_date_time_bloc.dart';
+import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/schedule.dart';
+import 'package:appointmentproject/model/service.dart';
+import 'package:appointmentproject/model/sub_services.dart';
+import 'package:appointmentproject/ui/ClientDashboard/client_dashboard_screen.dart';
 import 'package:appointmentproject/ui/SelectDateTime/components/backgound.dart';
 import 'package:appointmentproject/ui/SelectDateTime/components/custom_date.dart';
 import 'package:appointmentproject/ui/components/rounded_button.dart';
-import 'package:appointmentproject/ui/components/rounded_input_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:meta/meta.dart';
 
 class Body extends StatelessWidget {
+  final Client client;
+  final Service service;
+  final SubServices subServices;
+  final FirebaseUser user;
+
+  Body(
+      {@required this.client,
+      @required this.service,
+      @required this.subServices,
+      @required this.user});
 
   @override
   Widget build(BuildContext context) {
-    double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
     Professional professional;
     Schedule schedule;
@@ -34,7 +46,7 @@ class Body extends StatelessWidget {
               SizedBox(height: 20),
               Text(
                 "Select date",
-                style: TextStyle(fontSize: deviceWidth < 400 ? 15:20),
+                style: TextStyle(fontSize: deviceWidth < 400 ? 15 : 20),
               ),
               SizedBox(height: 20),
               CustomDateView(
@@ -45,7 +57,11 @@ class Body extends StatelessWidget {
                 },
               ),
               BlocListener<SelectDateTimeBloc, SelectDateTimeState>(
-                listener: (context, state) {},
+                listener: (context, state) {
+                  if (state is AppointmentIsBookedState) {
+                    showSuccessfulDialog(context);
+                  }
+                },
                 child: BlocBuilder<SelectDateTimeBloc, SelectDateTimeState>(
                   builder: (context, state) {
                     if (state is SelectDateTimeInitial) {
@@ -91,8 +107,16 @@ class Body extends StatelessWidget {
                         ),
                       ),
                     );
-                  }else if(state is TimeSlotSelectedState){
-                    return timeSlotBuilder(context, state.timeSlots, state.selectedIndex, state.professional, state.schedule);
+                  } else if (state is TimeSlotSelectedState) {
+                    selectedIndex = state.selectedIndex;
+                    timeSlots = state.timeSlots;
+                    schedule = state.schedule;
+                    return timeSlotBuilder(
+                        context,
+                        state.timeSlots,
+                        state.selectedIndex,
+                        state.professional,
+                        state.schedule);
                   }
                   return Container();
                 },
@@ -107,11 +131,10 @@ class Body extends StatelessWidget {
                       Text("Enter Name"),
                       SizedBox(height: 5),
                       TextField(
-                        decoration:InputDecoration(
+                        decoration: InputDecoration(
                             hintText: "Name",
-                            enabledBorder: OutlineInputBorder()
-                        ) ,
-                        onChanged: (text){
+                            enabledBorder: OutlineInputBorder()),
+                        onChanged: (text) {
                           name = text;
                         },
                       ),
@@ -120,18 +143,16 @@ class Body extends StatelessWidget {
                       SizedBox(height: 5),
                       TextField(
                         keyboardType: TextInputType.phone,
-                        decoration:InputDecoration(
+                        decoration: InputDecoration(
                             hintText: "Phone",
-                            enabledBorder: OutlineInputBorder()
-                        ) ,
-                        onChanged: (text){
+                            enabledBorder: OutlineInputBorder()),
+                        onChanged: (text) {
                           phone = text;
                         },
                       ),
                       SizedBox(height: 15),
                     ],
                   ),
-
                   RoundedButton(
                     text: "Book appointment",
                     width: 300,
@@ -139,15 +160,45 @@ class Body extends StatelessWidget {
                     fontSize: 20,
                     color: Colors.blue,
                     textColor: Colors.white,
-                    press: (){
-                    print("button pressed");
-                    print(name);
-                    print(phone);
-                  },)
+                    press: () {
+                      if (name == null || name.isEmpty) {
+                        showErrorDialog("please enter name", context);
+                        return;
+                      }
+                      if (name.length <= 2) {
+                        showErrorDialog(
+                            "name length should be more than 2", context);
+                        return;
+                      }
+
+                      String phoneValidation = phoneValidator(phone);
+                      if(phoneValidation!=null){
+                        showErrorDialog(phoneValidation, context);
+                        return;
+                      }
+                      if(selectedIndex == null){
+                        showErrorDialog("please select a time", context);
+                        return;
+                      }
+
+
+
+                      BlocProvider.of<SelectDateTimeBloc>(context).add(
+                          AppointmentIsBookedEvent(
+                              professional: professional,
+                              client: client,
+                              service: service,
+                              subServices: subServices,
+                              dateTime: timeSlots[selectedIndex],
+                              user: user,
+                              name: name,
+                              phone: phone));
+
+
+                    },
+                  )
                 ],
               ),
-
-
             ],
           ),
         ),
@@ -212,4 +263,70 @@ class Body extends StatelessWidget {
       ),
     );
   }
+
+  showErrorDialog(String message, BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Alert"),
+            content: Text(message),
+            actions: [
+              FlatButton(
+                child: Text("Close"),
+                onPressed: () => {Navigator.of(context).pop()},
+              )
+            ],
+          );
+        });
+  }
+
+  showSuccessfulDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Alert"),
+            content: Text(
+              "your appointment booked successfully",
+              style: TextStyle(color: Colors.green),
+            ),
+            actions: [
+              FlatButton(
+                child: Text("Close"),
+                onPressed: () => {Navigator.of(context).pop(),
+                  navigateToDashboardScreen(context)},
+              )
+            ],
+          );
+        });
+  }
+
+  void navigateToDashboardScreen(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ClientDashboardScreen(
+        client: client,
+        user: user,
+      );
+    }));
+  }
+
+
+  String phoneValidator(String phone){
+    String pattern = r"^((\+92)|(0092))-{0,1}\d{3}-{0,1}\d{7}$|^\d{11}$|^\d{4}-\d{7}$";
+    RegExp regExp = new RegExp(pattern);
+    if (phone.length == 0) {
+      return 'Please enter mobile number';
+    }
+    else if (!regExp.hasMatch(phone)) {
+      return 'Please enter valid mobile number';
+    }
+    return null;
+
+  }
+
+
 }
+
+
+

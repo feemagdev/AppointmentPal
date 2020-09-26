@@ -5,6 +5,7 @@ import 'package:appointmentproject/ui/AddAppointmentScreen/add_appoinmtment_scre
 import 'package:appointmentproject/ui/ClientDashboard/components/background.dart';
 import 'package:appointmentproject/ui/ClientDashboard/components/category_card.dart';
 import 'package:appointmentproject/ui/ClientDashboard/components/search_bar.dart';
+import 'package:appointmentproject/ui/ClientEditAppointmentScreen/client_edit_appointment_screen.dart';
 import 'package:appointmentproject/ui/SearchProfessioanl/search_professional_screen.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -32,7 +33,10 @@ class Body extends StatelessWidget {
             listener: (context, state) {
               if (state is AddAppointmentScreenState) {
                 List<Service> servicesList = state.serviceList;
-                navigateToAddAppointmentScreen(context,servicesList);
+                navigateToAddAppointmentScreen(context,servicesList,client,user);
+              }
+              if(state is EditAppointmentScreenState){
+                navigateToEditAppointmentScreen(context, state.client);
               }
             },
             child: BlocBuilder<ClientDashboardBloc, ClientDashboardState>(
@@ -113,7 +117,7 @@ class Body extends StatelessWidget {
           children: <Widget>[
 
             FadeAnimation(1.4, CategoryCard(svgSrc: "assets/icons/add_appointment.svg",title: "add appointment",onTap: () {addAppointmentTap(context);})),
-            FadeAnimation(1.4, CategoryCard(svgSrc: "assets/icons/edit_appointment.svg",title: "edit appointment",)),
+            FadeAnimation(1.4, CategoryCard(svgSrc: "assets/icons/edit_appointment.svg",title: "edit appointment",onTap: (){editAppointmentTap(context);},)),
             FadeAnimation(1.4, CategoryCard(svgSrc: "assets/icons/payment.svg",title: "payment",)),
             FadeAnimation(1.4, CategoryCard(svgSrc: "assets/icons/history.svg",title: "history",)),
             FadeAnimation(1.4, CategoryCard(svgSrc: "assets/icons/today.svg",title: "today",)),
@@ -130,9 +134,19 @@ class Body extends StatelessWidget {
     BlocProvider.of<ClientDashboardBloc>(context).add(AddAppointmentEvent(client:client));
   }
 
-  void navigateToAddAppointmentScreen(BuildContext context,List<Service> services) {
+  void editAppointmentTap(BuildContext context){
+    BlocProvider.of<ClientDashboardBloc>(context).add(EditAppointmentEvent(client:client));
+  }
+
+  void navigateToAddAppointmentScreen(BuildContext context,List<Service> services,Client client,FirebaseUser user) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return AddAppointmentScreen(servicesList: services);
+      return AddAppointmentScreen(servicesList: services,client:client,user:user);
+    }));
+  }
+
+  void navigateToEditAppointmentScreen(BuildContext context,Client client) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return EditAppointmentScreen(client:client);
     }));
   }
 
