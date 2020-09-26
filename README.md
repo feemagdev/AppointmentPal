@@ -1,6 +1,6 @@
-# appointmentproject
+# Appointment Pal
 
-A new Flutter application.
+Appointment Pal is a combination of services and appointment booking application with SMS alerts and in-app payments.
 
 ## Getting Started
 
