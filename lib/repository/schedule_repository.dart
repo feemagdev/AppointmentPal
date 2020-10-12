@@ -8,23 +8,23 @@ class ScheduleRepository {
   ScheduleRepository.defaultConstructor();
 
   Future<Schedule> getProfessionalSchedule(
-      String professionalID, String dayOfWeek) async {
-
-
-    print("repository start");
-    print(dayOfWeek);
+      DocumentReference professionalID, String dayOfWeek) async {
     final dbReference = Firestore.instance;
+    print("repository start");
+    print(professionalID.documentID);
+    print(dayOfWeek);
     Schedule schedule;
     await dbReference
-        .collection(scheduleCollection)
-        .document(professionalID)
+        .collection('schedule')
+        .document(professionalID.documentID)
         .collection(dayOfWeekSubCollection)
         .document(dayOfWeek)
         .get()
         .then((value) {
-          if(value.data == null){
-            return null;
-          }
+      if (value.data == null) {
+        print("no data");
+        return null;
+      }
       schedule = Schedule.professionalSchedule(value.data);
     });
     print("Repository end");

@@ -29,7 +29,6 @@ class LoginHelper extends StatelessWidget {
       },
       child: BlocBuilder<AuthBloc,AuthState>(builder: (context,state){
         if(state is AuthInitialState){
-
           return Container();
         }
         print("no auth state run");

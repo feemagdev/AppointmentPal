@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Schedule {
-  String _professionalID;
+  DocumentReference _professionalID;
   int _startTime;
   int _startTimeMinutes;
   int _endTime;
@@ -22,11 +24,11 @@ class Schedule {
         _breakStartTimeMinutes = snapshot['break_start_time_minutes'],
         _breakEndTimeMinutes = snapshot['break_end_time_minutes'];
 
-  String getProfessionalID() {
+  DocumentReference getProfessionalID() {
     return _professionalID;
   }
 
-  void setProfessionalID(String professionalID) {
+  void setProfessionalID(DocumentReference professionalID) {
     _professionalID = professionalID;
   }
 

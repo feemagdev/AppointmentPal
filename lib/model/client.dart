@@ -10,7 +10,7 @@ class Client {
   String _address;
   String _city;
   Timestamp _dob;
-  Service _need;
+  DocumentReference _need;
 
   FirebaseUser _user;
   final db = Firestore.instance;
@@ -28,10 +28,10 @@ class Client {
         _city = snapshot['city'],
         _address = snapshot['address'],
         _dob = snapshot['dob'],
-        _need = service,
+        _need = snapshot['need'],
         _user = user;
 
-  Map<String, dynamic> toMap([DocumentReference needReference]) {
+  Map<String, dynamic> toMap() {
     return {
       'name': _name,
       'phone': _phone,
@@ -39,40 +39,8 @@ class Client {
       'city': _city,
       'address': _address,
       'dob': _dob,
-      'need': needReference,
+      'need': _need,
     };
-  }
-
-  Future<void> registerClient() async {
-    final dbReference = Firestore.instance;
-    DocumentReference serviceReference =
-        dbReference.collection('service').document(_need.getServiceID());
-    await db
-        .collection(path)
-        .document(_user.uid)
-        .setData(toMap(serviceReference));
-  }
-
-  Future<void> updateClient() async {
-    await db.collection(path).document(_user.uid).updateData(toMap());
-  }
-
-  Future<bool> checkClientDetails(String uid) async {
-    DocumentSnapshot data = await db.collection(path).document(uid).get();
-    return data.exists;
-  }
-
-  Future<Client> getClientData(FirebaseUser user) async {
-    print("in client get data");
-    DocumentSnapshot documentSnapshot =
-        await db.collection(path).document(user.uid).get();
-    DocumentReference serviceReference = documentSnapshot.data['need'];
-    Service service =
-        await Service.defaultConstructor().getService(serviceReference);
-
-    Client client = Client.fromMap(documentSnapshot.data, service,user);
-    print("map created");
-    return client;
   }
 
   FirebaseUser getFirebaseUser() {
@@ -83,11 +51,11 @@ class Client {
     _user = user;
   }
 
-  Service getNeed() {
+  DocumentReference getNeed() {
     return _need;
   }
 
-  void setNeed(Service need) {
+  void setNeed(DocumentReference need) {
     _need = need;
   }
 

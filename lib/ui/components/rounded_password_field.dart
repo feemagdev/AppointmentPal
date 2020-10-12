@@ -9,11 +9,15 @@ class RoundedPasswordField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double deviceWidth = MediaQuery.of(context).size.width;
+    double deviceHeight = MediaQuery.of(context).size.height;
     return Container(
+      height: deviceWidth < 365 ? 50:70,
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
       ),
       child: TextField(
+        obscureText: true,
         onChanged: onChanged,
         keyboardType: TextInputType.visiblePassword,
         decoration: InputDecoration(

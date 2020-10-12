@@ -2,6 +2,7 @@
 
 
 import 'package:appointmentproject/model/client.dart';
+import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
@@ -21,9 +22,9 @@ class LoginLoadingState extends LoginState{
 
 class ProfessionalLoginSuccessState extends LoginState{
 
-  final FirebaseUser user;
+  final Professional professional;
 
-  ProfessionalLoginSuccessState({@required this.user});
+  ProfessionalLoginSuccessState({@required this.professional});
 
 
 }

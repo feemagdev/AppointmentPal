@@ -1,9 +1,9 @@
 
 import 'package:appointmentproject/BLoC/UserRoleBloc/bloc.dart';
 
-import 'package:appointmentproject/ui/ClientDashboard/client_dashboard_screen.dart';
+import 'package:appointmentproject/ui/Client/ClientDashboard/client_dashboard_screen.dart';
+import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/professional_dashboard_screen.dart';
 import 'package:appointmentproject/ui/UserDetails/user_detail_screen.dart';
-import 'package:appointmentproject/ui/professional_home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +22,7 @@ class CheckUserRole extends StatelessWidget{
     return BlocBuilder<UserRoleBloc,UserRoleState>(
       builder: (context,state){
         if(state is ProfessionalState){
-          return ProfessionalHomePage();
+          return ProfessionalDashboard(professional: state.professional);
         }
         else if(state is ClientState){
           return ClientDashboardScreen(user:user,client: state.client);

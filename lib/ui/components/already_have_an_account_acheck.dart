@@ -13,6 +13,7 @@ class AlreadyHaveAnAccountCheck extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double deviceWidth = MediaQuery.of(context).size.width;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -20,7 +21,7 @@ class AlreadyHaveAnAccountCheck extends StatelessWidget {
           onTap: press,
           child:Text(
             text,
-            style: TextStyle(color: kPrimaryColor),
+            style: TextStyle(color: kPrimaryColor,fontSize: deviceWidth < 400 ? 12:20, ),
           ),
         )
       ],
