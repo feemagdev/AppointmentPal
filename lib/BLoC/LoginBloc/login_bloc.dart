@@ -1,6 +1,8 @@
-import 'package:appointmentproject/BLoC/LoginBloc/login_event.dart';
-import 'package:appointmentproject/BLoC/LoginBloc/login_state.dart';
+import 'file:///C:/Users/faheem/AndroidStudioProjects/appointment_project/lib/BLoC/LoginBloc/login_event.dart';
+import 'file:///C:/Users/faheem/AndroidStudioProjects/appointment_project/lib/BLoC/LoginBloc/login_state.dart';
+import 'package:appointmentproject/BLoC/ProfessionalBloc/bloc.dart';
 import 'package:appointmentproject/model/client.dart';
+import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/repository/client_repository.dart';
 import 'package:appointmentproject/repository/person_repository.dart';
@@ -25,26 +27,32 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   @override
   Stream<LoginState> mapEventToState(LoginEvent event) async* {
     if (event is LoginButtonPressedEvent) {
+      bool professionalCheck = false;
       try {
         user = await PersonRepository.defaultConstructor()
             .signInUser(event.email, event.password);
         if (user.uid.isNotEmpty) {
-          if (await checkProfessionalRole(user)) {
+          Professional professional = await checkProfessionalRole(user);
+          if (professional != null ) {
+            professionalCheck = true;
             print("check professional true");
-            print(user.email);
-            yield ProfessionalLoginSuccessState(user: user);
-          } else if (await checkClientRole(user)) {
-            print("check client true");
-            try{
-              yield ClientLoginSuccessState(
-                  user: user, client: await getClientData(user));
-            }catch(e){
-              print(e);
+            yield ProfessionalLoginSuccessState(professional: professional);
+          }
+          if(professionalCheck == false){
+            Client client  = await getClientData(user);
+            if (client != null) {
+              print("check client true");
+              try{
+                yield ClientLoginSuccessState(
+                    user: user, client: client);
+              }catch(e){
+                print(e);
+              }
+            } else {
+              print("sign in client not filled state");
+              yield ClientDetailsNotFilledSignIn(
+                  services: await getServicesList(), user: user);
             }
-          } else {
-            print("sign in client not filled state");
-            yield ClientDetailsNotFilledSignIn(
-                services: await getServicesList(), user: user);
           }
         }
       } catch (e) {
@@ -79,13 +87,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     return await ClientRepository.defaultConstructor().getClientData(user);
   }
 
-  Future<bool> checkProfessionalRole(FirebaseUser user) async {
-    DocumentSnapshot data =
-        await _dbRef.collection('professional').document(user.uid).get();
-    return data.exists;
+  Future<Professional> checkProfessionalRole(FirebaseUser user) async {
+    return await ProfessionalRepository.defaultConstructor().getProfessionalData(user);
   }
 
-  Future<bool> checkClientRole(FirebaseUser user) async {
-    return ClientRepository.defaultConstructor().checkClientDetails(user.uid);
-  }
 }

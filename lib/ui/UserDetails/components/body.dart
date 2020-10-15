@@ -1,8 +1,9 @@
-import 'package:appointmentproject/BLoC/CompleteRegistrationBloc/bloc.dart';
+import 'package:appointmentproject/BLoC/ClientBloc/CompleteRegistrationBloc/bloc.dart';
 import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/service.dart';
-import 'package:appointmentproject/ui/ClientDashboard/client_dashboard_screen.dart';
+import 'package:appointmentproject/ui/Client/ClientDashboard/client_dashboard_screen.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
+import 'package:appointmentproject/ui/components/background.dart';
 import 'package:appointmentproject/ui/components/rounded_button.dart';
 import 'package:country_pickers/country_pickers.dart';
 import 'package:country_pickers/country.dart';
@@ -11,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
-import 'background.dart';
+
 
 class Body extends StatefulWidget {
   final FirebaseUser user;

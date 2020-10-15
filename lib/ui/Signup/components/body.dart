@@ -1,11 +1,12 @@
 import 'package:appointmentproject/BLoC/SignUpBloc/bloc.dart';
 import 'package:appointmentproject/BLoC/SignUpBloc/sign_up_bloc.dart';
 import 'package:appointmentproject/model/service.dart';
-import 'package:appointmentproject/ui/ClientEmailVerification/email_verification.dart';
+import 'package:appointmentproject/ui/Client/ClientEmailVerification/email_verification.dart';
 import 'package:appointmentproject/ui/Login/login_screen.dart';
 import 'package:appointmentproject/ui/UserDetails/user_detail_screen.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
 import 'package:appointmentproject/ui/components/already_have_an_account_acheck.dart';
+import 'package:appointmentproject/ui/components/background.dart';
 import 'package:appointmentproject/ui/components/rounded_button.dart';
 import 'package:appointmentproject/ui/components/rounded_input_field.dart';
 import 'package:appointmentproject/ui/components/rounded_password_field.dart';
@@ -13,7 +14,6 @@ import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'background.dart';
 
 
 class Body extends StatelessWidget {
@@ -25,7 +25,7 @@ class Body extends StatelessWidget {
     String password;
 
     double deviceHeight = MediaQuery.of(context).size.height;
-    double deviceWidth = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.width;
     return Background(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,7 +57,7 @@ class Body extends StatelessWidget {
                   return Container();
                 }),
           ),
-          SizedBox(height: deviceHeight * 0.20,),
+          SizedBox(height: deviceHeight * 0.10,),
           Padding(
             padding: EdgeInsets.all(20),
             child: Column(
@@ -67,14 +67,14 @@ class Body extends StatelessWidget {
                     1,
                     Text(
                       "Sign Up ",
-                      style: TextStyle(fontFamily:'Raleway',color: Colors.white, fontSize: deviceWidth < 400 ? 20 : 25,)
+                      style: TextStyle(fontFamily:'Raleway',color: Colors.white, fontSize: deviceWidth < 400 ? 15 : 25,)
                     )),
                 SizedBox(height: 10),
                 FadeAnimation(
                     1.3,
                     Text(
                       "Make your life easy",
-                      style: TextStyle(color: Colors.white, fontSize: deviceWidth < 400 ? 15 : 20,),
+                      style: TextStyle(color: Colors.white, fontSize: deviceWidth < 400 ? 12 : 20,),
                     )),
               ],
             ),
@@ -131,10 +131,11 @@ class Body extends StatelessWidget {
                         FadeAnimation(
                             1.6,
                             RoundedButton(
-                                height: deviceWidth < 400 ? deviceHeight * 0.09:deviceHeight * 0.07,
-                              color: Color.fromRGBO(56, 178, 227,1),
+                                height: deviceWidth < 400 ? 40:60,
+                              color:Colors.blue,
                               textColor: Colors.white,
                               text: "Sign up",
+                              fontSize: deviceWidth < 400 ? 15:20,
                               press: ()  {
                                 print('button pressed');
                                 print(email);

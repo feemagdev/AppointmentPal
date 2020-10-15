@@ -1,12 +1,11 @@
-import 'package:appointmentproject/model/client.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Appointment {
-  String _appointmentID;
+  DocumentReference _appointmentID;
   DocumentReference _professionalID;
   DocumentReference _serviceID;
   DocumentReference _subServicesID;
-  Client _clientID;
+  DocumentReference _clientID;
   Timestamp _appointmentDateTime;
   Timestamp _appointmentDate;
   String _appointmentStatus;
@@ -18,6 +17,23 @@ class Appointment {
   String _subServiceName;
 
   Appointment.bookAppointment();
+  Appointment.updateAppointment();
+
+  Map<String,dynamic> updateMap(
+      DocumentReference professionalID,
+      String clientName,
+      String clientPhone,
+      Timestamp appointmentDateTime,
+      Timestamp appointmentDate
+      ){
+    return {
+      'professionalID':professionalID,
+      'client_name':clientName,
+      'client_phone':clientPhone,
+      'appointment_date_time':appointmentDateTime,
+      'appointment_date':appointmentDate,
+    };
+  }
 
   Map<String, dynamic> toMap(
       DocumentReference professionalID,
@@ -50,13 +66,30 @@ class Appointment {
     };
   }
 
-  Appointment.notAvailableTime(Map snapshot, String appointmentID)
+  Map<String, dynamic> professionalAppointmentMap(
+      DocumentReference professionalID,
+      String clientName,
+      String clientPhone,
+      Timestamp appointmentDateTime,
+      Timestamp appointmentDate,
+      String appointmentStatus) {
+    return {
+      'professionalID': professionalID,
+      'client_name': clientName,
+      'client_phone': clientPhone,
+      'appointment_status': appointmentStatus,
+      'appointment_date_time': appointmentDateTime,
+      'appointment_date': appointmentDate
+    };
+  }
+
+  Appointment.notAvailableTime(Map snapshot, DocumentReference appointmentID)
       : _appointmentID = appointmentID,
         _appointmentDate = snapshot['appointment_date'],
         _appointmentDateTime = snapshot['appointment_date_time'];
 
   Appointment.getClientAppointments(
-      Map snapshot, String appointmentID)
+      Map snapshot, DocumentReference appointmentID)
       : _appointmentID = appointmentID,
         _appointmentDate = snapshot['appointment_date'],
         _appointmentDateTime = snapshot['appointment_date_time'],
@@ -68,11 +101,21 @@ class Appointment {
         _subServiceName = snapshot['sub_service_name'],
         _professionalID = snapshot['professionalID'];
 
-  String getAppointmentID() {
+  Appointment.getProfessionalAppointments(
+      Map snapshot, DocumentReference appointmentID)
+      : _appointmentID = appointmentID,
+        _appointmentDate = snapshot['appointment_date'],
+        _appointmentDateTime = snapshot['appointment_date_time'],
+        _clientName = snapshot['client_name'],
+        _clientPhone = snapshot['client_phone'],
+        _professionalID = snapshot['professionalID'],
+        _appointmentStatus = snapshot['appointment_status'];
+
+  DocumentReference getAppointmentID() {
     return _appointmentID;
   }
 
-  Client getClientReference() {
+  DocumentReference getClientID() {
     return _clientID;
   }
 
@@ -80,11 +123,11 @@ class Appointment {
     return _professionalID;
   }
 
-  DocumentReference getClientService() {
+  DocumentReference getServiceID() {
     return _serviceID;
   }
 
-  DocumentReference getSubServices() {
+  DocumentReference getSubServicesID() {
     return _subServicesID;
   }
 
