@@ -98,18 +98,18 @@ class _DemoWidgetState extends State<CustomDateView> {
     double deviceWidth = MediaQuery.of(context).size.width;
     return HorizontalCalendar(
       monthTextStyle: TextStyle(
-        fontSize: deviceWidth < 400 ? 10:17
+        fontSize: deviceWidth < 360 ? 10:15
       ),
       weekDayTextStyle: TextStyle(
-          fontSize: deviceWidth < 400 ? 10:17
+          fontSize: deviceWidth < 360 ? 10:15
       ),
       dateTextStyle: TextStyle(
-          fontSize: deviceWidth < 400 ? 10:17
+          fontSize: deviceWidth < 360 ? 10:15
       ),
 
       onDateSelected: onTap,
-      height: deviceWidth < 400 ? 80:120,
-      padding: EdgeInsets.all(deviceWidth < 400 ? 15:22),
+      height: deviceWidth < 360 ? 80:120,
+      padding: EdgeInsets.all(deviceWidth < 360 ? 15:22),
       firstDate: firstDate,
       lastDate: lastDate,
       dateFormat: dateFormat,

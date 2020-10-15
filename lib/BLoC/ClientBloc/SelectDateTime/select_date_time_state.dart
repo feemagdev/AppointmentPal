@@ -5,7 +5,8 @@ abstract class SelectDateTimeState {}
 
 class SelectDateTimeInitial extends SelectDateTimeState {
   final Professional professional;
-  SelectDateTimeInitial({@required this.professional});
+  final Appointment appointment;
+  SelectDateTimeInitial({@required this.professional,this.appointment});
 }
 
 class ShowAvailableTimeState extends SelectDateTimeState{

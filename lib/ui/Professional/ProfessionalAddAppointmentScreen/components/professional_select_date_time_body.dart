@@ -40,7 +40,7 @@ class ProfessionalSelectDateTime extends StatelessWidget {
               SizedBox(height: 20),
               Text(
                 "Select date",
-                style: TextStyle(fontSize: deviceWidth < 400 ? 12 : 20),
+                style: TextStyle(fontSize: deviceWidth < 360 ? 12 : 20),
               ),
               SizedBox(height: 15),
               CustomDateView(
@@ -63,11 +63,9 @@ class ProfessionalSelectDateTime extends StatelessWidget {
                 child: BlocBuilder<SelectDateTimeBloc, SelectDateTimeState>(
                   builder: (context, state) {
                     if (state is SelectDateTimeInitial) {
-                      print('select date initial');
                       professional = state.professional;
                       return loadingState(context, state.professional,name,phone);
                     } else if (state is ShowAvailableTimeState) {
-                      print('show available time');
                       name = state.name;
                       phone = state.phone;
                       professional = state.professional;
@@ -77,11 +75,10 @@ class ProfessionalSelectDateTime extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 20),
                         child: Text(
                           "Select time",
-                          style: TextStyle(fontSize: deviceWidth < 400 ? 12 : 15),
+                          style: TextStyle(fontSize: deviceWidth < 360 ? 12 : 15),
                         ),
                       );
                     } else if (state is TimeSlotSelectedState) {
-                      print('time slot selected');
                       professional = state.professional;
                       name = state.name;
                       phone = state.phone;
@@ -89,7 +86,7 @@ class ProfessionalSelectDateTime extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 20),
                         child: Text(
                           "Select time",
-                          style: TextStyle(fontSize: deviceWidth < 400 ? 12 : 15),
+                          style: TextStyle(fontSize: deviceWidth < 360 ? 12 : 15),
                         ),
                       );
                     }
@@ -137,7 +134,7 @@ class ProfessionalSelectDateTime extends StatelessWidget {
                     children: [
                       Text(
                         "Enter Name",
-                        style: TextStyle(fontSize: deviceWidth < 400 ? 10 : 15),
+                        style: TextStyle(fontSize: deviceWidth < 360 ? 10 : 15),
                       ),
                       SizedBox(height: 5),
                       BlocBuilder<SelectDateTimeBloc,SelectDateTimeState>(
@@ -145,47 +142,49 @@ class ProfessionalSelectDateTime extends StatelessWidget {
                           if(state is ShowAvailableTimeState){
                             nameTextController.text = state.name;
                             return Container(
-                              height: deviceWidth < 400 ? 50 : 70,
+                              height: deviceWidth < 360 ? 50 : 70,
                               child: customTextField(nameTextController, TextInputType.name, 'Name'),
                             );
                           }else if(state is TimeSlotSelectedState){
                             nameTextController.text = state.name;
                             return Container(
-                              height: deviceWidth < 400 ? 50 : 70,
+                              height: deviceWidth < 360 ? 50 : 70,
                               child: customTextField(nameTextController, TextInputType.name, 'Name'),
                             );
                           }else if(state is NoScheduleAvailable){
                             nameTextController.text = state.name;
                             return Container(
-                              height: deviceWidth < 400 ? 50 : 70,
+                              height: deviceWidth < 360 ? 50 : 70,
                               child: customTextField(nameTextController, TextInputType.name, 'Name'),
                             );
                           }
                           return Container();
                         },
                       ),
+                      SizedBox(height: 10,),
                       Text(
                         "Enter Phone",
-                        style: TextStyle(fontSize: deviceWidth < 400 ? 10 : 15),
+                        style: TextStyle(fontSize: deviceWidth < 360 ? 10 : 15),
                       ),
+                      SizedBox(height: 5,),
                       BlocBuilder<SelectDateTimeBloc,SelectDateTimeState>(
                         builder: (context,state){
                           if(state is ShowAvailableTimeState){
                             phoneTextController.text = state.phone;
                             return Container(
-                              height: deviceWidth < 400 ? 50 : 70,
+                              height: deviceWidth < 360 ? 50 : 70,
                               child: customTextField(phoneTextController, TextInputType.phone, 'Phone'),
                             );
                           }else if(state is TimeSlotSelectedState){
                             phoneTextController.text = state.phone;
                             return Container(
-                              height: deviceWidth < 400 ? 50 : 70,
+                              height: deviceWidth < 360 ? 50 : 70,
                               child: customTextField(phoneTextController, TextInputType.phone, 'Phone'),
                             );
                           }else if(state is NoScheduleAvailable){
                             phoneTextController.text = state.phone;
                             return Container(
-                                height: deviceWidth < 400 ? 50 : 70,
+                                height: deviceWidth < 360 ? 50 : 70,
                                 child: customTextField(phoneTextController, TextInputType.phone, 'Phone'),
                             );
                           }
@@ -195,37 +194,46 @@ class ProfessionalSelectDateTime extends StatelessWidget {
 
                     ],
                   ),
+                  SizedBox(height: 10,),
                   RoundedButton(
                     text: "Book appointment",
-                    width: deviceWidth < 400 ? 200 : 300,
-                    height: deviceWidth < 400 ? 40 : 55,
-                    fontSize: deviceWidth < 400 ? 10 : 20,
+                    width: deviceWidth < 360 ? 200 : 300,
+                    height: deviceWidth < 360 ? 40 : 55,
+                    fontSize: deviceWidth < 360 ? 10 : 20,
                     color: Colors.blue,
                     textColor: Colors.white,
                     press: () {
-                      print(nameTextController.text);
-                      if (nameTextController.text == null || nameTextController.text.isEmpty) {
-                        showErrorDialog("please enter name", context);
-                        return;
-                      }
-                      if (nameTextController.text.length <= 2) {
-                        showErrorDialog(
-                            "name length should be more than 2", context);
-                        return;
-                      }
 
-                      String phoneValidation = phoneValidator(phoneTextController.text);
-                      if (phoneValidation != null) {
-                        showErrorDialog(phoneValidation, context);
-                        return;
-                      }
-                      if (selectedIndex == null) {
-                        showErrorDialog("please select a time", context);
-                        return;
-                      }
-
+                      String nameValidation = nameValidator(nameTextController.text);
+                      String emptyPhoneValidation = emptyPhoneValidator(phoneTextController.text);
+                      bool checkSelectedIndex = selectedIndex == null;
                       if (appointment == null) {
-                        print("new appointment");
+                        if (nameValidation != null) {
+                          showErrorDialog(nameValidation, context);
+                          return;
+                        }
+                        if (nameTextController.text.length <= 2) {
+                          showErrorDialog(
+                              "name length should be more than 2", context);
+                          return;
+                        }
+
+                        if(emptyPhoneValidation !=null){
+                          showErrorDialog(emptyPhoneValidation, context);
+                          return;
+                        }
+
+                        String phoneValidation = phoneValidator(phoneTextController.text);
+                        if (phoneValidation != null) {
+                          showErrorDialog(phoneValidation, context);
+                          return;
+                        }
+
+                        if (checkSelectedIndex) {
+                          showErrorDialog("please select a time", context);
+                          return;
+                        }
+
                         BlocProvider.of<SelectDateTimeBloc>(context).add(
                             ProfessionalBookedTheAppointmentButtonEvent(
                                 professional: professional,
@@ -233,13 +241,47 @@ class ProfessionalSelectDateTime extends StatelessWidget {
                                 clientName: nameTextController.text,
                                 clientPhone: phoneTextController.text));
                       } else {
-                        print("update appointment");
+                        bool phoneIsEmpty = false;
+                        bool nameIsEmpty = false;
+                        String oldName;
+                        String oldPhone;
+
+                        if(nameValidation != null){
+                          nameIsEmpty = true;
+                          oldName = appointment.getClientName();
+                        }
+                        if(!nameIsEmpty){
+                          if (nameTextController.text.length <= 2) {
+                            showErrorDialog(
+                                "name length should be more than 2", context);
+                            return;
+                          }
+                        }
+
+                        if(emptyPhoneValidation != null){
+                          phoneIsEmpty = true;
+                          oldPhone = appointment.getClientPhone();
+                        }
+                        if(!phoneIsEmpty){
+                          String phoneValidation = phoneValidator(phoneTextController.text);
+                          if (phoneValidation != null) {
+                            showErrorDialog(phoneValidation, context);
+                            return;
+                          }
+                        }
+
+
+                        if(phoneIsEmpty && nameIsEmpty && selectedIndex == null){
+                          showErrorDialog("you have not update any thing", context);
+                          return;
+                        }
+
                         BlocProvider.of<SelectDateTimeBloc>(context).add(
                             ProfessionalUpdateAppointmentButtonEvent(
                                 appointment: appointment,
-                                dateTime: timeSlots[selectedIndex],
-                                clientName: nameTextController.text,
-                                clientPhone: phoneTextController.text,
+                                dateTime: checkSelectedIndex ? appointment.getAppointmentDateTime().toDate():timeSlots[selectedIndex],
+                                clientName: nameIsEmpty ? oldName:nameTextController.text,
+                                clientPhone: phoneIsEmpty ? oldPhone:phoneTextController.text,
                                 professional: professional));
                       }
                     },
@@ -282,8 +324,6 @@ class ProfessionalSelectDateTime extends StatelessWidget {
     double deviceWidth = MediaQuery.of(context).size.width;
     return InkWell(
       onTap: () {
-        print("time slot selected name");
-        print(name);
         BlocProvider.of<SelectDateTimeBloc>(context).add(TimeSlotSelectedEvent(
             professional: professional,
             scheduleIndex: selectedIndex,
@@ -305,16 +345,16 @@ class ProfessionalSelectDateTime extends StatelessWidget {
               children: [
                 Text(
                   DateFormat.jm().format(time),
-                  style: TextStyle(fontSize: deviceWidth < 400 ? 10 : 15),
+                  style: TextStyle(fontSize: deviceWidth < 360 ? 10 : 15),
                 ),
                 Text(
                   ' - ',
-                  style: TextStyle(fontSize: deviceWidth < 400 ? 10 : 15),
+                  style: TextStyle(fontSize: deviceWidth < 360 ? 10 : 15),
                 ),
                 Text(
                   DateFormat.jm()
                       .format(time.add(Duration(minutes: schedule.getDuration()))),
-                  style: TextStyle(fontSize: deviceWidth < 400 ? 10 : 15),
+                  style: TextStyle(fontSize: deviceWidth < 360 ? 10 : 15),
                 ),
               ],
             )),
@@ -324,8 +364,6 @@ class ProfessionalSelectDateTime extends StatelessWidget {
 
   Widget timeSlotBuilder(BuildContext context, List<DateTime> timeSlots,
       int selectedIndex, Professional professional, Schedule schedule,String name,String phone) {
-    print("in time slot builder name");
-    print(name);
     return Container(
       height: 50,
       child: ListView.builder(
@@ -399,14 +437,25 @@ class ProfessionalSelectDateTime extends StatelessWidget {
     String pattern =
         r"^((\+92)|(0092))-{0,1}\d{3}-{0,1}\d{7}$|^\d{11}$|^\d{4}-\d{7}$";
     RegExp regExp = new RegExp(pattern);
-    if (phone == null || phone.length == 0) {
-      return 'Please enter mobile number';
-    } else if (!regExp.hasMatch(phone)) {
+    if (!regExp.hasMatch(phone)) {
       return 'Please enter valid mobile number';
     }
     return null;
   }
 
+
+  String nameValidator(String name){
+    if(name == null || name.isEmpty){
+      return "please enter name";
+    }
+    return null;
+  }
+  String emptyPhoneValidator(String phone){
+    if(phone == null || phone.isEmpty){
+      return "please enter phone number";
+    }
+    return null;
+  }
 
   }
 

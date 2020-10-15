@@ -1,7 +1,8 @@
-import 'package:appointmentproject/BLoC/AddAppointmentBloc/bloc.dart';
+
+import 'package:appointmentproject/BLoC/ClientBloc/AddAppointmentBloc/add_appointment_bloc.dart';
 import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/service.dart';
-import 'package:appointmentproject/ui/AddAppointmentScreen/components/body.dart';
+import 'package:appointmentproject/ui/Client/AddAppointmentScreen/components/body.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,8 +19,10 @@ class AddAppointmentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AddAppointmentBloc(),
-      child: Scaffold(
-        body: Body(servicesList: servicesList,client:client,user:user),
+      child: SafeArea(
+        child: Scaffold(
+          body: Body(servicesList: servicesList,client:client,user:user),
+        ),
       ),
     );
   }

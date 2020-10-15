@@ -48,7 +48,7 @@ class ProfessionalDashboardBody extends StatelessWidget {
                       "welcome "+ professional.getName(),
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                          fontSize: deviceWidth < 400 ? 15:20,
+                          fontSize: deviceWidth < 360 ? 15:20,
                           fontWeight: FontWeight.w600,
                           color: Colors.white
                       ),

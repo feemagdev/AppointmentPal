@@ -22,7 +22,7 @@ class CategoryCard extends StatelessWidget {
     if(deviceWidth < 365 && deviceWidth > 330){
       widthOfImage = 50;
       heightOfImage = 50;
-      fontSize = 15;
+      fontSize = 12;
     }
     else if(deviceWidth < 330){
       widthOfImage = 50;
