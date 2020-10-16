@@ -42,7 +42,7 @@ class SelectDateTimeBloc
           await getProfessionalSchedule(event.professional, event.dateTime);
 
       if (schedule == null) {
-        yield NoScheduleAvailable(professional: event.professional,dateTime: event.dateTime,name: event.name,phone: event.phone);
+        yield NoScheduleAvailable(professional: event.professional,dateTime: event.dateTime);
       } else {
         DateTime dateTime = event.dateTime;
         if (dateTime == null) {
@@ -61,12 +61,12 @@ class SelectDateTimeBloc
         print("time slot lenght");
         print(timeSlots.length);
         if(timeSlots.isEmpty|| timeSlots.length == 0){
-          yield NoScheduleAvailable(professional: event.professional,dateTime: event.dateTime,name: event.name,phone:event.phone);
+          yield NoScheduleAvailable(professional: event.professional,dateTime: event.dateTime);
         }else{
           yield ShowAvailableTimeState(
               professional: event.professional,
               schedule: schedule,
-              timeSlots: timeSlots,name: event.name,phone: event.phone);
+              timeSlots: timeSlots);
         }
 
       }
@@ -75,7 +75,7 @@ class SelectDateTimeBloc
           professional: event.professional,
           schedule: event.schedule,
           timeSlots: event.schedules,
-          selectedIndex: event.scheduleIndex,name: event.name,phone:event.phone);
+          selectedIndex: event.scheduleIndex);
     } else if (event is AppointmentIsBookedEvent) {
       DocumentReference clientID = ClientRepository.defaultConstructor()
           .getClientReference(event.user.uid);
@@ -113,6 +113,9 @@ class SelectDateTimeBloc
 
       AppointmentRepository.defaultConstructor().updateAppointment(appointment,event.clientName,event.clientPhone,Timestamp.fromDate(event.dateTime));
       yield ProfessionalUpdateAppointmentState(professional:event.professional);
+    }
+    else if(event is MoveToSelectCustomerScreenEvent){
+      yield MoveToSelectCustomerScreenState(professional: event.professional,selectedDateTime: event.selectedDateTime);
     }
   }
 

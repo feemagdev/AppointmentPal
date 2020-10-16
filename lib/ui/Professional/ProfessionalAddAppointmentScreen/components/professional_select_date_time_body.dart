@@ -4,337 +4,171 @@ import 'package:appointmentproject/model/appointment.dart';
 import 'package:appointmentproject/model/schedule.dart';
 import 'package:appointmentproject/ui/Client/SelectDateTime/components/custom_date.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/professional_dashboard_screen.dart';
-import 'package:appointmentproject/ui/components/rounded_button.dart';
+import 'package:appointmentproject/ui/Professional/ProfessionalSelectCustomerScreen/professional_select_customer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter/cupertino.dart';
 
-
-
 class ProfessionalSelectDateTime extends StatelessWidget {
   final Professional professional;
   final Appointment appointment;
 
   ProfessionalSelectDateTime({@required this.professional, this.appointment});
+
   @override
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
     Professional professional;
-    String name;
-    String phone;
     List<DateTime> timeSlots;
     Schedule schedule;
     int selectedIndex;
     TextEditingController nameTextController = new TextEditingController();
     TextEditingController phoneTextController = new TextEditingController();
 
-    return SingleChildScrollView(
-          child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(height: 20),
-              Text(
-                "Select date",
-                style: TextStyle(fontSize: deviceWidth < 360 ? 12 : 20),
-              ),
-              SizedBox(height: 15),
-              CustomDateView(
-                onTap: (DateTime dateTime) {
-                  BlocProvider.of<SelectDateTimeBloc>(context).add(
-                      ShowAvailableTimeEvent(
-                          professional: professional, dateTime: dateTime,name:name,phone:phone));
-                },
-              ),
-              BlocListener<SelectDateTimeBloc, SelectDateTimeState>(
-                listener: (context, state) {
-                  if (state is ProfessionalAppointmentIsBookedState) {
-                    String message = "appointment booked successfully";
-                    showSuccessfulDialog(context, message);
-                  } else if (state is ProfessionalUpdateAppointmentState) {
-                    String message = "appointment updated successfully";
-                    showSuccessfulDialog(context, message);
-                  }
-                },
-                child: BlocBuilder<SelectDateTimeBloc, SelectDateTimeState>(
-                  builder: (context, state) {
-                    if (state is SelectDateTimeInitial) {
-                      professional = state.professional;
-                      return loadingState(context, state.professional,name,phone);
-                    } else if (state is ShowAvailableTimeState) {
-                      name = state.name;
-                      phone = state.phone;
-                      professional = state.professional;
-                      schedule = state.schedule;
-                      timeSlots = state.timeSlots;
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: Text(
-                          "Select time",
-                          style: TextStyle(fontSize: deviceWidth < 360 ? 12 : 15),
-                        ),
-                      );
-                    } else if (state is TimeSlotSelectedState) {
-                      professional = state.professional;
-                      name = state.name;
-                      phone = state.phone;
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: Text(
-                          "Select time",
-                          style: TextStyle(fontSize: deviceWidth < 360 ? 12 : 15),
-                        ),
-                      );
-                    }
-                    return Container();
-                  },
-                ),
-              ),
-              BlocBuilder<SelectDateTimeBloc, SelectDateTimeState>(
-                builder: (context, state) {
-                  if (state is ShowAvailableTimeState) {
-                    return timeSlotBuilder(context, state.timeSlots, null,
-                        state.professional, state.schedule,state.name,state.phone);
-                  } else if (state is NoScheduleAvailable) {
-                    String text = "sorry no schedule available for this date";
-                    if (state.dateTime == null ||
-                        state.dateTime.day == DateTime.now().day) {
-                      text = "sorry no schedule available today";
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Text(
-                        text,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 15,
-                        ),
-                      ),
-                    );
-                  } else if (state is TimeSlotSelectedState) {
-                    selectedIndex = state.selectedIndex;
-                    timeSlots = state.timeSlots;
-                    schedule = state.schedule;
-                    return timeSlotBuilder(context, state.timeSlots,
-                        state.selectedIndex, state.professional, state.schedule,state.name,state.phone);
-                  }
-                  return Container();
-                },
-              ),
-              Column(
-                children: [
-                  SizedBox(height: 20),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Enter Name",
-                        style: TextStyle(fontSize: deviceWidth < 360 ? 10 : 15),
-                      ),
-                      SizedBox(height: 5),
-                      BlocBuilder<SelectDateTimeBloc,SelectDateTimeState>(
-                        builder: (context,state){
-                          if(state is ShowAvailableTimeState){
-                            nameTextController.text = state.name;
-                            return Container(
-                              height: deviceWidth < 360 ? 50 : 70,
-                              child: customTextField(nameTextController, TextInputType.name, 'Name'),
-                            );
-                          }else if(state is TimeSlotSelectedState){
-                            nameTextController.text = state.name;
-                            return Container(
-                              height: deviceWidth < 360 ? 50 : 70,
-                              child: customTextField(nameTextController, TextInputType.name, 'Name'),
-                            );
-                          }else if(state is NoScheduleAvailable){
-                            nameTextController.text = state.name;
-                            return Container(
-                              height: deviceWidth < 360 ? 50 : 70,
-                              child: customTextField(nameTextController, TextInputType.name, 'Name'),
-                            );
-                          }
-                          return Container();
-                        },
-                      ),
-                      SizedBox(height: 10,),
-                      Text(
-                        "Enter Phone",
-                        style: TextStyle(fontSize: deviceWidth < 360 ? 10 : 15),
-                      ),
-                      SizedBox(height: 5,),
-                      BlocBuilder<SelectDateTimeBloc,SelectDateTimeState>(
-                        builder: (context,state){
-                          if(state is ShowAvailableTimeState){
-                            phoneTextController.text = state.phone;
-                            return Container(
-                              height: deviceWidth < 360 ? 50 : 70,
-                              child: customTextField(phoneTextController, TextInputType.phone, 'Phone'),
-                            );
-                          }else if(state is TimeSlotSelectedState){
-                            phoneTextController.text = state.phone;
-                            return Container(
-                              height: deviceWidth < 360 ? 50 : 70,
-                              child: customTextField(phoneTextController, TextInputType.phone, 'Phone'),
-                            );
-                          }else if(state is NoScheduleAvailable){
-                            phoneTextController.text = state.phone;
-                            return Container(
-                                height: deviceWidth < 360 ? 50 : 70,
-                                child: customTextField(phoneTextController, TextInputType.phone, 'Phone'),
-                            );
-                          }
-                          return Container();
-                        },
-                      ),
-
-                    ],
-                  ),
-                  SizedBox(height: 10,),
-                  RoundedButton(
-                    text: "Book appointment",
-                    width: deviceWidth < 360 ? 200 : 300,
-                    height: deviceWidth < 360 ? 40 : 55,
-                    fontSize: deviceWidth < 360 ? 10 : 20,
-                    color: Colors.blue,
-                    textColor: Colors.white,
-                    press: () {
-
-                      String nameValidation = nameValidator(nameTextController.text);
-                      String emptyPhoneValidation = emptyPhoneValidator(phoneTextController.text);
-                      bool checkSelectedIndex = selectedIndex == null;
-                      if (appointment == null) {
-                        if (nameValidation != null) {
-                          showErrorDialog(nameValidation, context);
-                          return;
-                        }
-                        if (nameTextController.text.length <= 2) {
-                          showErrorDialog(
-                              "name length should be more than 2", context);
-                          return;
-                        }
-
-                        if(emptyPhoneValidation !=null){
-                          showErrorDialog(emptyPhoneValidation, context);
-                          return;
-                        }
-
-                        String phoneValidation = phoneValidator(phoneTextController.text);
-                        if (phoneValidation != null) {
-                          showErrorDialog(phoneValidation, context);
-                          return;
-                        }
-
-                        if (checkSelectedIndex) {
-                          showErrorDialog("please select a time", context);
-                          return;
-                        }
-
-                        BlocProvider.of<SelectDateTimeBloc>(context).add(
-                            ProfessionalBookedTheAppointmentButtonEvent(
-                                professional: professional,
-                                dateTime: timeSlots[selectedIndex],
-                                clientName: nameTextController.text,
-                                clientPhone: phoneTextController.text));
-                      } else {
-                        bool phoneIsEmpty = false;
-                        bool nameIsEmpty = false;
-                        String oldName;
-                        String oldPhone;
-
-                        if(nameValidation != null){
-                          nameIsEmpty = true;
-                          oldName = appointment.getClientName();
-                        }
-                        if(!nameIsEmpty){
-                          if (nameTextController.text.length <= 2) {
-                            showErrorDialog(
-                                "name length should be more than 2", context);
-                            return;
-                          }
-                        }
-
-                        if(emptyPhoneValidation != null){
-                          phoneIsEmpty = true;
-                          oldPhone = appointment.getClientPhone();
-                        }
-                        if(!phoneIsEmpty){
-                          String phoneValidation = phoneValidator(phoneTextController.text);
-                          if (phoneValidation != null) {
-                            showErrorDialog(phoneValidation, context);
-                            return;
-                          }
-                        }
-
-
-                        if(phoneIsEmpty && nameIsEmpty && selectedIndex == null){
-                          showErrorDialog("you have not update any thing", context);
-                          return;
-                        }
-
-                        BlocProvider.of<SelectDateTimeBloc>(context).add(
-                            ProfessionalUpdateAppointmentButtonEvent(
-                                appointment: appointment,
-                                dateTime: checkSelectedIndex ? appointment.getAppointmentDateTime().toDate():timeSlots[selectedIndex],
-                                clientName: nameIsEmpty ? oldName:nameTextController.text,
-                                clientPhone: phoneIsEmpty ? oldPhone:phoneTextController.text,
-                                professional: professional));
-                      }
-                    },
-                  )
-                ],
-              ),
-            ],
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(height: 20),
+          Text(
+            "Select date",
+            style: TextStyle(fontSize: deviceWidth < 360 ? 12 : 20),
           ),
-        )
-      );
+          SizedBox(height: 15),
+          CustomDateView(
+            onTap: (DateTime dateTime) {
+              BlocProvider.of<SelectDateTimeBloc>(context).add(
+                  ShowAvailableTimeEvent(
+                      professional: professional, dateTime: dateTime));
+            },
+          ),
+          BlocListener<SelectDateTimeBloc, SelectDateTimeState>(
+            listener: (context, state) {
+              if (state is MoveToSelectCustomerScreenState) {
+                navigateToSelectCustomerScreen(context,state.professional,state.selectedDateTime);
+              }
+            },
+            child: BlocBuilder<SelectDateTimeBloc, SelectDateTimeState>(
+              builder: (context, state) {
+                if (state is SelectDateTimeInitial) {
+                  professional = state.professional;
+                  return loadingState(context, state.professional);
+                } else if (state is ShowAvailableTimeState) {
+                  professional = state.professional;
+                  schedule = state.schedule;
+                  timeSlots = state.timeSlots;
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 20, bottom: 15),
+                    child: Text(
+                      "Select time",
+                      style: TextStyle(fontSize: deviceWidth < 360 ? 12 : 17),
+                    ),
+                  );
+                } else if (state is TimeSlotSelectedState) {
+                  professional = state.professional;
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 20, bottom: 15),
+                    child: Text(
+                      "Select time",
+                      style: TextStyle(fontSize: deviceWidth < 360 ? 12 : 17),
+                    ),
+                  );
+                }
+                return Container();
+              },
+            ),
+          ),
+          BlocBuilder<SelectDateTimeBloc, SelectDateTimeState>(
+            builder: (context, state) {
+              if (state is ShowAvailableTimeState) {
+                return Expanded(
+                  child: timeSlotBuilder2(
+                    context,
+                    state.timeSlots,
+                    null,
+                    state.professional,
+                    state.schedule,
+                  ),
+                );
+              } else if (state is NoScheduleAvailable) {
+                String text = "sorry no schedule available for this date";
+                if (state.dateTime == null ||
+                    state.dateTime.day == DateTime.now().day) {
+                  text = "sorry no schedule available today";
+                }
+                return Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Text(
+                    text,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 15,
+                    ),
+                  ),
+                );
+              } else if (state is TimeSlotSelectedState) {
+                selectedIndex = state.selectedIndex;
+                timeSlots = state.timeSlots;
+                schedule = state.schedule;
+                return buildTimeSlotsUI(context, state.timeSlots,
+                    state.selectedIndex, state.professional, state.schedule);
+              }
+              return Container();
+            },
+          ),
+        ],
+      ),
+    );
   }
 
-
-  Widget loadingState(BuildContext context, Professional professional,String name,String phone) {
+  Widget loadingState(BuildContext context, Professional professional) {
     BlocProvider.of<SelectDateTimeBloc>(context).add(
-        ShowAvailableTimeEvent(professional: professional, dateTime: null,name: name,phone: phone));
-    return Container();
+        ShowAvailableTimeEvent(professional: professional, dateTime: null));
+    return Container(
+      child: Center(
+        child: CircularProgressIndicator(
+          backgroundColor: Colors.blue,
+        ),
+      ),
+    );
   }
 
-  Widget customTextField(TextEditingController textEditingController,TextInputType textInputType,String hint){
+  Widget customTextField(TextEditingController textEditingController,
+      TextInputType textInputType, String hint) {
     return TextField(
       controller: textEditingController,
       keyboardType: textInputType,
-      decoration: InputDecoration(
-          hintText: hint,
-          enabledBorder: OutlineInputBorder()),
+      decoration:
+          InputDecoration(hintText: hint, enabledBorder: OutlineInputBorder()),
     );
   }
 
   Widget timeSlotsUI(
-      DateTime time,
-      Color color,
-      BuildContext context,
-      int selectedIndex,
-      Professional professional,
-      List<DateTime> timeSlots,
-      Schedule schedule,
-      String name,
-      String phone) {
+    DateTime time,
+    Color color,
+    BuildContext context,
+    int selectedIndex,
+    Professional professional,
+    List<DateTime> timeSlots,
+    Schedule schedule,
+  ) {
     double deviceWidth = MediaQuery.of(context).size.width;
     return InkWell(
       onTap: () {
         BlocProvider.of<SelectDateTimeBloc>(context).add(TimeSlotSelectedEvent(
-            professional: professional,
-            scheduleIndex: selectedIndex,
-            schedules: timeSlots,
-            schedule: schedule,
-            name: name,
-            phone: phone));
+          professional: professional,
+          scheduleIndex: selectedIndex,
+          schedules: timeSlots,
+          schedule: schedule,
+        ));
       },
       child: Container(
-        padding: EdgeInsets.all(5.0),
         height: 50,
+        padding: EdgeInsets.all(5.0),
         decoration: BoxDecoration(
           color: color,
           border: Border.all(color: Colors.blue),
@@ -342,28 +176,36 @@ class ProfessionalSelectDateTime extends StatelessWidget {
         ),
         child: Center(
             child: Row(
-              children: [
-                Text(
-                  DateFormat.jm().format(time),
-                  style: TextStyle(fontSize: deviceWidth < 360 ? 10 : 15),
-                ),
-                Text(
-                  ' - ',
-                  style: TextStyle(fontSize: deviceWidth < 360 ? 10 : 15),
-                ),
-                Text(
-                  DateFormat.jm()
-                      .format(time.add(Duration(minutes: schedule.getDuration()))),
-                  style: TextStyle(fontSize: deviceWidth < 360 ? 10 : 15),
-                ),
-              ],
-            )),
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              DateFormat.jm().format(time),
+              style: TextStyle(fontSize: deviceWidth < 360 ? 10 : 15),
+            ),
+            Text(
+              ' - ',
+              style: TextStyle(fontSize: deviceWidth < 360 ? 10 : 15),
+            ),
+            Text(
+              DateFormat.jm()
+                  .format(time.add(Duration(minutes: schedule.getDuration()))),
+              style: TextStyle(fontSize: deviceWidth < 360 ? 10 : 15),
+            ),
+          ],
+        )),
       ),
     );
   }
 
-  Widget timeSlotBuilder(BuildContext context, List<DateTime> timeSlots,
-      int selectedIndex, Professional professional, Schedule schedule,String name,String phone) {
+  /* Widget timeSlotBuilder(
+      BuildContext context,
+      List<DateTime> timeSlots,
+      int selectedIndex,
+      Professional professional,
+      Schedule schedule,
+      String name,
+      String phone) {
     return Container(
       height: 50,
       child: ListView.builder(
@@ -379,10 +221,39 @@ class ProfessionalSelectDateTime extends StatelessWidget {
               index,
               professional,
               timeSlots,
-              schedule,name,phone),
+              schedule,
+              name,
+              phone),
         ),
       ),
     );
+  }
+*/
+  Widget timeSlotBuilder2(
+    BuildContext context,
+    List<DateTime> timeSlots,
+    int selectedIndex,
+    Professional professional,
+    Schedule schedule,
+  ) {
+    return GridView.builder(
+        itemCount: timeSlots.length,
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 2.5,
+            crossAxisSpacing: 15,
+            mainAxisSpacing: 20),
+        itemBuilder: (BuildContext context, int index) => timeSlotsUI(
+              timeSlots[index],
+              selectedIndex == index ? Colors.blue : Colors.white,
+              context,
+              index,
+              professional,
+              timeSlots,
+              schedule,
+            ));
   }
 
   showErrorDialog(String message, BuildContext context) {
@@ -425,13 +296,7 @@ class ProfessionalSelectDateTime extends StatelessWidget {
         });
   }
 
-  void navigateToDashboardScreen(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return ProfessionalDashboard(
-        professional: professional,
-      );
-    }));
-  }
+
 
   String phoneValidator(String phone) {
     String pattern =
@@ -443,21 +308,50 @@ class ProfessionalSelectDateTime extends StatelessWidget {
     return null;
   }
 
-
-  String nameValidator(String name){
-    if(name == null || name.isEmpty){
+  String nameValidator(String name) {
+    if (name == null || name.isEmpty) {
       return "please enter name";
     }
     return null;
   }
-  String emptyPhoneValidator(String phone){
-    if(phone == null || phone.isEmpty){
+
+  String emptyPhoneValidator(String phone) {
+    if (phone == null || phone.isEmpty) {
       return "please enter phone number";
     }
     return null;
   }
 
+  Widget buildTimeSlotsUI(BuildContext context, List<DateTime> timeSlots,
+      int selectedIndex, Professional professional, Schedule schedule) {
+    BlocProvider.of<SelectDateTimeBloc>(context).add(
+        MoveToSelectCustomerScreenEvent(
+            professional: professional,
+            selectedDateTime: timeSlots[selectedIndex]));
+    return Expanded(
+        child: timeSlotBuilder2(
+      context,
+      timeSlots,
+      selectedIndex,
+      professional,
+      schedule,
+    ));
   }
 
+  void navigateToDashboardScreen(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ProfessionalDashboard(
+        professional: professional,
+      );
+    }));
+  }
 
-
+  void navigateToSelectCustomerScreen(BuildContext context, Professional professional, DateTime selectedDateTime) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ProfessionalSelectCustomerScreen(
+        professional: professional,
+        selectedDateTime:selectedDateTime,
+      );
+    }));
+  }
+}
