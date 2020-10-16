@@ -13,9 +13,7 @@ class ShowAvailableTimeState extends SelectDateTimeState{
   final Professional professional;
   final Schedule schedule;
   final List<DateTime> timeSlots;
-  final String name;
-  final String phone;
-  ShowAvailableTimeState({@required this.professional,@required this.schedule,@required this.timeSlots,@required this.name,@required this.phone});
+  ShowAvailableTimeState({@required this.professional,@required this.schedule,@required this.timeSlots});
 
 }
 
@@ -23,9 +21,7 @@ class ShowAvailableTimeState extends SelectDateTimeState{
 class NoScheduleAvailable extends SelectDateTimeState {
   final Professional professional;
   final DateTime dateTime;
-  final String name;
-  final String phone;
-  NoScheduleAvailable({@required this.professional,@required this.dateTime,@required this.name,@required this.phone});
+  NoScheduleAvailable({@required this.professional,@required this.dateTime});
 }
 
 
@@ -34,9 +30,7 @@ class TimeSlotSelectedState extends SelectDateTimeState{
   final Schedule schedule;
   final List<DateTime> timeSlots;
   final int selectedIndex;
-  final String name;
-  final String phone;
-  TimeSlotSelectedState({@required this.professional,this.schedule,this.timeSlots,this.selectedIndex,@required this.name,@required this.phone});
+  TimeSlotSelectedState({@required this.professional,this.schedule,this.timeSlots,this.selectedIndex});
 }
 
 
@@ -50,6 +44,13 @@ class ProfessionalAppointmentIsBookedState extends SelectDateTimeState {
 class ProfessionalUpdateAppointmentState extends SelectDateTimeState {
   final Professional professional;
   ProfessionalUpdateAppointmentState({@required this.professional});
+}
+
+class MoveToSelectCustomerScreenState extends SelectDateTimeState {
+  final Professional professional;
+  final DateTime selectedDateTime;
+
+  MoveToSelectCustomerScreenState({@required this.professional,@required this.selectedDateTime});
 }
 
 

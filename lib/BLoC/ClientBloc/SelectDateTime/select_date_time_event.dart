@@ -6,14 +6,10 @@ abstract class SelectDateTimeEvent {}
 class ShowAvailableTimeEvent extends SelectDateTimeEvent {
   final Professional professional;
   final DateTime dateTime;
-  final String name;
-  final String phone;
 
   ShowAvailableTimeEvent(
       {@required this.professional,
-      @required this.dateTime,
-      @required this.name,
-      @required this.phone});
+      @required this.dateTime});
 }
 
 class TimeSlotSelectedEvent extends SelectDateTimeEvent {
@@ -21,16 +17,12 @@ class TimeSlotSelectedEvent extends SelectDateTimeEvent {
   final List<DateTime> schedules;
   final int scheduleIndex;
   final Schedule schedule;
-  final String name;
-  final String phone;
 
   TimeSlotSelectedEvent(
       {@required this.professional,
       @required this.schedules,
       @required this.scheduleIndex,
-      @required this.schedule,
-      @required this.name,
-      @required this.phone});
+      @required this.schedule});
 }
 
 class AppointmentIsBookedEvent extends SelectDateTimeEvent {
@@ -80,4 +72,13 @@ class ProfessionalUpdateAppointmentButtonEvent extends SelectDateTimeEvent {
       @required this.clientPhone,
       @required this.dateTime,
       @required this.professional});
+}
+
+
+class MoveToSelectCustomerScreenEvent extends SelectDateTimeEvent {
+  final Professional professional;
+  final DateTime selectedDateTime;
+
+  MoveToSelectCustomerScreenEvent({@required this.professional,@required this.selectedDateTime});
+
 }
