@@ -2,7 +2,7 @@ import 'package:appointmentproject/BLoC/ClientBloc/EditAppointmentBloc/edit_appo
 import 'package:appointmentproject/model/appointment.dart';
 import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/ui/Client/SelectDateTime/components/custom_date.dart';
-import 'package:appointmentproject/ui/Professional/ProfessionalEditAppointmentSelectDateTime/edit_appointment_select_date_time.dart';
+import 'package:appointmentproject/ui/Professional/ProfessionalAddAppointmentScreen/components/professional_select_date_time_body.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -94,7 +94,7 @@ class Body extends StatelessWidget {
                             style: TextStyle(
                               fontWeight: FontWeight.bold
                           ),),
-                          Text(appointment.getServiceName()),
+                        //  Text(appointment.getServiceName()),
                           SizedBox(
                             height: 10,
                           ),
@@ -102,7 +102,7 @@ class Body extends StatelessWidget {
                             style: TextStyle(
                                 fontWeight: FontWeight.bold
                             ),),
-                          Text(appointment.getProfessionalName()),
+                   //       Text(appointment.getProfessionalName()),
                         ],
                       ),
                       Column(
@@ -120,7 +120,7 @@ class Body extends StatelessWidget {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold
                               ),),
-                            Text(appointment.getSubServiceName()),
+                    //        Text(appointment.getSubServiceName()),
                             SizedBox(
                               height: 10,
                             ),
@@ -128,7 +128,7 @@ class Body extends StatelessWidget {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold
                               ),),
-                            Text(appointment.getProfessionalContact()),
+                 //           Text(appointment.getProfessionalContact()),
                           ])
                     ]))));
   }
@@ -151,7 +151,7 @@ class Body extends StatelessWidget {
 
   navigateToSelectNewTimeScreen(BuildContext context,Appointment appointment){
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return ProfessionalEditAppointmentNewDateTime(appointment:appointment);
+      return ProfessionalSelectDateTime(appointment:appointment);
     }));
   }
 

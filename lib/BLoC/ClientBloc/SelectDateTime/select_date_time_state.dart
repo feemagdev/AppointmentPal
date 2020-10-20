@@ -49,8 +49,16 @@ class ProfessionalUpdateAppointmentState extends SelectDateTimeState {
 class MoveToSelectCustomerScreenState extends SelectDateTimeState {
   final Professional professional;
   final DateTime selectedDateTime;
+  final Schedule schedule;
 
-  MoveToSelectCustomerScreenState({@required this.professional,@required this.selectedDateTime});
+  MoveToSelectCustomerScreenState({@required this.professional,@required this.selectedDateTime,@required this.schedule});
+}
+
+
+class MoveToDashboardScreenState extends SelectDateTimeState {
+  final Professional professional;
+
+  MoveToDashboardScreenState({@required this.professional});
 }
 
 

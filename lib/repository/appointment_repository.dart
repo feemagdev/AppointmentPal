@@ -39,8 +39,7 @@ class AppointmentRepository {
 
   professionalMakeAppointment(
       DocumentReference professionalID,
-      String clientName,
-      String clientPhone,
+      DocumentReference customerID,
       Timestamp appointmentDateTime,
       String appointmentStatus) {
     final dbReference = Firestore.instance;
@@ -48,8 +47,7 @@ class AppointmentRepository {
     dbReference.collection('appointment').add(
         appointment.professionalAppointmentMap(
             professionalID,
-            clientName,
-            clientPhone,
+            customerID,
             appointmentDateTime,
             changeTime(appointmentDateTime),
             appointmentStatus));

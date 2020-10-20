@@ -12,6 +12,9 @@ class Customer {
     };
   }
 
+Customer.defaultConstructor();
+
+
   Customer.fromMap(Map snapshot, DocumentReference customerID)
       : _name = snapshot['name'],
         _phone = snapshot['phone'],
@@ -28,6 +31,17 @@ class Customer {
 
   String getPhone(){
     return _phone;
+  }
+
+  void setName(String name){
+    _name = name;
+  }
+  void setPhone(String phone){
+    _phone = phone;
+  }
+
+  void setDocumentReference(DocumentReference customerID){
+    _customerID = customerID;
   }
 
 

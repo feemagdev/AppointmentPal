@@ -10,12 +10,9 @@ import 'package:appointmentproject/model/sub_services.dart';
 import 'package:appointmentproject/repository/appointment_repository.dart';
 import 'package:appointmentproject/repository/client_repository.dart';
 import 'package:appointmentproject/repository/schedule_repository.dart';
-import 'package:appointmentproject/repository/service_repository.dart';
-import 'package:appointmentproject/repository/sub_services_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 part 'select_date_time_event.dart';
@@ -27,11 +24,11 @@ class SelectDateTimeBloc
   final Professional professional;
   final Appointment appointment;
 
-  SelectDateTimeBloc({@required this.professional,this.appointment});
+  SelectDateTimeBloc({@required this.professional, this.appointment});
 
   @override
   SelectDateTimeState get initialState =>
-      SelectDateTimeInitial(professional: professional);
+      SelectDateTimeInitial(professional: professional,appointment: appointment);
 
   @override
   Stream<SelectDateTimeState> mapEventToState(
@@ -42,7 +39,8 @@ class SelectDateTimeBloc
           await getProfessionalSchedule(event.professional, event.dateTime);
 
       if (schedule == null) {
-        yield NoScheduleAvailable(professional: event.professional,dateTime: event.dateTime);
+        yield NoScheduleAvailable(
+            professional: event.professional, dateTime: event.dateTime);
       } else {
         DateTime dateTime = event.dateTime;
         if (dateTime == null) {
@@ -55,20 +53,19 @@ class SelectDateTimeBloc
                 .getNotAvailableTime(Timestamp.fromDate(dateTime),
                     event.professional.getProfessionalID());
 
-
         List<DateTime> timeSlots = makeScheduleTimeSlots(
             schedule, dateTime.year, dateTime.month, dateTime.day, appointment);
         print("time slot lenght");
         print(timeSlots.length);
-        if(timeSlots.isEmpty|| timeSlots.length == 0){
-          yield NoScheduleAvailable(professional: event.professional,dateTime: event.dateTime);
-        }else{
+        if (timeSlots.isEmpty || timeSlots.length == 0) {
+          yield NoScheduleAvailable(
+              professional: event.professional, dateTime: event.dateTime);
+        } else {
           yield ShowAvailableTimeState(
               professional: event.professional,
               schedule: schedule,
               timeSlots: timeSlots);
         }
-
       }
     } else if (event is TimeSlotSelectedEvent) {
       yield TimeSlotSelectedState(
@@ -100,22 +97,23 @@ class SelectDateTimeBloc
           event.subServices.getName());
 
       yield AppointmentIsBookedState();
-    } else if (event is ProfessionalBookedTheAppointmentButtonEvent) {
-      AppointmentRepository.defaultConstructor().professionalMakeAppointment(
-          event.professional.getProfessionalID(),
-          event.clientName,
-          event.clientPhone,
-          Timestamp.fromDate(event.dateTime),
-          'booked');
-      yield ProfessionalAppointmentIsBookedState(professional: event.professional);
-    }else if(event is ProfessionalUpdateAppointmentButtonEvent){
+    } else if (event is ProfessionalUpdateAppointmentButtonEvent) {
       Appointment appointment = event.appointment;
 
-      AppointmentRepository.defaultConstructor().updateAppointment(appointment,event.clientName,event.clientPhone,Timestamp.fromDate(event.dateTime));
-      yield ProfessionalUpdateAppointmentState(professional:event.professional);
-    }
-    else if(event is MoveToSelectCustomerScreenEvent){
-      yield MoveToSelectCustomerScreenState(professional: event.professional,selectedDateTime: event.selectedDateTime);
+      AppointmentRepository.defaultConstructor().updateAppointment(
+          appointment,
+          event.clientName,
+          event.clientPhone,
+          Timestamp.fromDate(event.dateTime));
+      yield ProfessionalUpdateAppointmentState(
+          professional: event.professional);
+    } else if (event is MoveToSelectCustomerScreenEvent) {
+      yield MoveToSelectCustomerScreenState(
+          professional: event.professional,
+          selectedDateTime: event.selectedDateTime,
+          schedule: event.schedule);
+    }else if (event is MoveToDashboardScreenEvent){
+      yield MoveToDashboardScreenState(professional: event.professional);
     }
   }
 
@@ -204,9 +202,9 @@ class SelectDateTimeBloc
           break;
         }
 
-        if(appointment == null){
+        if (appointment == null) {
           checkDate = false;
-        }else{
+        } else {
           for (int i = 0; i < appointment.length; i++) {
             print('in date checking loop');
             if (Timestamp.fromDate(tempDate) ==
