@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:appointmentproject/BLoC/SignUpBloc/bloc.dart';
 import 'package:appointmentproject/model/service.dart';
+import 'package:appointmentproject/repository/person_repository.dart';
 import 'package:appointmentproject/repository/service_repository.dart';
-import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
 part 'email_verification_event.dart';

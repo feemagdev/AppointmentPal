@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:appointmentproject/model/appointment.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/repository/appointment_repository.dart';
-import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
 part 'professional_edit_appointment_event.dart';

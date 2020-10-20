@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:appointmentproject/BLoC/ClientBloc/ClientDashboardBloc/client_dashboard_event.dart';
+import 'package:appointmentproject/BLoC/ClientBloc/ClientDashboardBloc/client_dashboard_state.dart';
 import 'package:appointmentproject/repository/service_repository.dart';
-import 'package:bloc/bloc.dart';
-import 'bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 
 class ClientDashboardBloc extends Bloc<ClientDashboardEvent, ClientDashboardState> {
 

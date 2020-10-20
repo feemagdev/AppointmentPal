@@ -1,5 +1,4 @@
-import 'package:appointmentproject/model/sub_services.dart';
-import 'package:appointmentproject/repository/sub_services_repository.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Professional {

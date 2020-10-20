@@ -4,7 +4,6 @@ import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/ui/Client/AddAppointmentScreen/add_appoinmtment_screen.dart';
 import 'package:appointmentproject/ui/Client/ClientDashboard/components/category_card.dart';
 import 'package:appointmentproject/ui/Client/ClientEditAppointmentScreen/client_edit_appointment_screen.dart';
-import 'package:appointmentproject/ui/Client/SearchProfessioanl/search_professional_screen.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
 import 'package:appointmentproject/ui/components/background.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -82,11 +81,7 @@ class Body extends StatelessWidget {
     );
   }
 
-  void navigateToSearchPage(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context){
-      return SearchProfessionalScreen();
-    }));
-  }
+
 
   Widget createGrid(BuildContext context){
 

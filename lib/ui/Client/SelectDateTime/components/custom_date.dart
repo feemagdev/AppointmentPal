@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:appointmentproject/BLoC/ProfessionalBloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:horizontal_calendar_widget/date_helper.dart';
 import 'package:horizontal_calendar_widget/horizontal_calendar.dart';
