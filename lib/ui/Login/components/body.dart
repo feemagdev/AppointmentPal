@@ -1,7 +1,7 @@
 
 import 'package:appointmentproject/BLoC/LoginBloc/login_bloc.dart';
-import 'file:///C:/Users/faheem/AndroidStudioProjects/appointment_project/lib/BLoC/LoginBloc/login_event.dart';
-import 'file:///C:/Users/faheem/AndroidStudioProjects/appointment_project/lib/BLoC/LoginBloc/login_state.dart';
+import 'package:appointmentproject/BLoC/LoginBloc/login_event.dart';
+import 'package:appointmentproject/BLoC/LoginBloc/login_state.dart';
 import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/model/service.dart';

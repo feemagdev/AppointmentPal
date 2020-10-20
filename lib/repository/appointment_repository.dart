@@ -1,4 +1,4 @@
-import 'package:appointmentproject/BLoC/ProfessionalBloc/bloc.dart';
+
 import 'package:appointmentproject/model/appointment.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 

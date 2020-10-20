@@ -1,24 +1,20 @@
-import 'file:///C:/Users/faheem/AndroidStudioProjects/appointment_project/lib/BLoC/LoginBloc/login_event.dart';
-import 'file:///C:/Users/faheem/AndroidStudioProjects/appointment_project/lib/BLoC/LoginBloc/login_state.dart';
-import 'package:appointmentproject/BLoC/ProfessionalBloc/bloc.dart';
+
+import 'package:appointmentproject/BLoC/LoginBloc/login_event.dart';
+import 'package:appointmentproject/BLoC/LoginBloc/login_state.dart';
 import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/repository/client_repository.dart';
 import 'package:appointmentproject/repository/person_repository.dart';
+import 'package:appointmentproject/repository/professional_repository.dart';
 import 'package:appointmentproject/repository/service_repository.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  Firestore _dbRef;
-  FirebaseUser user;
 
-  LoginBloc() {
-    _dbRef = Firestore.instance;
-  }
+  FirebaseUser user;
 
   @override
   // TODO: implement initialState

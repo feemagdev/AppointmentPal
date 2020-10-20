@@ -1,15 +1,11 @@
 import 'dart:async';
 
-import 'package:appointmentproject/BLoC/ProfessionalBloc/bloc.dart';
 import 'package:appointmentproject/model/appointment.dart';
 import 'package:appointmentproject/model/client.dart';
-import 'package:appointmentproject/model/professional.dart';
-import 'package:appointmentproject/model/schedule.dart';
 import 'package:appointmentproject/repository/appointment_repository.dart';
 import 'package:appointmentproject/repository/client_repository.dart';
-import 'package:appointmentproject/repository/schedule_repository.dart';
-import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
 part 'edit_appointment_event.dart';

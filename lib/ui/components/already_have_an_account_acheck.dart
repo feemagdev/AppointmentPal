@@ -1,6 +1,7 @@
+import 'package:appointmentproject/ui/constants.dart';
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
+
 
 class AlreadyHaveAnAccountCheck extends StatelessWidget {
   final String text;

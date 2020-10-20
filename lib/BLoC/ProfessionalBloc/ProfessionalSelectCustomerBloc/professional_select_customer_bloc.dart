@@ -4,7 +4,7 @@ import 'package:appointmentproject/model/customer.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/model/schedule.dart';
 import 'package:appointmentproject/repository/customer_repository.dart';
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
 part 'professional_select_customer_event.dart';

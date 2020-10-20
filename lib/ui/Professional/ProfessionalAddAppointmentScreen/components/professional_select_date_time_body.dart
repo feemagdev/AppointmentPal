@@ -1,6 +1,7 @@
-import 'package:appointmentproject/BLoC/ProfessionalBloc/bloc.dart';
+
 import 'package:appointmentproject/BLoC/ClientBloc/SelectDateTime/select_date_time_bloc.dart';
 import 'package:appointmentproject/model/appointment.dart';
+import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/model/schedule.dart';
 import 'package:appointmentproject/ui/Client/SelectDateTime/components/custom_date.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/professional_dashboard_screen.dart';

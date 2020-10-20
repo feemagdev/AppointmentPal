@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:appointmentproject/model/professional.dart';
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 
 part 'professional_dashboard_event.dart';

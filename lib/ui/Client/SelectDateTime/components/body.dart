@@ -1,12 +1,12 @@
-import 'package:appointmentproject/BLoC/ProfessionalBloc/bloc.dart';
+
 import 'package:appointmentproject/BLoC/ClientBloc/SelectDateTime/select_date_time_bloc.dart';
 import 'package:appointmentproject/model/client.dart';
+import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/model/schedule.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/model/sub_services.dart';
 import 'package:appointmentproject/ui/Client/ClientDashboard/client_dashboard_screen.dart';
 import 'package:appointmentproject/ui/Client/SelectDateTime/components/custom_date.dart';
-import 'package:appointmentproject/ui/components/background.dart';
 import 'package:appointmentproject/ui/components/rounded_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
