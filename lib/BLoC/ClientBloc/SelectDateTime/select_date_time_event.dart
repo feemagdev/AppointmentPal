@@ -78,7 +78,14 @@ class ProfessionalUpdateAppointmentButtonEvent extends SelectDateTimeEvent {
 class MoveToSelectCustomerScreenEvent extends SelectDateTimeEvent {
   final Professional professional;
   final DateTime selectedDateTime;
+  final Schedule schedule;
 
-  MoveToSelectCustomerScreenEvent({@required this.professional,@required this.selectedDateTime});
+  MoveToSelectCustomerScreenEvent({@required this.professional,@required this.selectedDateTime,@required this.schedule});
 
 }
+
+class MoveToDashboardScreenEvent extends SelectDateTimeEvent {
+  final Professional professional;
+  MoveToDashboardScreenEvent({@required this.professional});
+}
+

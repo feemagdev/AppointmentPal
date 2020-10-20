@@ -108,7 +108,7 @@ class ProfessionalEditAppointmentBody extends StatelessWidget {
                             "Client",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          Text(appointment.getClientName()),
+                      //    Text(appointment.getClientName()),
                         ],
                       ),
                       Column(
@@ -127,7 +127,7 @@ class ProfessionalEditAppointmentBody extends StatelessWidget {
                               "Client contact",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            Text(appointment.getClientPhone()),
+              //              Text(appointment.getClientPhone()),
                           ])
                     ]))));
   }
