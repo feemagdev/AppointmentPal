@@ -3,12 +3,13 @@ import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/model/sub_services.dart';
 import 'package:meta/meta.dart';
 
+@immutable
 abstract class AddAppointmentState {}
 
 class InitialAddAppointmentState extends AddAppointmentState {}
 
 class TapOnServiceState extends AddAppointmentState {
-  List<SubServices> subServicesList;
+  final List<SubServices> subServicesList;
   final Service selectedService;
 
   TapOnServiceState(
@@ -16,8 +17,8 @@ class TapOnServiceState extends AddAppointmentState {
 }
 
 class TapOnSubServiceState extends AddAppointmentState {
-  List<Professional> professionals;
-  List<SubServices> subServicesList;
+  final List<Professional> professionals;
+  final List<SubServices> subServicesList;
   final Service selectedService;
   final SubServices selectedSubService;
 

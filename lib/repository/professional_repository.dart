@@ -35,18 +35,15 @@ class ProfessionalRepository {
   }
 
   Future<Professional> getProfessionalData(FirebaseUser user) async {
-    print('in professional get data');
     final dbReference = Firestore.instance;
     Professional professional;
     DocumentSnapshot snapshot = await dbReference.collection('professional').document(user.uid).get();
 
     if(snapshot.exists){
-      print('data returned of professional');
       professional = Professional.fromMap(snapshot.data, snapshot.reference);
       professional.getName();
       return professional;
     }
-    print('null return');
     return null;
 
 
