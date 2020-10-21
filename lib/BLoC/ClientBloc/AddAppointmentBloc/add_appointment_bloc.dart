@@ -1,11 +1,16 @@
 import 'dart:async';
-import 'package:appointmentproject/BLoC/ProfessionalBloc/bloc.dart';
+import 'package:appointmentproject/BLoC/ClientBloc/AddAppointmentBloc/add_appointment_event.dart';
+import 'package:appointmentproject/BLoC/ClientBloc/AddAppointmentBloc/add_appointment_state.dart';
 import 'package:appointmentproject/model/professional.dart';
+import 'package:appointmentproject/model/sub_services.dart';
+import 'package:appointmentproject/repository/professional_repository.dart';
 import 'package:appointmentproject/repository/sub_services_repository.dart';
-import 'package:bloc/bloc.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
-import 'bloc.dart';
+
+
+
 
 class AddAppointmentBloc
     extends Bloc<AddAppointmentEvent, AddAppointmentState> {
@@ -22,12 +27,14 @@ class AddAppointmentBloc
           subServicesList: await SubServiceRepository.defaultConstructor()
               .getSubServicesList(event.selectedService.getServiceID()));
     } else if (event is TapOnSubServiceEvent) {
+      List<Professional> professionals = await ProfessionalRepository.defaultConstructor()
+          .getListOfProfessionalsBySubService(
+          event.selectedSubService.getSubServiceID());
+      List<SubServices> subServicesList = await SubServiceRepository.defaultConstructor()
+          .getSubServicesList(event.selectedService.getServiceID());
       yield TapOnSubServiceState(
-        professionals: await ProfessionalRepository.defaultConstructor()
-            .getListOfProfessionalsBySubService(
-                event.selectedSubService.getSubServiceID()),
-        subServicesList: await SubServiceRepository.defaultConstructor()
-            .getSubServicesList(event.selectedService.getServiceID()),
+        professionals: professionals,
+        subServicesList: subServicesList,
         selectedService: event.selectedService,
         selectedSubService: event.selectedSubService,
       );
