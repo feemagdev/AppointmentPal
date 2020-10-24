@@ -2,10 +2,10 @@
 
 
 
-import 'package:appointmentproject/BLoC/AuthBloc/auth_bloc.dart';
-import 'package:appointmentproject/BLoC/AuthBloc/auth_state.dart';
-import 'package:appointmentproject/BLoC/UserRoleBloc/user_role_bloc.dart';
-import 'package:appointmentproject/BLoC/UserRoleBloc/user_role_event.dart';
+import 'package:appointmentproject/bloc/AuthBloc/auth_bloc.dart';
+import 'package:appointmentproject/bloc/AuthBloc/auth_state.dart';
+import 'package:appointmentproject/bloc/UserRoleBloc/user_role_bloc.dart';
+import 'package:appointmentproject/bloc/UserRoleBloc/user_role_event.dart';
 import 'package:appointmentproject/ui/Signup/signup_screen.dart';
 import 'package:appointmentproject/ui/helpers/check_user_role_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';

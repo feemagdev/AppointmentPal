@@ -4,26 +4,27 @@ class Appointment {
   DocumentReference _appointmentID;
   DocumentReference _professionalID;
   DocumentReference _customerID;
-  Timestamp _appointmentDateTime;
+  Timestamp _appointmentStartTime;
+  Timestamp _appointmentEndTime;
   Timestamp _appointmentDate;
   String _appointmentStatus;
 
   Appointment.bookAppointment();
+
   Appointment.updateAppointment();
 
-  Map<String,dynamic> updateMap(
+  Map<String, dynamic> updateMap(
       DocumentReference professionalID,
       String clientName,
       String clientPhone,
       Timestamp appointmentDateTime,
-      Timestamp appointmentDate
-      ){
+      Timestamp appointmentDate) {
     return {
-      'professionalID':professionalID,
-      'client_name':clientName,
-      'client_phone':clientPhone,
-      'appointment_date_time':appointmentDateTime,
-      'appointment_date':appointmentDate,
+      'professionalID': professionalID,
+      'client_name': clientName,
+      'client_phone': clientPhone,
+      'appointment_date_time': appointmentDateTime,
+      'appointment_date': appointmentDate,
     };
   }
 
@@ -61,14 +62,16 @@ class Appointment {
   Map<String, dynamic> professionalAppointmentMap(
       DocumentReference professionalID,
       DocumentReference customerID,
-      Timestamp appointmentDateTime,
+      Timestamp appointmentStartTime,
+      Timestamp appointmentEndTime,
       Timestamp appointmentDate,
       String appointmentStatus) {
     return {
       'professionalID': professionalID,
       'customerID': customerID,
       'appointment_status': appointmentStatus,
-      'appointment_date_time': appointmentDateTime,
+      'appointment_start_time': appointmentStartTime,
+      'appointment_end_time': appointmentEndTime,
       'appointment_date': appointmentDate
     };
   }
@@ -76,22 +79,26 @@ class Appointment {
   Appointment.notAvailableTime(Map snapshot, DocumentReference appointmentID)
       : _appointmentID = appointmentID,
         _appointmentDate = snapshot['appointment_date'],
-        _appointmentDateTime = snapshot['appointment_date_time'];
+        _appointmentStartTime = snapshot['appointment_start_time'],
+        _appointmentEndTime = snapshot['appointment_end_time'];
 
   Appointment.getClientAppointments(
       Map snapshot, DocumentReference appointmentID)
       : _appointmentID = appointmentID,
         _appointmentDate = snapshot['appointment_date'],
-        _appointmentDateTime = snapshot['appointment_date_time'],
-        _professionalID = snapshot['professionalID'];
+        _appointmentStartTime = snapshot['appointment_start_time'],
+        _professionalID = snapshot['professionalID'],
+        _appointmentEndTime = snapshot['appointment_end_time'];
 
   Appointment.getProfessionalAppointments(
       Map snapshot, DocumentReference appointmentID)
       : _appointmentID = appointmentID,
         _appointmentDate = snapshot['appointment_date'],
-        _appointmentDateTime = snapshot['appointment_date_time'],
+        _appointmentStartTime = snapshot['appointment_start_time'],
+        _appointmentEndTime = snapshot['appointment_end_time'],
         _professionalID = snapshot['professionalID'],
-        _appointmentStatus = snapshot['appointment_status'];
+        _appointmentStatus = snapshot['appointment_status'],
+        _customerID = snapshot['customerID'];
 
   DocumentReference getAppointmentID() {
     return _appointmentID;
@@ -105,9 +112,11 @@ class Appointment {
     return _professionalID;
   }
 
-
-  Timestamp getAppointmentDateTime() {
-    return _appointmentDateTime;
+  Timestamp getAppointmentStartTime() {
+    return _appointmentStartTime;
+  }
+  Timestamp getAppointmentEndTime() {
+    return _appointmentEndTime;
   }
 
   Timestamp getAppointmentDate() {
@@ -117,5 +126,14 @@ class Appointment {
   String getAppointmentStatus() {
     return _appointmentStatus;
   }
+
+
+  void setAppointmentStartTime(Timestamp appointmentStartTime){
+    _appointmentStartTime = appointmentStartTime;
+  }
+  void setAppointmentEndTime(Timestamp appointmentEndTime){
+    _appointmentEndTime = appointmentEndTime;
+  }
+
 
 }

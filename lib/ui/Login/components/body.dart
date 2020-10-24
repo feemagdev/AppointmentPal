@@ -1,7 +1,8 @@
 
-import 'package:appointmentproject/BLoC/LoginBloc/login_bloc.dart';
-import 'package:appointmentproject/BLoC/LoginBloc/login_event.dart';
-import 'package:appointmentproject/BLoC/LoginBloc/login_state.dart';
+
+import 'package:appointmentproject/bloc/LoginBloc/login_bloc.dart';
+import 'package:appointmentproject/bloc/LoginBloc/login_event.dart';
+import 'package:appointmentproject/bloc/LoginBloc/login_state.dart';
 import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/model/service.dart';

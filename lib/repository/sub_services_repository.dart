@@ -15,7 +15,6 @@ class SubServiceRepository {
   Future<List<SubServices>> getSubServicesList(DocumentReference serviceID) async {
     List<SubServices> subServicesList = List();
     final _dbReference = Firestore.instance;
-    final String servicePath = 'service';
     final String subServicesPath = 'sub_service';
     final String referenceAttribute = "serviceID";
     await _dbReference

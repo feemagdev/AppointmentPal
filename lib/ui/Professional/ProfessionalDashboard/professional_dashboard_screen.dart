@@ -1,4 +1,5 @@
-import 'package:appointmentproject/BLoC/ProfessionalBloc/ProfessionalDashboardBloc/professional_dashboard_bloc.dart';
+
+import 'package:appointmentproject/bloc/ProfessionalBloc/ProfessionalDashboardBloc/professional_dashboard_bloc.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/components/professional_dashboard_body.dart';
 import 'package:flutter/material.dart';

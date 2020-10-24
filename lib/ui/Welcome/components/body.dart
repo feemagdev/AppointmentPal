@@ -1,7 +1,8 @@
 
 
-import 'package:appointmentproject/BLoC/AuthBloc/auth_bloc.dart';
-import 'package:appointmentproject/BLoC/AuthBloc/auth_event.dart';
+
+import 'package:appointmentproject/bloc/AuthBloc/auth_bloc.dart';
+import 'package:appointmentproject/bloc/AuthBloc/auth_event.dart';
 import 'package:appointmentproject/ui/Welcome/components/background.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
 import 'package:appointmentproject/ui/helpers/login_helper.dart';

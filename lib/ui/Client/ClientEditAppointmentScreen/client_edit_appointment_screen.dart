@@ -1,4 +1,5 @@
-import 'package:appointmentproject/BLoC/ClientBloc/EditAppointmentBloc/edit_appointment_bloc.dart';
+
+import 'package:appointmentproject/bloc/ClientBloc/EditAppointmentBloc/edit_appointment_bloc.dart';
 import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/ui/Client/ClientEditAppointmentScreen/components/client_edit_appointment_screen_body.dart';
 import 'package:flutter/cupertino.dart';

@@ -1,8 +1,10 @@
-import 'package:appointmentproject/BLoC/ClientBloc/EditAppointmentBloc/edit_appointment_bloc.dart';
+
+import 'package:appointmentproject/bloc/ClientBloc/EditAppointmentBloc/edit_appointment_bloc.dart';
 import 'package:appointmentproject/model/appointment.dart';
 import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/ui/Client/SelectDateTime/components/custom_date.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalAddAppointmentScreen/components/professional_select_date_time_body.dart';
+import 'package:appointmentproject/ui/Professional/ProfessionalAddAppointmentScreen/professional_select_date_time_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -86,7 +88,7 @@ class Body extends StatelessWidget {
                             style: TextStyle(
                             fontWeight: FontWeight.bold
                           ),),
-                          Text(DateFormat.yMMMMd().format(appointment.getAppointmentDateTime().toDate())),
+                          Text(DateFormat.yMMMMd().format(appointment.getAppointmentStartTime().toDate())),
                           SizedBox(
                             height: 10,
                           ),
@@ -112,7 +114,7 @@ class Body extends StatelessWidget {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold
                               ),),
-                            Text(DateFormat.jm().format(appointment.getAppointmentDateTime().toDate())),
+                            Text(DateFormat.jm().format(appointment.getAppointmentStartTime().toDate())),
                             SizedBox(
                               height: 10,
                             ),
@@ -151,7 +153,7 @@ class Body extends StatelessWidget {
 
   navigateToSelectNewTimeScreen(BuildContext context,Appointment appointment){
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return ProfessionalSelectDateTime(appointment:appointment);
+      return ProfessionalSelectDateTimeScreen(appointment:appointment);
     }));
   }
 

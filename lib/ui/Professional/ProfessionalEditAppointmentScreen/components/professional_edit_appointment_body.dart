@@ -1,8 +1,11 @@
-import 'package:appointmentproject/BLoC/ProfessionalBloc/ProfessionalEditAppointment/professional_edit_appointment_bloc.dart';
+import 'package:appointmentproject/bloc/ProfessionalBloc/ProfessionalEditAppointment/professional_edit_appointment_bloc.dart';
 import 'package:appointmentproject/model/appointment.dart';
+import 'package:appointmentproject/model/customer.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/ui/Client/SelectDateTime/components/custom_date.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalAddAppointmentScreen/professional_select_date_time_screen.dart';
+import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/professional_dashboard_screen.dart';
+import 'package:appointmentproject/ui/Professional/UpdateAppointmentScreen/update_appointment_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,49 +15,65 @@ class ProfessionalEditAppointmentBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Professional _professional;
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 20),
-          Text("Select date"),
-          SizedBox(
-            height: 10,
-          ),
-          CustomDateView(
-            onTap: (DateTime dateTime) {
-              BlocProvider.of<ProfessionalEditAppointmentBloc>(context).add(
-                  ProfessionalShowSelectedDayAppointmentsEvent(
-                      professional: _professional, dateTime: dateTime));
-            },
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          BlocListener<ProfessionalEditAppointmentBloc,
-              ProfessionalEditAppointmentState>(
-            listener: (context, state) {
-              if (state is ProfessionalAppointmentIsSelectedState) {
-                navigateToSelectNewTimeScreen(
-                    context, state.appointment, state.professional);
-              }
-            },
-            child: BlocBuilder<ProfessionalEditAppointmentBloc,
-                ProfessionalEditAppointmentState>(
-              builder: (context, state) {
-                if (state is ProfessionalEditAppointmentInitial) {
-                  _professional = state.professional;
-                  return loadingState(context, state.professional);
-                } else if (state
-                    is ProfessionalShowSelectedDayAppointmentsState) {
-                  return appointmentsBuilder(
-                      context, state.appointments, state.professional);
-                }
-                return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Select Appointment to Update"),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            BlocProvider.of<ProfessionalEditAppointmentBloc>(context).add(
+                MoveToDashboardScreenFromEditAppointmentEvent(
+                    professional: _professional));
+          },
+        ),
+      ),
+      body: Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 20),
+            Text("Select date"),
+            SizedBox(
+              height: 10,
+            ),
+            CustomDateView(
+              onTap: (DateTime dateTime) {
+                BlocProvider.of<ProfessionalEditAppointmentBloc>(context).add(
+                    ProfessionalShowSelectedDayAppointmentsEvent(
+                        professional: _professional, dateTime: dateTime));
               },
             ),
-          ),
-        ],
+            SizedBox(
+              height: 10,
+            ),
+            BlocListener<ProfessionalEditAppointmentBloc,
+                ProfessionalEditAppointmentState>(
+              listener: (context, state) {
+                if (state is ProfessionalAppointmentIsSelectedState) {
+                  navigateToUpdateAppointmentScreen(context, state.appointment,
+                      state.professional, state.customer);
+                }else if(state is MoveToDashboardScreenFromEditAppointmentState){
+                  navigateToDashboardScreen(context,state.professional);
+                }
+              },
+              child: BlocBuilder<ProfessionalEditAppointmentBloc,
+                  ProfessionalEditAppointmentState>(
+                builder: (context, state) {
+                  if (state is ProfessionalEditAppointmentInitial) {
+                    _professional = state.professional;
+                    return loadingState(context, state.professional);
+                  } else if (state
+                      is ProfessionalShowSelectedDayAppointmentsState) {
+                    _professional = state.professional;
+                    return appointmentsBuilder(context, state.appointments,
+                        state.professional, state.customers);
+                  }
+                  return Container();
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -67,12 +86,14 @@ class ProfessionalEditAppointmentBody extends StatelessWidget {
   }
 
   Widget appointmentUI(BuildContext context, Appointment appointment,
-      Professional professional) {
+      Professional professional, Customer customer) {
     return InkWell(
         onTap: () {
           BlocProvider.of<ProfessionalEditAppointmentBloc>(context).add(
               ProfessionalEditAppointmentSelectedEvent(
-                  appointment: appointment, professional: professional));
+                  appointment: appointment,
+                  professional: professional,
+                  customer: customer));
         },
         child: Container(
             decoration: BoxDecoration(
@@ -100,56 +121,70 @@ class ProfessionalEditAppointmentBody extends StatelessWidget {
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Text(DateFormat.yMMMMd().format(
-                              appointment.getAppointmentDateTime().toDate())),
+                              appointment.getAppointmentStartTime().toDate())),
                           SizedBox(
                             height: 10,
                           ),
                           Text(
-                            "Client",
+                            "Customer",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                      //    Text(appointment.getClientName()),
+                          Text(customer.getName()),
                         ],
                       ),
                       Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "time",
+                              "Time",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            Text(DateFormat.jm().format(
-                                appointment.getAppointmentDateTime().toDate())),
+                            Text(DateFormat.jm().format(appointment
+                                .getAppointmentStartTime()
+                                .toDate())),
                             SizedBox(
                               height: 10,
                             ),
                             Text(
-                              "Client contact",
+                              "Customer contact",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-              //              Text(appointment.getClientPhone()),
+                            Text(customer.getPhone()),
                           ])
                     ]))));
   }
 
-  Widget appointmentsBuilder(BuildContext context,
-      List<Appointment> appointments, Professional professional) {
+  Widget appointmentsBuilder(
+      BuildContext context,
+      List<Appointment> appointments,
+      Professional professional,
+      List<Customer> customers) {
     return ListView.builder(
       shrinkWrap: true,
       itemCount: appointments.length,
       scrollDirection: Axis.vertical,
       itemBuilder: (context, index) => Padding(
         padding: const EdgeInsets.only(right: 7, top: 10, left: 7),
-        child: appointmentUI(context, appointments[index], professional),
+        child: appointmentUI(
+            context, appointments[index], professional, customers[index]),
       ),
     );
   }
 
-  navigateToSelectNewTimeScreen(BuildContext context, Appointment appointment,
-      Professional professional) {
+  navigateToUpdateAppointmentScreen(BuildContext context, Appointment appointment,
+      Professional professional, Customer customer) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return ProfessionalSelectDateTimeScreen(
-          appointment: appointment, professional: professional);
+      return UpdateAppointmentScreen(
+        appointment: appointment,
+        professional: professional,
+        customer: customer,
+      );
+    }));
+  }
+
+  void navigateToDashboardScreen(BuildContext context, Professional professional) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context){
+      return ProfessionalDashboard(professional: professional);
     }));
   }
 }

@@ -40,7 +40,8 @@ class AppointmentRepository {
   professionalMakeAppointment(
       DocumentReference professionalID,
       DocumentReference customerID,
-      Timestamp appointmentDateTime,
+      Timestamp appointmentStartTime,
+      Timestamp appointmentEndTime,
       String appointmentStatus) {
     final dbReference = Firestore.instance;
     Appointment appointment = Appointment.bookAppointment();
@@ -48,8 +49,9 @@ class AppointmentRepository {
         appointment.professionalAppointmentMap(
             professionalID,
             customerID,
-            appointmentDateTime,
-            changeTime(appointmentDateTime),
+            appointmentStartTime,
+            appointmentEndTime,
+            changeTime(appointmentStartTime),
             appointmentStatus));
   }
 
@@ -124,6 +126,7 @@ class AppointmentRepository {
       value.documents.forEach((element) {
         Appointment appointment = Appointment.getProfessionalAppointments(
             element.data, element.reference);
+        print(element.data);
         appointments.add(appointment);
       });
     });

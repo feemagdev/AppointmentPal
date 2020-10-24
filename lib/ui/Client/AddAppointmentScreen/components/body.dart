@@ -1,6 +1,7 @@
-import 'package:appointmentproject/BLoC/ClientBloc/AddAppointmentBloc/add_appointment_bloc.dart';
-import 'package:appointmentproject/BLoC/ClientBloc/AddAppointmentBloc/add_appointment_event.dart';
-import 'package:appointmentproject/BLoC/ClientBloc/AddAppointmentBloc/add_appointment_state.dart';
+
+import 'package:appointmentproject/bloc/ClientBloc/AddAppointmentBloc/add_appointment_bloc.dart';
+import 'package:appointmentproject/bloc/ClientBloc/AddAppointmentBloc/add_appointment_event.dart';
+import 'package:appointmentproject/bloc/ClientBloc/AddAppointmentBloc/add_appointment_state.dart';
 import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/model/service.dart';
