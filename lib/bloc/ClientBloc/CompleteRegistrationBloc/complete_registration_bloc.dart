@@ -1,13 +1,13 @@
 import 'dart:async';
 
+
+import 'package:appointmentproject/bloc/ClientBloc/CompleteRegistrationBloc/bloc.dart';
 import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/repository/client_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'complete_registration_bloc_event.dart';
-import 'complete_registration_bloc_state.dart';
 
 class CompleteRegistrationBloc
     extends Bloc<CompleteRegistrationBlocEvent, CompleteRegistrationBlocState> {

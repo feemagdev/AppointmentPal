@@ -1,8 +1,9 @@
+import 'package:appointmentproject/bloc/SignUpBloc/bloc.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/repository/service_repository.dart';
 import 'package:flutter/services.dart';
 
-import './bloc.dart';
+
 
 class SignUpBloc extends Bloc<SignUpEvent,SignUpState>{
   @override

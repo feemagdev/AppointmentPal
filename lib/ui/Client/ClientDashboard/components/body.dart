@@ -1,4 +1,8 @@
-import 'package:appointmentproject/BLoC/ClientBloc/ClientDashboardBloc/bloc.dart';
+
+
+import 'package:appointmentproject/bloc/ClientBloc/ClientDashboardBloc/client_dashboard_bloc.dart';
+import 'package:appointmentproject/bloc/ClientBloc/ClientDashboardBloc/client_dashboard_event.dart';
+import 'package:appointmentproject/bloc/ClientBloc/ClientDashboardBloc/client_dashboard_state.dart';
 import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/ui/Client/AddAppointmentScreen/add_appoinmtment_screen.dart';

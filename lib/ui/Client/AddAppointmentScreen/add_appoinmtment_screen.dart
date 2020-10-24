@@ -1,5 +1,6 @@
 
-import 'package:appointmentproject/BLoC/ClientBloc/AddAppointmentBloc/add_appointment_bloc.dart';
+
+import 'package:appointmentproject/bloc/ClientBloc/AddAppointmentBloc/add_appointment_bloc.dart';
 import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/ui/Client/AddAppointmentScreen/components/body.dart';
