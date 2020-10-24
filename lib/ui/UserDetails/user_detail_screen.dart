@@ -1,4 +1,5 @@
-import 'package:appointmentproject/BLoC/ClientBloc/CompleteRegistrationBloc/bloc.dart';
+
+import 'package:appointmentproject/bloc/ClientBloc/CompleteRegistrationBloc/complete_registration_bloc.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/ui/UserDetails/components/body.dart';
 import 'package:firebase_auth/firebase_auth.dart';

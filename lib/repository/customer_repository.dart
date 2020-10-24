@@ -26,13 +26,13 @@ class CustomerRepository {
   }
 
   Future<Customer> addCustomer(
-      String professionalDocumentID, String name, String phone) async {
+      String professionalDocumentID, String name, String phone,String address, String city,String country) async {
     final dbReference = Firestore.instance;
     DocumentReference reference = await dbReference
         .collection('professional')
         .document(professionalDocumentID)
         .collection('customer')
-        .add(Customer.defaultConstructor().toMap(name, phone));
+        .add(Customer.defaultConstructor().toMap(name, phone,address,city,country));
     Customer customer = Customer.defaultConstructor();
     customer.setName(name);
     customer.setPhone(phone);
@@ -43,4 +43,24 @@ class CustomerRepository {
     }
     return customer;
   }
+
+  Future<Customer> getCustomer(DocumentReference documentReference) async {
+    Customer customer = Customer.defaultConstructor();
+    await documentReference.get().then((value){
+      customer = Customer.fromMap(value.data, value.reference);
+    });
+    return customer;
+  }
+  
+  Future<bool> checkCustomerExist(String phone,String professionalID) async{
+    final dbReference = Firestore.instance;
+    QuerySnapshot snapshot = await dbReference.collection('professional').document(professionalID).collection('customer').where('phone',isEqualTo: phone).getDocuments();
+    return snapshot.documents.isNotEmpty;
+
+    
+    
+  }
+
+
+
 }

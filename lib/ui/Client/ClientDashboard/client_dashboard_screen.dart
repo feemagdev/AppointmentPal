@@ -1,5 +1,6 @@
 
-import 'package:appointmentproject/BLoC/ClientBloc/ClientDashboardBloc/client_dashboard_bloc.dart';
+
+import 'package:appointmentproject/bloc/ClientBloc/ClientDashboardBloc/client_dashboard_bloc.dart';
 import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/ui/Client/ClientDashboard/components/body.dart';
 import 'package:firebase_auth/firebase_auth.dart';

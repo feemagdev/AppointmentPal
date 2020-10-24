@@ -1,4 +1,7 @@
-import 'package:appointmentproject/BLoC/ClientBloc/CompleteRegistrationBloc/bloc.dart';
+
+import 'package:appointmentproject/bloc/ClientBloc/CompleteRegistrationBloc/complete_registration_bloc.dart';
+import 'package:appointmentproject/bloc/ClientBloc/CompleteRegistrationBloc/complete_registration_bloc_event.dart';
+import 'package:appointmentproject/bloc/ClientBloc/CompleteRegistrationBloc/complete_registration_bloc_state.dart';
 import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/ui/Client/ClientDashboard/client_dashboard_screen.dart';

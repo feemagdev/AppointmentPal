@@ -1,7 +1,6 @@
-import 'package:appointmentproject/BLoC/ProfessionalBloc/ProfessionalSelectCustomerBloc/professional_select_customer_bloc.dart';
+import 'package:appointmentproject/bloc/ProfessionalBloc/ProfessionalSelectCustomerBloc/professional_select_customer_bloc.dart';
 import 'package:appointmentproject/model/customer.dart';
 import 'package:appointmentproject/model/professional.dart';
-import 'package:appointmentproject/model/schedule.dart';
 import 'package:appointmentproject/ui/Professional/AppointmentBookingScreen/appointment_booking_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalAddAppointmentScreen/professional_select_date_time_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalAddNewCustomer/professional_add_new_customer_screen.dart';
@@ -13,8 +12,8 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
     Professional professional;
-    DateTime selectedDateTime;
-    Schedule schedule;
+    DateTime appointmentStartTime;
+    DateTime appointmentEndTime;
     return Scaffold(
       appBar: AppBar(
         title: Text("Select Customer"),
@@ -41,8 +40,8 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
                     BlocProvider.of<ProfessionalSelectCustomerBloc>(context).add(
                         AddCustomerButtonPressedEvent(
                             professional: professional,
-                            selectedDateTime: selectedDateTime,
-                            schedule: schedule));
+                            appointmentStartTime: appointmentStartTime,
+                            appointmentEndTime: appointmentEndTime));
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -75,9 +74,9 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
                   if (state is AddCustomerButtonPressedState) {
                     print("add customer button pressed state");
                     moveToAddNewCustomerScreen(state.professional,
-                        state.selectedDateTime, context, state.schedule);
+                        state.appointmentStartTime, context, state.appointmentEndTime);
                   }else if(state is CustomerIsSelectedState){
-                    navigateToAppointmentBookingScreen(state.professional,state.customer,state.appointmentTime,state.schedule,context);
+                    navigateToAppointmentBookingScreen(state.professional,state.customer,state.appointmentStartTime,state.appointmentEndTime,context);
                   }else if(state is MoveBackToSelectDateTimeScreenState){
                     navigateToAddAppointmentScreen(context,state.professional);
                   }
@@ -87,21 +86,21 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
                   builder: (context, state) {
                     if (state is ProfessionalSelectCustomerInitial) {
                       professional = state.professional;
-                      selectedDateTime = state.selectedDateTime;
-                      schedule = state.schedule;
+                      appointmentStartTime = state.appointmentStartTime;
+                      appointmentEndTime = state.appointmentEndTime;
                       return loadingState(context, professional,
-                          state.selectedDateTime, state.schedule);
+                          state.appointmentStartTime, state.appointmentEndTime);
                     }
                     if (state is ProfessionalSelectCustomerShowAllCustomerState) {
                       professional = state.professional;
-                      selectedDateTime = state.selectedDateTime;
-                      schedule = state.schedule;
+                      appointmentStartTime = state.appointmentStartTime;
+                      appointmentEndTime = state.appointmentEndTime;
                       return customerUIBuilder(
                           state.customer,
                           context,
                           deviceWidth,
-                          state.schedule,
-                          state.selectedDateTime,
+                          state.appointmentEndTime,
+                          state.appointmentStartTime,
                           state.professional);
                     }
                     return Container();
@@ -119,18 +118,18 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
       List<Customer> customers,
       BuildContext context,
       double deviceWidth,
-      Schedule schedule,
-      DateTime selectedDateTime,
+      DateTime appointmentEndTime,
+      DateTime appointmentStartTime,
       Professional professional) {
     return ListView.builder(
         itemCount: customers.length,
         shrinkWrap: true,
         itemBuilder: (context, index) => customerUI(customers[index],
-            deviceWidth, context, schedule, selectedDateTime, professional));
+            deviceWidth, context, appointmentStartTime, appointmentEndTime, professional));
   }
 
   Widget customerUI(Customer customer, double deviceWidth, BuildContext context,
-      Schedule schedule, DateTime selectedDateTime, Professional professional) {
+      DateTime appointmentStartTime, DateTime appointmentEndTime, Professional professional) {
     double fontSize = 12;
     double iconSize = 20;
     if (deviceWidth < 360) {
@@ -144,9 +143,9 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
             BlocProvider.of<ProfessionalSelectCustomerBloc>(context).add(
                 CustomerIsSelectedEvent(
                     professional: professional,
-                    appointmentTime: selectedDateTime,
+                    appointmentStartTime: appointmentStartTime,
                     customer: customer,
-                    schedule: schedule));
+                    appointmentEndTime: appointmentEndTime));
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -190,38 +189,35 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
   }
 
   Widget loadingState(BuildContext context, Professional professional,
-      DateTime selectedDateTime, Schedule schedule) {
+      DateTime appointmentStartTime, DateTime appointmentEndTime) {
     BlocProvider.of<ProfessionalSelectCustomerBloc>(context).add(
         ProfessionalSelectCustomerShowAllCustomerEvent(
             professional: professional,
-            selectedDateTime: selectedDateTime,
-            schedule: schedule));
+            appointmentStartTime: appointmentStartTime,
+            appointmentEndTime: appointmentEndTime));
 
     return CircularProgressIndicator();
   }
 
   void moveToAddNewCustomerScreen(Professional professional,
-      DateTime selectedDateTime, BuildContext context, Schedule schedule) {
+      DateTime appointmentStartTime, BuildContext context, DateTime appointmentEndTime) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalAddNewCustomerScreen(
         professional: professional,
-        selectedDateTime: selectedDateTime,
-        schedule: schedule,
+        appointmentStartTime: appointmentStartTime,
+        appointmentEndTime: appointmentEndTime,
       );
     }));
   }
 
   void navigateToAppointmentBookingScreen(Professional professional,
-      Customer customer, DateTime selectedDateTime, Schedule schedule,BuildContext context) {
+      Customer customer, DateTime appointmentStartTime, DateTime appointmentEndTime,BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      print("select professional add customer screen");
-      print(selectedDateTime);
-      print(schedule.getDuration());
       return AppointmentBookingScreen(
           professional: professional,
-          selectedDateTime: selectedDateTime,
+          appointmentStartTime: appointmentStartTime,
           customer: customer,
-          schedule: schedule);
+          appointmentEndTime: appointmentEndTime);
     }));
   }
 

@@ -1,7 +1,7 @@
-import 'package:appointmentproject/BLoC/ProfessionalBloc/AppointmentBookingBloc/appointment_booking_bloc.dart';
+
+import 'package:appointmentproject/bloc/ProfessionalBloc/AppointmentBookingBloc/appointment_booking_bloc.dart';
 import 'package:appointmentproject/model/customer.dart';
 import 'package:appointmentproject/model/professional.dart';
-import 'package:appointmentproject/model/schedule.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/professional_dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,8 +45,8 @@ class _AppointmentBookingScreenBodyState
                   if (state is AppointmentBookingInitial) {
                     professional = state.professional;
                     return appointmentBookingUI(
-                        state.startDateTime,
-                        state.schedule,
+                        state.appointmentStartTime,
+                        state.appointmentEndTime,
                         state.customer,
                         state.professional,
                         deviceWidth);
@@ -61,7 +61,7 @@ class _AppointmentBookingScreenBodyState
     );
   }
 
-  Widget appointmentBookingUI(DateTime startDateTime, Schedule schedule,
+  Widget appointmentBookingUI(DateTime appointmentStartTime, DateTime appointmentEndTime,
       Customer customer, Professional professional, double deviceWidth) {
     double fontSize = 12;
     double iconSize = 20;
@@ -94,7 +94,7 @@ class _AppointmentBookingScreenBodyState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    DateFormat.yMMMMd('en_US').format(startDateTime),
+                    DateFormat.yMMMMd('en_US').format(appointmentStartTime),
                     style: TextStyle(
                       fontSize: fontSize,
                     ),
@@ -102,7 +102,7 @@ class _AppointmentBookingScreenBodyState
                   Row(
                     children: [
                       Text(
-                        DateFormat.jm().format(startDateTime),
+                        DateFormat.jm().format(appointmentStartTime),
                         style: TextStyle(
                           fontSize: fontSize,
                         ),
@@ -118,8 +118,7 @@ class _AppointmentBookingScreenBodyState
                         width: 2,
                       ),
                       Text(
-                        DateFormat.jm().format(startDateTime
-                            .add(Duration(minutes: schedule.getDuration()))),
+                        DateFormat.jm().format(appointmentEndTime),
                         style: TextStyle(
                           fontSize: fontSize,
                         ),
@@ -172,7 +171,8 @@ class _AppointmentBookingScreenBodyState
                 BlocProvider.of<AppointmentBookingBloc>(context).add(AddAppointmentButtonPressedEvent(
                     professional: professional,
                     customer: customer,
-                    appointmentTime: startDateTime));
+                    appointmentStartTime: appointmentStartTime,
+                appointmentEndTime:appointmentEndTime));
                 print("Appointment added");
               },
             ),

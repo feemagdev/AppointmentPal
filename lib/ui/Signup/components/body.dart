@@ -1,5 +1,7 @@
-import 'package:appointmentproject/BLoC/SignUpBloc/bloc.dart';
-import 'package:appointmentproject/BLoC/SignUpBloc/sign_up_bloc.dart';
+
+import 'package:appointmentproject/bloc/SignUpBloc//sign_up_event.dart';
+import 'package:appointmentproject/bloc/SignUpBloc/sign_up_bloc.dart';
+import 'package:appointmentproject/bloc/SignUpBloc/sign_up_state.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/ui/Client/ClientEmailVerification/email_verification.dart';
 import 'package:appointmentproject/ui/Login/login_screen.dart';

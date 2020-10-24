@@ -1,4 +1,5 @@
-import 'package:appointmentproject/BLoC/ClientBloc/ForgotPassword/forgot_password_bloc.dart';
+
+import 'package:appointmentproject/bloc/ClientBloc/ForgotPassword/forgot_password_bloc.dart';
 import 'package:appointmentproject/ui/Login/login_screen.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
 import 'package:appointmentproject/ui/components/background.dart';

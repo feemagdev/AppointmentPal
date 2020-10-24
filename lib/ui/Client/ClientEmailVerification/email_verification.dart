@@ -1,5 +1,6 @@
 
-import 'package:appointmentproject/BLoC/ClientBloc/EmailVerificationBloc/email_verification_bloc.dart';
+
+import 'package:appointmentproject/bloc/ClientBloc/EmailVerificationBloc/email_verification_bloc.dart';
 import 'package:appointmentproject/ui/Client/ClientEmailVerification/components/body.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

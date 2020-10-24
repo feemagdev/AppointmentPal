@@ -1,6 +1,8 @@
 
-import 'package:appointmentproject/BLoC/UserRoleBloc/bloc.dart';
 
+
+import 'package:appointmentproject/bloc/UserRoleBloc/user_role_bloc.dart';
+import 'package:appointmentproject/bloc/UserRoleBloc/user_role_state.dart';
 import 'package:appointmentproject/ui/Client/ClientDashboard/client_dashboard_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/professional_dashboard_screen.dart';
 import 'package:appointmentproject/ui/UserDetails/user_detail_screen.dart';

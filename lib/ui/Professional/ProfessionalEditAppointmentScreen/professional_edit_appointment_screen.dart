@@ -1,5 +1,5 @@
 
-import 'package:appointmentproject/BLoC/ProfessionalBloc/ProfessionalEditAppointment/professional_edit_appointment_bloc.dart';
+import 'package:appointmentproject/bloc/ProfessionalBloc/ProfessionalEditAppointment/professional_edit_appointment_bloc.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalEditAppointmentScreen/components/professional_edit_appointment_body.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,13 +14,8 @@ class ProfessionalEditAppointmentScreen extends StatelessWidget{
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ProfessionalEditAppointmentBloc(professional: professional),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("Edit appointment"),
-        ),
-        body: ProfessionalEditAppointmentBody(),
-      ),
-    );
+      child: ProfessionalEditAppointmentBody(),
+      );
   }
 
 }

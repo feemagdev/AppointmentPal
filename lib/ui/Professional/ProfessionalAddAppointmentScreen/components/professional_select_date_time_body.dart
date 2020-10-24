@@ -1,11 +1,12 @@
-
-import 'package:appointmentproject/BLoC/ClientBloc/SelectDateTime/select_date_time_bloc.dart';
+import 'package:appointmentproject/bloc/ClientBloc/SelectDateTime/select_date_time_bloc.dart';
 import 'package:appointmentproject/model/appointment.dart';
+import 'package:appointmentproject/model/customer.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/model/schedule.dart';
 import 'package:appointmentproject/ui/Client/SelectDateTime/components/custom_date.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/professional_dashboard_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalSelectCustomerScreen/professional_select_customer_screen.dart';
+import 'package:appointmentproject/ui/Professional/UpdateAppointmentScreen/update_appointment_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -13,15 +14,13 @@ import 'package:meta/meta.dart';
 import 'package:flutter/cupertino.dart';
 
 class ProfessionalSelectDateTime extends StatelessWidget {
-  final Professional professional;
-  final Appointment appointment;
-
-  ProfessionalSelectDateTime({@required this.professional, this.appointment});
 
   @override
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
     Professional professional;
+    Appointment appointment;
+    Customer customer;
     List<DateTime> timeSlots;
     Schedule schedule;
     int selectedIndex;
@@ -33,8 +32,17 @@ class ProfessionalSelectDateTime extends StatelessWidget {
         title: Text("Select Date and Time"),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: (){
-            BlocProvider.of<SelectDateTimeBloc>(context).add(MoveToDashboardScreenEvent(professional:professional));
+          onPressed: () {
+            if (appointment == null) {
+              BlocProvider.of<SelectDateTimeBloc>(context)
+                  .add(MoveToDashboardScreenEvent(professional: professional));
+            } else {
+              BlocProvider.of<SelectDateTimeBloc>(context).add(
+                  MoveToUpdateAppointmentScreenEvent(
+                      professional: professional,
+                      appointment: appointment,
+                      customer: customer));
+            }
           },
         ),
       ),
@@ -54,26 +62,38 @@ class ProfessionalSelectDateTime extends StatelessWidget {
               onTap: (DateTime dateTime) {
                 BlocProvider.of<SelectDateTimeBloc>(context).add(
                     ShowAvailableTimeEvent(
-                        professional: professional, dateTime: dateTime));
+                        professional: professional,
+                        dateTime: dateTime,
+                        appointment: appointment,
+                        customer: customer));
               },
             ),
             BlocListener<SelectDateTimeBloc, SelectDateTimeState>(
               listener: (context, state) {
                 if (state is MoveToSelectCustomerScreenState) {
-                  navigateToSelectCustomerScreen(context,state.professional,state.selectedDateTime,state.schedule);
-                }else if(state is MoveToDashboardScreenState){
-                  navigateToDashboardScreen(context,state.professional);
+                  navigateToSelectCustomerScreen(context, state.professional,
+                      state.appointmentStartTime, state.appointmentEndTime);
+                } else if (state is MoveToDashboardScreenState) {
+                  navigateToDashboardScreen(context, state.professional);
+                } else if (state is MoveToUpdateAppointmentScreenState) {
+                  navigateToUpdateAppointmentScreen(context, state.professional,
+                      state.appointment, state.customer);
                 }
               },
               child: BlocBuilder<SelectDateTimeBloc, SelectDateTimeState>(
                 builder: (context, state) {
                   if (state is SelectDateTimeInitial) {
                     professional = state.professional;
-                    return loadingState(context, state.professional);
+                    appointment = state.appointment;
+                    customer = state.customer;
+                    return loadingState(context, state.professional,
+                        state.appointment, state.customer);
                   } else if (state is ShowAvailableTimeState) {
                     professional = state.professional;
                     schedule = state.schedule;
                     timeSlots = state.timeSlots;
+                    customer = state.customer;
+                    appointment = state.appointment;
                     return Padding(
                       padding: const EdgeInsets.only(top: 20, bottom: 15),
                       child: Text(
@@ -98,15 +118,13 @@ class ProfessionalSelectDateTime extends StatelessWidget {
               builder: (context, state) {
                 if (state is ShowAvailableTimeState) {
                   return Expanded(
-                    child: timeSlotBuilder2(
-                      context,
-                      state.timeSlots,
-                      null,
-                      state.professional,
-                      state.schedule,
-                    ),
+                    child: timeSlotBuilder2(context, state.timeSlots, null,
+                        state.professional, state.schedule, state.appointment,state.customer),
                   );
                 } else if (state is NoScheduleAvailable) {
+                  professional = state.professional;
+                  appointment = state.appointment;
+                  customer = state.customer;
                   String text = "sorry no schedule available for this date";
                   if (state.dateTime == null ||
                       state.dateTime.day == DateTime.now().day) {
@@ -127,8 +145,14 @@ class ProfessionalSelectDateTime extends StatelessWidget {
                   selectedIndex = state.selectedIndex;
                   timeSlots = state.timeSlots;
                   schedule = state.schedule;
-                  return buildTimeSlotsUI(context, state.timeSlots,
-                      state.selectedIndex, state.professional, state.schedule);
+                  customer = state.customer;
+                  return buildTimeSlotsUI(
+                      context,
+                      state.timeSlots,
+                      state.selectedIndex,
+                      state.professional,
+                      state.schedule,
+                      state.appointment,state.customer);
                 }
                 return Container();
               },
@@ -139,9 +163,13 @@ class ProfessionalSelectDateTime extends StatelessWidget {
     );
   }
 
-  Widget loadingState(BuildContext context, Professional professional) {
-    BlocProvider.of<SelectDateTimeBloc>(context).add(
-        ShowAvailableTimeEvent(professional: professional, dateTime: null));
+  Widget loadingState(BuildContext context, Professional professional,
+      Appointment appointment, Customer customer) {
+    BlocProvider.of<SelectDateTimeBloc>(context).add(ShowAvailableTimeEvent(
+        professional: professional,
+        dateTime: null,
+        customer: customer,
+        appointment: appointment));
     return Container(
       child: Center(
         child: CircularProgressIndicator(
@@ -162,14 +190,14 @@ class ProfessionalSelectDateTime extends StatelessWidget {
   }
 
   Widget timeSlotsUI(
-    DateTime time,
-    Color color,
-    BuildContext context,
-    int selectedIndex,
-    Professional professional,
-    List<DateTime> timeSlots,
-    Schedule schedule,
-  ) {
+      DateTime time,
+      Color color,
+      BuildContext context,
+      int selectedIndex,
+      Professional professional,
+      List<DateTime> timeSlots,
+      Schedule schedule,
+      Appointment appointment,Customer customer) {
     double deviceWidth = MediaQuery.of(context).size.width;
     return InkWell(
       onTap: () {
@@ -178,6 +206,8 @@ class ProfessionalSelectDateTime extends StatelessWidget {
           scheduleIndex: selectedIndex,
           schedules: timeSlots,
           schedule: schedule,
+          appointment: appointment,
+          customer:customer,
         ));
       },
       child: Container(
@@ -249,6 +279,8 @@ class ProfessionalSelectDateTime extends StatelessWidget {
     int selectedIndex,
     Professional professional,
     Schedule schedule,
+    Appointment appointment,
+      Customer customer
   ) {
     return GridView.builder(
         itemCount: timeSlots.length,
@@ -260,14 +292,14 @@ class ProfessionalSelectDateTime extends StatelessWidget {
             crossAxisSpacing: 15,
             mainAxisSpacing: 20),
         itemBuilder: (BuildContext context, int index) => timeSlotsUI(
-              timeSlots[index],
-              selectedIndex == index ? Colors.blue : Colors.white,
-              context,
-              index,
-              professional,
-              timeSlots,
-              schedule,
-            ));
+            timeSlots[index],
+            selectedIndex == index ? Colors.blue : Colors.white,
+            context,
+            index,
+            professional,
+            timeSlots,
+            schedule,
+            appointment,customer));
   }
 
   showErrorDialog(String message, BuildContext context) {
@@ -287,7 +319,8 @@ class ProfessionalSelectDateTime extends StatelessWidget {
         });
   }
 
-  showSuccessfulDialog(BuildContext context, String message,Professional professional) {
+  showSuccessfulDialog(
+      BuildContext context, String message, Professional professional) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -302,16 +335,13 @@ class ProfessionalSelectDateTime extends StatelessWidget {
                 child: Text("Close"),
                 onPressed: () => {
                   Navigator.of(context).pop(),
-                  navigateToDashboardScreen(context,professional)
+                  navigateToDashboardScreen(context, professional)
                 },
               )
             ],
           );
         });
   }
-
-
-
 
   String nameValidator(String name) {
     if (name == null || name.isEmpty) {
@@ -327,27 +357,27 @@ class ProfessionalSelectDateTime extends StatelessWidget {
     return null;
   }
 
-  Widget buildTimeSlotsUI(BuildContext context, List<DateTime> timeSlots,
-      int selectedIndex, Professional professional, Schedule schedule) {
-    print("in select date time DURATION IS");
-    print(schedule.getDuration());
-    BlocProvider.of<SelectDateTimeBloc>(context).add(
-        MoveToSelectCustomerScreenEvent(
-            professional: professional,
-            selectedDateTime: timeSlots[selectedIndex],
-          schedule: schedule
-        ));
+  Widget buildTimeSlotsUI(
+      BuildContext context,
+      List<DateTime> timeSlots,
+      int selectedIndex,
+      Professional professional,
+      Schedule schedule,
+      Appointment appointment,Customer customer) {
+    BlocProvider.of<SelectDateTimeBloc>(context).add(TimeSlotIsSelectedEvent(
+        professional: professional,
+        appointmentStartTime: timeSlots[selectedIndex],
+        appointmentEndTime: timeSlots[selectedIndex]
+            .add(Duration(minutes: schedule.getDuration())),
+        appointment: appointment,
+    customer:customer));
     return Expanded(
-        child: timeSlotBuilder2(
-      context,
-      timeSlots,
-      selectedIndex,
-      professional,
-      schedule,
-    ));
+        child: timeSlotBuilder2(context, timeSlots, selectedIndex, professional,
+            schedule, appointment,customer));
   }
 
-  void navigateToDashboardScreen(BuildContext context,Professional professional) {
+  void navigateToDashboardScreen(
+      BuildContext context, Professional professional) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalDashboard(
         professional: professional,
@@ -355,15 +385,27 @@ class ProfessionalSelectDateTime extends StatelessWidget {
     }));
   }
 
-  void navigateToSelectCustomerScreen(BuildContext context, Professional professional, DateTime selectedDateTime,Schedule schedule) {
+  void navigateToSelectCustomerScreen(
+      BuildContext context,
+      Professional professional,
+      DateTime appointmentStartTime,
+      DateTime appointmentEndTime) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      print("select date time screen");
-      print(selectedDateTime);
-      print(schedule.getDuration());
       return ProfessionalSelectCustomerScreen(
         professional: professional,
-        selectedDateTime:selectedDateTime,
-        schedule:schedule
+        appointmentStartTime: appointmentStartTime,
+        appointmentEndTime: appointmentEndTime,
+      );
+    }));
+  }
+
+  void navigateToUpdateAppointmentScreen(BuildContext context,
+      Professional professional, Appointment appointment, Customer customer) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return UpdateAppointmentScreen(
+        professional: professional,
+        appointment: appointment,
+        customer: customer,
       );
     }));
   }

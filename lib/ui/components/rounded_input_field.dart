@@ -21,7 +21,6 @@ class RoundedInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
-    double deviceHeight = MediaQuery.of(context).size.height;
     return Container(
       height: deviceWidth < 400 ? 50:70,
       padding: EdgeInsets.all(10),

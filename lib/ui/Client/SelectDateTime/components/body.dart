@@ -1,5 +1,6 @@
 
-import 'package:appointmentproject/BLoC/ClientBloc/SelectDateTime/select_date_time_bloc.dart';
+
+import 'package:appointmentproject/bloc/ClientBloc/SelectDateTime/select_date_time_bloc.dart';
 import 'package:appointmentproject/model/client.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/model/schedule.dart';

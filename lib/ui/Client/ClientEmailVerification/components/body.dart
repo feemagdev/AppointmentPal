@@ -1,4 +1,5 @@
-import 'package:appointmentproject/BLoC/ClientBloc/EmailVerificationBloc/email_verification_bloc.dart';
+
+import 'package:appointmentproject/bloc/ClientBloc/EmailVerificationBloc/email_verification_bloc.dart';
 import 'package:appointmentproject/model/service.dart';
 import 'package:appointmentproject/ui/UserDetails/user_detail_screen.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
