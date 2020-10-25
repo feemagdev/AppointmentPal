@@ -139,16 +139,18 @@ class AppointmentRepository {
 
   Future<bool> updateAppointment(Appointment appointment) async {
     final dbReference = Firestore.instance;
+    Map<String,dynamic> updateMap = appointment.updateMap(
+        appointment.getProfessionalID(),
+        appointment.getCustomerID(),
+        appointment.getAppointmentStartTime(),
+        appointment.getAppointmentEndTime(),
+        changeTime(appointment.getAppointmentStartTime()));
+
     await dbReference
         .collection('appointment')
         .document(appointment.getAppointmentID().documentID)
         .setData(
-            appointment.updateMap(
-                appointment.getProfessionalID(),
-                appointment.getCustomerID(),
-                appointment.getAppointmentStartTime(),
-                appointment.getAppointmentEndTime(),
-                changeTime(appointment.getAppointmentStartTime())),
+            updateMap,
             merge: true);
 
     return true;
@@ -171,8 +173,6 @@ class AppointmentRepository {
             appointments.add(appointment);
           });
     });
-   /* */
-    print(appointments);
     return appointments;
   }
 
