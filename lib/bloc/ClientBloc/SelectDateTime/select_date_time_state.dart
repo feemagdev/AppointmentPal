@@ -77,3 +77,6 @@ class MoveToDashboardScreenState extends SelectDateTimeState {
 }
 
 
+class SelectDateTimeLoadingState extends SelectDateTimeState {}
+
+

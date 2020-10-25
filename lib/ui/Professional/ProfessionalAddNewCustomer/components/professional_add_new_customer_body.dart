@@ -1,8 +1,10 @@
 import 'package:appointmentproject/bloc/ProfessionalBloc/ProfessionalAddNewCustomerBloc/professional_add_new_customer_bloc.dart';
+import 'package:appointmentproject/model/appointment.dart';
 import 'package:appointmentproject/model/customer.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/ui/Professional/AppointmentBookingScreen/appointment_booking_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalSelectCustomerScreen/professional_select_customer_screen.dart';
+import 'package:appointmentproject/ui/Professional/UpdateAppointmentScreen/update_appointment_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -55,17 +57,28 @@ class _ProfessionalAddNewCustomerBodyState
                   ProfessionalAddNewCustomerState>(
                 listener: (context, state) {
                   if (state is CustomerAddedSuccessfullyState) {
-                    moveToAppointmentBookingScreen(
-                        state.professional,
-                        state.customer,
-                        state.appointmentStartTime,
-                        state.appointmentEndTime);
+                    Appointment appointment = BlocProvider.of<ProfessionalAddNewCustomerBloc>(context).appointment;
+                    Professional professional = BlocProvider.of<ProfessionalAddNewCustomerBloc>(context).professional;
+                    if(appointment == null){
+                      moveToAppointmentBookingScreen(
+                          state.professional,
+                          state.customer,
+                          state.appointmentStartTime,
+                          state.appointmentEndTime);
+                    }else{
+                      moveToUpdateAppointmentScreen(context,state.customer,professional,appointment);
+                    }
+
                   } else if (state is MoveBackToSelectCustomerScreenState) {
-                    navigateToSelectCustomerScreen(
-                        state.professional,
-                        state.appointmentEndTime,
-                        state.appointmentStartTime,
-                        context);
+                    Appointment appointment = BlocProvider.of<ProfessionalAddNewCustomerBloc>(context).appointment;
+                    Customer customer = BlocProvider.of<ProfessionalAddNewCustomerBloc>(context).customer;
+
+                      navigateToSelectCustomerScreen(
+                          state.professional,
+                          state.appointmentEndTime,
+                          state.appointmentStartTime,
+                          context,appointment,customer);
+
                   }
                 },
                 child: BlocBuilder<ProfessionalAddNewCustomerBloc,
@@ -271,12 +284,20 @@ class _ProfessionalAddNewCustomerBodyState
       Professional professional,
       DateTime appointmentEndTime,
       DateTime appointmentStartTime,
-      BuildContext context) {
+      BuildContext context,
+      Appointment appointment,
+      Customer customer) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalSelectCustomerScreen(
           professional: professional,
           appointmentStartTime: appointmentStartTime,
-          appointmentEndTime: appointmentEndTime);
+          appointmentEndTime: appointmentEndTime,appointment: appointment,customer: customer,);
+    }));
+  }
+
+  void moveToUpdateAppointmentScreen(BuildContext context, Customer customer, Professional professional, Appointment appointment) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return UpdateAppointmentScreen(professional: professional, appointment: appointment, customer: customer);
     }));
   }
 }

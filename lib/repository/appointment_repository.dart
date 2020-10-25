@@ -1,6 +1,6 @@
-
 import 'package:appointmentproject/model/appointment.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class AppointmentRepository {
   AppointmentRepository.defaultConstructor();
@@ -137,8 +137,7 @@ class AppointmentRepository {
     return Firestore.instance.collection('appointment').document(appointmentID);
   }
 
-  Future<void> updateAppointment(Appointment appointment, String clientName,
-      String clientPhone, Timestamp appointmentDateTime) async {
+  Future<bool> updateAppointment(Appointment appointment) async {
     final dbReference = Firestore.instance;
     await dbReference
         .collection('appointment')
@@ -146,10 +145,36 @@ class AppointmentRepository {
         .setData(
             appointment.updateMap(
                 appointment.getProfessionalID(),
-                clientName,
-                clientPhone,
-                appointmentDateTime,
-                changeTime(appointmentDateTime)),
+                appointment.getCustomerID(),
+                appointment.getAppointmentStartTime(),
+                appointment.getAppointmentEndTime(),
+                changeTime(appointment.getAppointmentStartTime())),
             merge: true);
+
+    return true;
   }
+
+
+  Future<List<Appointment>> getTodayAppointmentOfProfessional (DocumentReference professionalID) async {
+    DateTime dateTime = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day);
+    print(DateFormat.yMd().add_jm().format(dateTime));
+    print(professionalID);
+    final dbReference = Firestore.instance;
+    List<Appointment> appointments = List();
+    await dbReference.collection('appointment')
+        .where('professionalID',isEqualTo: professionalID)
+        .where('appointment_date',isEqualTo: Timestamp.fromDate(dateTime))
+        .where('appointment_end_time',isLessThanOrEqualTo: Timestamp.now())
+        .getDocuments().then((value) {
+          value.documents.forEach((element) {
+            Appointment appointment = Appointment.getProfessionalAppointments(element.data, element.reference);
+            appointments.add(appointment);
+          });
+    });
+   /* */
+    print(appointments);
+    return appointments;
+  }
+
+
 }

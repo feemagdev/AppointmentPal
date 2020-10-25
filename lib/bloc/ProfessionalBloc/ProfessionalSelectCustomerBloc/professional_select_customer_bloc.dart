@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:appointmentproject/model/appointment.dart';
 import 'package:appointmentproject/model/customer.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/repository/customer_repository.dart';
@@ -15,11 +16,15 @@ class ProfessionalSelectCustomerBloc extends Bloc<
   final Professional professional;
   final DateTime appointmentStartTime;
   final DateTime appointmentEndTime;
+  final Appointment appointment;
+  final Customer customer;
 
   ProfessionalSelectCustomerBloc(
       {@required this.professional,
       @required this.appointmentStartTime,
-      @required this.appointmentEndTime});
+      @required this.appointmentEndTime,
+      this.appointment,
+      this.customer});
 
   @override
   Stream<ProfessionalSelectCustomerState> mapEventToState(
@@ -33,7 +38,7 @@ class ProfessionalSelectCustomerBloc extends Bloc<
 
       yield ProfessionalSelectCustomerShowAllCustomerState(
           professional: event.professional,
-          customer: customers,
+          customers: customers,
           appointmentStartTime: event.appointmentStartTime,
           appointmentEndTime: event.appointmentEndTime);
     } else if (event is AddCustomerButtonPressedEvent) {
@@ -47,8 +52,11 @@ class ProfessionalSelectCustomerBloc extends Bloc<
           customer: event.customer,
           appointmentStartTime: event.appointmentStartTime,
           appointmentEndTime: event.appointmentEndTime);
-    }else if(event is MoveBackToSelectDateTimeScreenEvent){
-      yield MoveBackToSelectDateTimeScreenState(professional: event.professional);
+    } else if (event is MoveBackToSelectDateTimeScreenEvent) {
+      yield MoveBackToSelectDateTimeScreenState(
+          professional: event.professional);
+    }else if(event is MoveBackToUpdateAppointmentScreenEvent){
+      yield CustomerIsSelectedState(professional: professional, appointmentStartTime: appointmentStartTime, appointmentEndTime: appointmentEndTime, customer: customer,appointment: appointment);
     }
   }
 

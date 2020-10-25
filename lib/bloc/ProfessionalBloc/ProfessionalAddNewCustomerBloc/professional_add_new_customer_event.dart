@@ -24,17 +24,21 @@ class AddNewCustomerButtonPressedEvent extends ProfessionalAddNewCustomerEvent {
       this.appointmentEndTime});
 }
 
-
-class MoveBackToSelectCustomerScreenEvent extends ProfessionalAddNewCustomerEvent {
+class MoveBackToSelectCustomerScreenEvent
+    extends ProfessionalAddNewCustomerEvent {
   final Professional professional;
   final DateTime appointmentStartTime;
   final DateTime appointmentEndTime;
+  final Appointment appointment;
+  final Customer customer;
 
-  MoveBackToSelectCustomerScreenEvent ({@required this.professional,@required this.appointmentStartTime,@required this.appointmentEndTime});
-
+  MoveBackToSelectCustomerScreenEvent(
+      {@required this.professional,
+      @required this.appointmentStartTime,
+      @required this.appointmentEndTime,
+      this.appointment,
+      this.customer});
 }
-
-
 
 class AddCustomerAgainEvent extends ProfessionalAddNewCustomerEvent {
   final Professional professional;
@@ -48,18 +52,18 @@ class AddCustomerAgainEvent extends ProfessionalAddNewCustomerEvent {
 
   AddCustomerAgainEvent(
       {@required this.professional,
-        this.name,
-        this.appointmentStartTime,
-        this.phone,
-        this.address,
-        this.city,
-        this.country,
-        this.appointmentEndTime});
+      this.name,
+      this.appointmentStartTime,
+      this.phone,
+      this.address,
+      this.city,
+      this.country,
+      this.appointmentEndTime});
 }
 
 class CheckPhoneEvent extends ProfessionalAddNewCustomerEvent {
   final String phone;
   final Professional professional;
 
-  CheckPhoneEvent({@required this.phone,@required this.professional});
+  CheckPhoneEvent({@required this.phone, @required this.professional});
 }

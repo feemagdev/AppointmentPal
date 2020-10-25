@@ -28,3 +28,14 @@ class MoveToEditAppointmentScreenState extends UpdateAppointmentState {
   MoveToEditAppointmentScreenState({@required this.professional});
 
 }
+
+
+class UpdateAppointmentSelectCustomerState extends UpdateAppointmentState {
+  final Professional professional;
+  final Appointment appointment;
+  final Customer customer;
+
+  UpdateAppointmentSelectCustomerState({@required this.professional,@required this.appointment,@required this.customer});
+}
+
+class AppointmentUpdatedSuccessfullyState extends UpdateAppointmentState {}

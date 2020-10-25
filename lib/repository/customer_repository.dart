@@ -6,8 +6,6 @@ class CustomerRepository {
 
   Future<List<Customer>> getAllCustomersOfProfessional(
       String professionalDocumentID) async {
-    print("in get all customers");
-    print(professionalDocumentID);
     final dbReference = Firestore.instance;
     List<Customer> customers = new List();
     await dbReference

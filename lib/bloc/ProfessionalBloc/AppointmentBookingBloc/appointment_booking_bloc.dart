@@ -19,12 +19,16 @@ class AppointmentBookingBloc
   final DateTime appointmentEndTime;
 
   AppointmentBookingBloc(
-      {@required this.professional, @required this.customer, @required this.appointmentStartTime, @required this.appointmentEndTime});
+      {@required this.professional,
+      @required this.customer,
+      @required this.appointmentStartTime,
+      @required this.appointmentEndTime});
 
   @override
   Stream<AppointmentBookingState> mapEventToState(
-      AppointmentBookingEvent event,) async* {
-    if(event is AddAppointmentButtonPressedEvent){
+    AppointmentBookingEvent event,
+  ) async* {
+    if (event is AddAppointmentButtonPressedEvent) {
       AppointmentRepository.defaultConstructor().professionalMakeAppointment(
           event.professional.getProfessionalID(),
           event.customer.getCustomerID(),
@@ -35,11 +39,10 @@ class AppointmentBookingBloc
     }
   }
 
-
   @override
-  AppointmentBookingState get initialState =>
-      AppointmentBookingInitial(professional: professional,
-          customer: customer,
-          appointmentStartTime: appointmentStartTime,
-          appointmentEndTime: appointmentEndTime);
+  AppointmentBookingState get initialState => AppointmentBookingInitial(
+      professional: professional,
+      customer: customer,
+      appointmentStartTime: appointmentStartTime,
+      appointmentEndTime: appointmentEndTime);
 }

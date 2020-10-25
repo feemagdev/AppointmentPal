@@ -31,21 +31,16 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           Professional professional = await checkProfessionalRole(user);
           if (professional != null ) {
             professionalCheck = true;
-            print("check professional true");
             yield ProfessionalLoginSuccessState(professional: professional);
           }
           if(professionalCheck == false){
             Client client  = await getClientData(user);
             if (client != null) {
-              print("check client true");
               try{
                 yield ClientLoginSuccessState(
                     user: user, client: client);
-              }catch(e){
-                print(e);
-              }
+              }catch(e){}
             } else {
-              print("sign in client not filled state");
               yield ClientDetailsNotFilledSignIn(
                   services: await getServicesList(), user: user);
             }
@@ -68,7 +63,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         }
       }
     } else if (event is ForgotPasswordButtonPressedEvent) {
-      print("forgot passord evemt");
       yield ForgotPasswordState();
     } else if(event is DoNotHaveAnAccountEvent){
       yield DoNotHaveAnAccountState();

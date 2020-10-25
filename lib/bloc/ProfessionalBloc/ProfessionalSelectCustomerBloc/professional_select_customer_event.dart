@@ -17,6 +17,7 @@ class AddCustomerButtonPressedEvent extends ProfessionalSelectCustomerEvent{
   final Professional professional;
   final DateTime appointmentStartTime;
   final DateTime appointmentEndTime;
+
   AddCustomerButtonPressedEvent({@required this.professional,@required this.appointmentStartTime,this.appointmentEndTime});
 }
 
@@ -38,5 +39,7 @@ class MoveBackToSelectDateTimeScreenEvent extends ProfessionalSelectCustomerEven
   MoveBackToSelectDateTimeScreenEvent({@required this.professional});
 
 }
+
+class MoveBackToUpdateAppointmentScreenEvent extends ProfessionalSelectCustomerEvent {}
 
 

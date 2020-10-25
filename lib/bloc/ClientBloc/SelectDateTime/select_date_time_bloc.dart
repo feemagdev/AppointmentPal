@@ -37,6 +37,7 @@ class SelectDateTimeBloc
     SelectDateTimeEvent event,
   ) async* {
     if (event is ShowAvailableTimeEvent) {
+      yield SelectDateTimeLoadingState();
       Schedule schedule =
           await getProfessionalSchedule(event.professional, event.dateTime);
 
@@ -52,7 +53,6 @@ class SelectDateTimeBloc
           dateTime = DateTime.now();
         }
 
-        print("check of appointment date");
         List<Appointment> appointment =
             await AppointmentRepository.defaultConstructor()
                 .getNotAvailableTime(Timestamp.fromDate(dateTime),
@@ -60,8 +60,6 @@ class SelectDateTimeBloc
 
         List<DateTime> timeSlots = makeScheduleTimeSlots(
             schedule, dateTime.year, dateTime.month, dateTime.day, appointment);
-        print("time slot length");
-        print(timeSlots.length);
         if (timeSlots.isEmpty || timeSlots.length == 0) {
           yield NoScheduleAvailable(
               professional: event.professional,
@@ -151,7 +149,6 @@ class SelectDateTimeBloc
   String getDay(DateTime dateTime) {
     String convertedDay;
     int day = dateTime.weekday;
-    print(day);
     if (day == DateTime.monday) {
       convertedDay = 'Monday';
     } else if (day == DateTime.tuesday) {
@@ -188,23 +185,35 @@ class SelectDateTimeBloc
       checkInitialDate = true;
     } else {
       for (int i = 0; i < appointment.length; i++) {
-        print('in initial date checking loop');
-        if (Timestamp.fromDate(startTime) ==
-            appointment[i].getAppointmentStartTime()) {
-          print('initial date if true');
+        int startTimeInMinutes = startTime.hour*60+startTime.minute;
+        int appointmentStartTime = appointment[i].getAppointmentStartTime().toDate().hour*60+appointment[i].getAppointmentStartTime().toDate().minute;
+        int appointmentEndTime = appointment[i].getAppointmentEndTime().toDate().hour*60+appointment[i].getAppointmentEndTime().toDate().minute;
+        if(startTimeInMinutes >= appointmentStartTime && startTimeInMinutes <= appointmentEndTime){
           checkInitialDate = false;
           break;
         }
+      /*  if (Timestamp.fromDate(startTime) ==
+            appointment[i].getAppointmentStartTime()) {
+          checkInitialDate = false;
+          break;
+        }*/
       }
     }
     int startTimeInMinutes = startTime.hour * 60 + startTime.minute;
     int currentTimeInMinutes = DateTime.now().hour * 60 + DateTime.now().minute;
 
-    if (startTimeInMinutes > currentTimeInMinutes) {
-      if (checkInitialDate) {
+    if(startTime.day == DateTime.now().day){
+      if (startTimeInMinutes > currentTimeInMinutes) {
+        if (checkInitialDate) {
+          schedules.add(startTime);
+        }
+      }
+    } else{
+      if(checkInitialDate){
         schedules.add(startTime);
       }
     }
+
 
     if (schedule.getBreakEndTime() == -1 &&
         schedule.getBreakEndTimeMinutes() == -1 &&
@@ -224,13 +233,18 @@ class SelectDateTimeBloc
           checkDate = false;
         } else {
           for (int i = 0; i < appointment.length; i++) {
-            print('in date checking loop');
-            if (Timestamp.fromDate(tempDate) ==
-                appointment[i].getAppointmentStartTime()) {
-              print('date if true');
+            int startTimeInMinutes = tempDate.hour*60 + tempDate.minute;
+            int appointmentStartTime = appointment[i].getAppointmentStartTime().toDate().hour*60+appointment[i].getAppointmentStartTime().toDate().minute;
+            int appointmentEndTime = appointment[i].getAppointmentEndTime().toDate().hour*60+appointment[i].getAppointmentEndTime().toDate().minute;
+            if(startTimeInMinutes >= appointmentStartTime && startTimeInMinutes <= appointmentEndTime){
               checkDate = true;
               continue;
             }
+            /*if (Timestamp.fromDate(tempDate) ==
+                appointment[i].getAppointmentStartTime()) {
+              checkDate = true;
+              continue;
+            }*/
           }
         }
 
@@ -239,7 +253,6 @@ class SelectDateTimeBloc
           continue;
         }
         if (tempDate.day == DateTime.now().day) {
-          print("current day run");
           int tempTimeInMinutes = tempDate.hour * 60 + tempDate.minute;
           int currentTimeInMinutes =
               DateTime.now().hour * 60 + DateTime.now().minute;
@@ -250,7 +263,6 @@ class SelectDateTimeBloc
           } else {
             multiplier++;
             schedules.add(tempDate);
-            print("schedule added");
           }
         } else {
           multiplier++;
@@ -262,21 +274,34 @@ class SelectDateTimeBloc
         bool checkDate = false;
         DateTime tempDate = startTime
             .add(Duration(minutes: schedule.getDuration() * multiplier));
-        if (tempDate.hour >= breakStartTime.hour &&
-            tempDate.minute >= breakStartTime.minute) {
+        int startTimeInMinutes = tempDate.hour*60 + tempDate.minute;
+        int breakStartTimeInMinutes = breakStartTime.hour * 60 + breakStartTime.minute;
+
+        if(startTimeInMinutes >= breakStartTimeInMinutes){
           break;
         }
+
+        /*if (tempDate.hour >= breakStartTime.hour &&
+            tempDate.minute >= breakStartTime.minute) {
+          break;
+        }*/
+
+
         if (appointment == null) {
           checkDate = false;
         } else {
           for (int i = 0; i < appointment.length; i++) {
-            print('in date checking loop');
-            if (Timestamp.fromDate(tempDate) ==
-                appointment[i].getAppointmentStartTime()) {
-              print('date if true');
+            int appointmentStartTime = appointment[i].getAppointmentStartTime().toDate().hour*60+appointment[i].getAppointmentStartTime().toDate().minute;
+            int appointmentEndTime = appointment[i].getAppointmentEndTime().toDate().hour*60+appointment[i].getAppointmentEndTime().toDate().minute;
+            if(startTimeInMinutes >= appointmentStartTime && startTimeInMinutes <= appointmentEndTime){
               checkDate = true;
               continue;
             }
+            /* if (Timestamp.fromDate(tempDate) ==
+                appointment[i].getAppointmentStartTime()) {
+              checkDate = true;
+              continue;
+            }*/
           }
         }
         if (checkDate == true) {
@@ -284,7 +309,6 @@ class SelectDateTimeBloc
           continue;
         }
         if (tempDate.day == DateTime.now().day) {
-          print("current day run");
           int tempTimeInMinutes = tempDate.hour * 60 + tempDate.minute;
           int currentTimeInMinutes =
               DateTime.now().hour * 60 + DateTime.now().minute;
@@ -295,7 +319,6 @@ class SelectDateTimeBloc
           } else {
             multiplier++;
             schedules.add(tempDate);
-            print("schedule added");
           }
         } else {
           multiplier++;
@@ -308,14 +331,21 @@ class SelectDateTimeBloc
       if (appointment == null) {
         checkBreakEndTime = true;
       } else {
+        int breakEndTimeInMinutes  = breakEndTime.hour*60 + breakEndTime.minute;
+
         for (int i = 0; i < appointment.length; i++) {
-          print('in after break date checking loop');
-          if (Timestamp.fromDate(breakEndTime) ==
-              appointment[i].getAppointmentStartTime()) {
-            print('initial date if true');
+          int appointmentStartTime = appointment[i].getAppointmentStartTime().toDate().hour*60+appointment[i].getAppointmentStartTime().toDate().minute;
+          int appointmentEndTime = appointment[i].getAppointmentEndTime().toDate().hour*60+appointment[i].getAppointmentEndTime().toDate().minute;
+
+          if(breakEndTimeInMinutes >= appointmentStartTime && breakEndTimeInMinutes <= appointmentEndTime){
             checkBreakEndTime = false;
             break;
           }
+         /* if (Timestamp.fromDate(breakEndTime) ==
+              appointment[i].getAppointmentStartTime()) {
+            checkBreakEndTime = false;
+            break;
+          }*/
         }
       }
 
@@ -332,21 +362,34 @@ class SelectDateTimeBloc
         bool checkDate = false;
         DateTime tempDate = breakEndTime
             .add(Duration(minutes: schedule.getDuration() * multiplier));
-        if (tempDate.hour >= endTime.hour &&
-            tempDate.minute >= endTime.minute) {
+        int breakEndTimeInMinutes = tempDate.hour * 60 + tempDate.minute;
+        int endTimeInMinutes = endTime.hour * 60 + endTime.minute;
+
+        if(breakEndTimeInMinutes >= endTimeInMinutes ){
           break;
         }
+
+        /*if (tempDate.hour >= endTime.hour &&
+            tempDate.minute >= endTime.minute) {
+          break;
+        }*/
         if (appointment == null) {
           checkDate = false;
         } else {
           for (int i = 0; i < appointment.length; i++) {
-            print('in date checking loop');
-            if (Timestamp.fromDate(tempDate) ==
-                appointment[i].getAppointmentStartTime()) {
-              print('date if true');
+            int appointmentStartTime = appointment[i].getAppointmentStartTime().toDate().hour*60+appointment[i].getAppointmentStartTime().toDate().minute;
+            int appointmentEndTime = appointment[i].getAppointmentEndTime().toDate().hour*60+appointment[i].getAppointmentEndTime().toDate().minute;
+
+            if(breakEndTimeInMinutes >= appointmentStartTime && breakEndTimeInMinutes <= appointmentEndTime){
               checkDate = true;
               continue;
             }
+
+            /*if (Timestamp.fromDate(tempDate) ==
+                appointment[i].getAppointmentStartTime()) {
+              checkDate = true;
+              continue;
+            }*/
           }
         }
         if (checkDate == true) {
@@ -354,7 +397,6 @@ class SelectDateTimeBloc
           continue;
         }
         if (tempDate.day == DateTime.now().day) {
-          print("current day run");
           int tempTimeInMinutes = tempDate.hour * 60 + tempDate.minute;
           int currentTimeInMinutes =
               DateTime.now().hour * 60 + DateTime.now().minute;
@@ -365,7 +407,6 @@ class SelectDateTimeBloc
           } else {
             multiplier++;
             schedules.add(tempDate);
-            print("schedule added");
           }
         } else {
           multiplier++;
@@ -373,8 +414,7 @@ class SelectDateTimeBloc
         }
       }
     }
-
-    print(schedules);
+print(schedules);
     return schedules;
   }
 }

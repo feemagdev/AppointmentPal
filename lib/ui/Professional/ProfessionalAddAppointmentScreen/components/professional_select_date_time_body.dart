@@ -10,7 +10,6 @@ import 'package:appointmentproject/ui/Professional/UpdateAppointmentScreen/updat
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:meta/meta.dart';
 import 'package:flutter/cupertino.dart';
 
 class ProfessionalSelectDateTime extends StatelessWidget {
@@ -153,6 +152,8 @@ class ProfessionalSelectDateTime extends StatelessWidget {
                       state.professional,
                       state.schedule,
                       state.appointment,state.customer);
+                }else if(state is SelectDateTimeLoadingState){
+                  return Center(child: CircularProgressIndicator());
                 }
                 return Container();
               },
@@ -172,9 +173,7 @@ class ProfessionalSelectDateTime extends StatelessWidget {
         appointment: appointment));
     return Container(
       child: Center(
-        child: CircularProgressIndicator(
-          backgroundColor: Colors.blue,
-        ),
+        child: CircularProgressIndicator(),
       ),
     );
   }
