@@ -17,3 +17,19 @@ class MoveToEditAppointmentScreenEvent extends UpdateAppointmentEvent {
   final Professional professional;
   MoveToEditAppointmentScreenEvent({@required this.professional});
 }
+
+
+class UpdateAppointmentSelectCustomerEvent extends UpdateAppointmentEvent {
+  final Professional professional;
+  final Appointment appointment;
+  final Customer customer;
+
+  UpdateAppointmentSelectCustomerEvent({@required this.professional,@required this.appointment,@required this.customer});
+
+
+}
+
+class UpdateAppointmentButtonPressedEvent extends UpdateAppointmentEvent {
+  final Appointment appointment;
+  UpdateAppointmentButtonPressedEvent({@required this.appointment});
+}

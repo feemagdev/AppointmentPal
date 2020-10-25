@@ -1,9 +1,11 @@
 import 'package:appointmentproject/bloc/ProfessionalBloc/ProfessionalSelectCustomerBloc/professional_select_customer_bloc.dart';
+import 'package:appointmentproject/model/appointment.dart';
 import 'package:appointmentproject/model/customer.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/ui/Professional/AppointmentBookingScreen/appointment_booking_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalAddAppointmentScreen/professional_select_date_time_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalAddNewCustomer/professional_add_new_customer_screen.dart';
+import 'package:appointmentproject/ui/Professional/UpdateAppointmentScreen/update_appointment_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,13 +16,24 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
     Professional professional;
     DateTime appointmentStartTime;
     DateTime appointmentEndTime;
+    Appointment appointment =
+        BlocProvider.of<ProfessionalSelectCustomerBloc>(context).appointment;
+    Customer customer =
+        BlocProvider.of<ProfessionalSelectCustomerBloc>(context).customer;
     return Scaffold(
       appBar: AppBar(
         title: Text("Select Customer"),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: (){
-            BlocProvider.of<ProfessionalSelectCustomerBloc>(context).add(MoveBackToSelectDateTimeScreenEvent(professional:professional));
+          onPressed: () {
+            if (appointment == null) {
+              BlocProvider.of<ProfessionalSelectCustomerBloc>(context).add(
+                  MoveBackToSelectDateTimeScreenEvent(
+                      professional: professional));
+            } else {
+              BlocProvider.of<ProfessionalSelectCustomerBloc>(context)
+                  .add(MoveBackToUpdateAppointmentScreenEvent());
+            }
           },
         ),
       ),
@@ -37,8 +50,8 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
                 child: InkWell(
                   onTap: () {
                     print("add customer button tapped");
-                    BlocProvider.of<ProfessionalSelectCustomerBloc>(context).add(
-                        AddCustomerButtonPressedEvent(
+                    BlocProvider.of<ProfessionalSelectCustomerBloc>(context)
+                        .add(AddCustomerButtonPressedEvent(
                             professional: professional,
                             appointmentStartTime: appointmentStartTime,
                             appointmentEndTime: appointmentEndTime));
@@ -72,13 +85,33 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
                   ProfessionalSelectCustomerState>(
                 listener: (context, state) {
                   if (state is AddCustomerButtonPressedState) {
-                    print("add customer button pressed state");
-                    moveToAddNewCustomerScreen(state.professional,
-                        state.appointmentStartTime, context, state.appointmentEndTime);
-                  }else if(state is CustomerIsSelectedState){
-                    navigateToAppointmentBookingScreen(state.professional,state.customer,state.appointmentStartTime,state.appointmentEndTime,context);
-                  }else if(state is MoveBackToSelectDateTimeScreenState){
-                    navigateToAddAppointmentScreen(context,state.professional);
+                    moveToAddNewCustomerScreen(
+                        state.professional,
+                        state.appointmentStartTime,
+                        context,
+                        state.appointmentEndTime,
+                        appointment,
+                        customer);
+                  } else if (state is CustomerIsSelectedState) {
+                    Appointment appointment =
+                        BlocProvider.of<ProfessionalSelectCustomerBloc>(context)
+                            .appointment;
+                    Professional professional =
+                        BlocProvider.of<ProfessionalSelectCustomerBloc>(context)
+                            .professional;
+                    if (appointment == null) {
+                      navigateToAppointmentBookingScreen(
+                          state.professional,
+                          state.customer,
+                          state.appointmentStartTime,
+                          state.appointmentEndTime,
+                          context);
+                    } else {
+                      navigateToUpdateAppointmentScreen(
+                          context, professional, appointment, state.customer);
+                    }
+                  } else if (state is MoveBackToSelectDateTimeScreenState) {
+                    navigateToAddAppointmentScreen(context, state.professional);
                   }
                 },
                 child: BlocBuilder<ProfessionalSelectCustomerBloc,
@@ -91,12 +124,13 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
                       return loadingState(context, professional,
                           state.appointmentStartTime, state.appointmentEndTime);
                     }
-                    if (state is ProfessionalSelectCustomerShowAllCustomerState) {
+                    if (state
+                        is ProfessionalSelectCustomerShowAllCustomerState) {
                       professional = state.professional;
                       appointmentStartTime = state.appointmentStartTime;
                       appointmentEndTime = state.appointmentEndTime;
                       return customerUIBuilder(
-                          state.customer,
+                          state.customers,
                           context,
                           deviceWidth,
                           state.appointmentEndTime,
@@ -124,12 +158,22 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
     return ListView.builder(
         itemCount: customers.length,
         shrinkWrap: true,
-        itemBuilder: (context, index) => customerUI(customers[index],
-            deviceWidth, context, appointmentStartTime, appointmentEndTime, professional));
+        itemBuilder: (context, index) => customerUI(
+            customers[index],
+            deviceWidth,
+            context,
+            appointmentStartTime,
+            appointmentEndTime,
+            professional));
   }
 
-  Widget customerUI(Customer customer, double deviceWidth, BuildContext context,
-      DateTime appointmentStartTime, DateTime appointmentEndTime, Professional professional) {
+  Widget customerUI(
+      Customer customer,
+      double deviceWidth,
+      BuildContext context,
+      DateTime appointmentStartTime,
+      DateTime appointmentEndTime,
+      Professional professional) {
     double fontSize = 12;
     double iconSize = 20;
     if (deviceWidth < 360) {
@@ -152,11 +196,11 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleAvatar(
-                backgroundColor: Colors.grey[300],
+                  backgroundColor: Colors.grey[300],
                   child: Icon(
-                Icons.person_outline,
-                size: iconSize,
-              )),
+                    Icons.person_outline,
+                    size: iconSize,
+                  )),
               SizedBox(
                 width: 10,
               ),
@@ -199,19 +243,29 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
     return CircularProgressIndicator();
   }
 
-  void moveToAddNewCustomerScreen(Professional professional,
-      DateTime appointmentStartTime, BuildContext context, DateTime appointmentEndTime) {
+  void moveToAddNewCustomerScreen(
+      Professional professional,
+      DateTime appointmentStartTime,
+      BuildContext context,
+      DateTime appointmentEndTime,
+      Appointment appointment,
+      Customer customer) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalAddNewCustomerScreen(
-        professional: professional,
-        appointmentStartTime: appointmentStartTime,
-        appointmentEndTime: appointmentEndTime,
-      );
+          professional: professional,
+          appointmentStartTime: appointmentStartTime,
+          appointmentEndTime: appointmentEndTime,
+          appointment: appointment,
+          customer: customer);
     }));
   }
 
-  void navigateToAppointmentBookingScreen(Professional professional,
-      Customer customer, DateTime appointmentStartTime, DateTime appointmentEndTime,BuildContext context) {
+  void navigateToAppointmentBookingScreen(
+      Professional professional,
+      Customer customer,
+      DateTime appointmentStartTime,
+      DateTime appointmentEndTime,
+      BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return AppointmentBookingScreen(
           professional: professional,
@@ -221,13 +275,20 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
     }));
   }
 
-  void navigateToAddAppointmentScreen(BuildContext context,Professional professional) {
+  void navigateToAddAppointmentScreen(
+      BuildContext context, Professional professional) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalSelectDateTimeScreen(professional: professional);
     }));
   }
 
-
-
+  void navigateToUpdateAppointmentScreen(BuildContext context,
+      Professional professional, Appointment appointment, Customer customer) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return UpdateAppointmentScreen(
+          professional: professional,
+          appointment: appointment,
+          customer: customer);
+    }));
+  }
 }
-

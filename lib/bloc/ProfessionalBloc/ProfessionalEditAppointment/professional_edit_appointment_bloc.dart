@@ -21,6 +21,7 @@ class ProfessionalEditAppointmentBloc extends Bloc<ProfessionalEditAppointmentEv
     ProfessionalEditAppointmentEvent event,
   ) async* {
     if(event is ProfessionalShowSelectedDayAppointmentsEvent){
+      yield ProfessionalEditAppointmentLoadingState();
       List<Appointment> appointments = List();
       List<Customer> customers = List();
       DateTime dateTime = event.dateTime;
@@ -30,7 +31,7 @@ class ProfessionalEditAppointmentBloc extends Bloc<ProfessionalEditAppointmentEv
       appointments = await AppointmentRepository.defaultConstructor().getProfessionalSelectedDayAppointments(event.professional.getProfessionalID(),Timestamp.fromDate(dateTime));
       if(appointments.isNotEmpty || appointments.length != 0){
         await Future.forEach(appointments, (element) async {
-          customers.add(await CustomerRepository.defaultConstructor().getCustomer(element.getClientID()));
+          customers.add(await CustomerRepository.defaultConstructor().getCustomer(element.getCustomerID()));
         });
       }
       yield ProfessionalShowSelectedDayAppointmentsState(professional: event.professional,appointments: appointments,customers:customers);

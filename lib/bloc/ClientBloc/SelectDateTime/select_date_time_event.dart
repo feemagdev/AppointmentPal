@@ -66,20 +66,7 @@ class ProfessionalBookedTheAppointmentButtonEvent extends SelectDateTimeEvent {
       @required this.dateTime});
 }
 
-class ProfessionalUpdateAppointmentButtonEvent extends SelectDateTimeEvent {
-  final Professional professional;
-  final Appointment appointment;
-  final String clientName;
-  final String clientPhone;
-  final DateTime dateTime;
 
-  ProfessionalUpdateAppointmentButtonEvent(
-      {@required this.appointment,
-      @required this.clientName,
-      @required this.clientPhone,
-      @required this.dateTime,
-      @required this.professional});
-}
 
 class TimeSlotIsSelectedEvent extends SelectDateTimeEvent {
   final Professional professional;

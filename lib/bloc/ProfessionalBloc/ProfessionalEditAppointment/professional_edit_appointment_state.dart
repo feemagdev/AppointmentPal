@@ -27,3 +27,5 @@ class MoveToDashboardScreenFromEditAppointmentState extends ProfessionalEditAppo
   MoveToDashboardScreenFromEditAppointmentState({@required this.professional});
 }
 
+class ProfessionalEditAppointmentLoadingState extends ProfessionalEditAppointmentState {}
+

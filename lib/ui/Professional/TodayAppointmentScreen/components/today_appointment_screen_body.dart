@@ -1,0 +1,162 @@
+
+
+import 'package:appointmentproject/bloc/ProfessionalBloc/TodayAppointment/today_appointment_bloc.dart';
+import 'package:appointmentproject/model/appointment.dart';
+import 'package:appointmentproject/model/customer.dart';
+import 'package:appointmentproject/model/professional.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+
+class TodayAppointmentScreenBody extends StatefulWidget {
+  @override
+  _TodayAppointmentScreenBodyState createState() => _TodayAppointmentScreenBodyState();
+}
+
+class _TodayAppointmentScreenBodyState extends State<TodayAppointmentScreenBody> {
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    Professional professional = BlocProvider.of<TodayAppointmentBloc>(context).professional;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Today Appointments"),
+      ),
+      body: Container(
+        child: Column(
+          children: [
+            BlocListener<TodayAppointmentBloc,TodayAppointmentState>(
+              listener: (context,state){},
+              child: BlocBuilder<TodayAppointmentBloc,TodayAppointmentState>(
+                builder: (context,state){
+                  if(state is TodayAppointmentInitial){
+                    return loadingState(context);
+                  }else if(state is GetAllTodayAppointmentState){
+                    return appointmentsBuilder(context, state.appointments , professional, state.customers);
+                  }
+                  return Container();
+                },
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  Widget _markAppointmentCompleteUI(BuildContext context,Appointment appointment,Professional professional, Customer customer){
+    return Stack(
+      children: [
+
+        Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 2,
+                  blurRadius: 7,
+                  offset: Offset(0, 3), // changes position of shadow
+                ),
+              ],
+            ),
+            child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Date",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(DateFormat.yMMMMd().format(
+                              appointment.getAppointmentStartTime().toDate())),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            "Customer",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(customer.getName()),
+                        ],
+                      ),
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Time",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(DateFormat.jm().format(appointment
+                                .getAppointmentStartTime()
+                                .toDate())),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "Customer contact",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(customer.getPhone()),
+                          ]),
+                      Column(
+                        children: [
+                          Container(
+                            width: 40,
+                            height: 40,
+                            child: Align(
+                              child: FloatingActionButton(
+                                onPressed: (){},
+                                child: Icon(Icons.check),
+                                backgroundColor: Colors.lightBlue,
+                              ),
+                              alignment: Alignment.topRight,
+                            ),
+                          ),
+                        ],
+                      )
+                    ]))),
+
+      ],
+    );
+
+  }
+
+
+  Widget appointmentsBuilder(
+      BuildContext context,
+      List<Appointment> appointments,
+      Professional professional,
+      List<Customer> customers) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: appointments.length,
+      scrollDirection: Axis.vertical,
+      itemBuilder: (context, index) => Padding(
+        padding: const EdgeInsets.only(right: 7, top: 10, left: 7),
+        child: _markAppointmentCompleteUI(
+            context, appointments[index], professional, customers[index]),
+      ),
+    );
+  }
+
+  Widget loadingState(BuildContext context) {
+    Container(
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+    BlocProvider.of<TodayAppointmentBloc>(context).add(GetAllTodayAppointments());
+    return Container();
+  }
+
+}

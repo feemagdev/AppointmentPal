@@ -1,4 +1,6 @@
 import 'package:appointmentproject/bloc/ProfessionalBloc/ProfessionalAddNewCustomerBloc/professional_add_new_customer_bloc.dart';
+import 'package:appointmentproject/model/appointment.dart';
+import 'package:appointmentproject/model/customer.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalAddNewCustomer/components/professional_add_new_customer_body.dart';
 import 'package:flutter/material.dart';
@@ -8,9 +10,11 @@ class ProfessionalAddNewCustomerScreen extends StatelessWidget {
   final Professional professional;
   final DateTime appointmentStartTime;
   final DateTime  appointmentEndTime;
+  final Appointment appointment;
+  final Customer customer;
 
   ProfessionalAddNewCustomerScreen(
-      {@required this.professional, this.appointmentStartTime, this.appointmentEndTime});
+      {@required this.professional, this.appointmentStartTime, this.appointmentEndTime,this.appointment,this.customer});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +22,7 @@ class ProfessionalAddNewCustomerScreen extends StatelessWidget {
       create: (context) => ProfessionalAddNewCustomerBloc(
           professional: professional,
           appointmentStartTime: appointmentStartTime,
-          appointmentEndTime: appointmentEndTime),
+          appointmentEndTime: appointmentEndTime,appointment:appointment,customer:customer),
       child: ProfessionalAddNewCustomerBody(),
     );
   }

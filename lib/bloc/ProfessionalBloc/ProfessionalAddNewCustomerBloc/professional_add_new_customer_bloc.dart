@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:appointmentproject/model/appointment.dart';
 import 'package:appointmentproject/model/customer.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/repository/customer_repository.dart';
@@ -16,11 +17,15 @@ class ProfessionalAddNewCustomerBloc extends Bloc<
   final Professional professional;
   final DateTime appointmentStartTime;
   final DateTime appointmentEndTime;
+  final Appointment appointment;
+  final Customer customer;
 
   ProfessionalAddNewCustomerBloc(
       {@required this.professional,
       this.appointmentStartTime,
-      this.appointmentEndTime});
+      this.appointmentEndTime,
+      this.appointment,
+      this.customer});
 
   @override
   Stream<ProfessionalAddNewCustomerState> mapEventToState(
@@ -53,8 +58,8 @@ class ProfessionalAddNewCustomerBloc extends Bloc<
               event.phone, event.professional.getProfessionalID().documentID);
       if (customerCheck) {
         yield CustomerAlreadyExistState(professional: event.professional);
-      }else {
-        yield CustomerCanBeAdded(professional:event.professional);
+      } else {
+        yield CustomerCanBeAdded(professional: event.professional);
       }
     }
   }

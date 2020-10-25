@@ -15,15 +15,15 @@ class Appointment {
 
   Map<String, dynamic> updateMap(
       DocumentReference professionalID,
-      String clientName,
-      String clientPhone,
-      Timestamp appointmentDateTime,
+      DocumentReference customerID,
+      Timestamp appointmentStartTime,
+      Timestamp appointmentEndTime,
       Timestamp appointmentDate) {
     return {
       'professionalID': professionalID,
-      'client_name': clientName,
-      'client_phone': clientPhone,
-      'appointment_date_time': appointmentDateTime,
+      'customerID': customerID,
+      'appointment_start_time': appointmentStartTime,
+      'appointment_end_time': appointmentEndTime,
       'appointment_date': appointmentDate,
     };
   }
@@ -104,7 +104,7 @@ class Appointment {
     return _appointmentID;
   }
 
-  DocumentReference getClientID() {
+  DocumentReference getCustomerID() {
     return _customerID;
   }
 
@@ -115,6 +115,7 @@ class Appointment {
   Timestamp getAppointmentStartTime() {
     return _appointmentStartTime;
   }
+
   Timestamp getAppointmentEndTime() {
     return _appointmentEndTime;
   }
@@ -127,12 +128,15 @@ class Appointment {
     return _appointmentStatus;
   }
 
-
-  void setAppointmentStartTime(Timestamp appointmentStartTime){
+  void setAppointmentStartTime(Timestamp appointmentStartTime) {
     _appointmentStartTime = appointmentStartTime;
   }
-  void setAppointmentEndTime(Timestamp appointmentEndTime){
+
+  void setAppointmentEndTime(Timestamp appointmentEndTime) {
     _appointmentEndTime = appointmentEndTime;
+  }
+  void setCustomerID(DocumentReference customerID){
+    _customerID = customerID;
   }
 
 
