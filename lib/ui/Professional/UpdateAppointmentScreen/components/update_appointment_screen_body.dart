@@ -60,6 +60,8 @@ class _UpdateAppointmentScreenBodyState
                   if (state is UpdateAppointmentInitial) {
                     return appointmentBookingUI(appointment,
                         customer, professional, deviceWidth);
+                  }else if(state is UpdateAppointmentLoadingState){
+                    return loadingCircularProgressIndicator();
                   }
                   return Container();
                 },
@@ -155,7 +157,7 @@ class _UpdateAppointmentScreenBodyState
                   ],
                 ),
                 Row(
-                  children: [Icon(Icons.arrow_forward_ios)],
+                  children: [Icon(Icons.edit)],
                 ),
               ],
             ),
@@ -200,7 +202,7 @@ class _UpdateAppointmentScreenBodyState
                   ],
                 ),
                 Row(
-                  children: [Icon(Icons.arrow_forward_ios)],
+                  children: [Icon(Icons.edit)],
                 ),
               ],
             ),
@@ -259,5 +261,9 @@ class _UpdateAppointmentScreenBodyState
     Navigator.of(context).push(MaterialPageRoute(builder: (context){
       return ProfessionalDashboard(professional: professional);
     }));
+  }
+
+  Widget loadingCircularProgressIndicator() {
+    return Center(child: CircularProgressIndicator(),);
   }
 }

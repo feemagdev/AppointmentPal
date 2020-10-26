@@ -39,7 +39,9 @@ class UpdateAppointmentBloc
           appointment: event.appointment,
           customer: event.customer);
     }else if(event is UpdateAppointmentButtonPressedEvent){
+      yield UpdateAppointmentLoadingState();
       appointment.setCustomerID(customer.getCustomerID());
+
       bool updated = await AppointmentRepository.defaultConstructor().updateAppointment(appointment);
       if(updated){
         yield AppointmentUpdatedSuccessfullyState();

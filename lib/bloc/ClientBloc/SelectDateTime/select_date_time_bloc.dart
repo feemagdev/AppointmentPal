@@ -179,7 +179,7 @@ class SelectDateTimeBloc
     DateTime breakEndTime = DateTime(year, month, day,
         schedule.getBreakEndTime(), schedule.getBreakEndTimeMinutes());
     int multiplier = 1;
-    bool checkInitialDate = false;
+    bool checkInitialDate = true;
 
     if (appointment == null) {
       checkInitialDate = true;
@@ -191,6 +191,11 @@ class SelectDateTimeBloc
         if(startTimeInMinutes >= appointmentStartTime && startTimeInMinutes <= appointmentEndTime){
           checkInitialDate = false;
           break;
+        }else if(startTime.hour == appointment[i].getAppointmentStartTime().toDate().hour){
+          if((startTimeInMinutes + schedule.getDuration()) <= appointmentEndTime){
+            checkInitialDate = false;
+            break;
+          }
         }
       /*  if (Timestamp.fromDate(startTime) ==
             appointment[i].getAppointmentStartTime()) {
@@ -223,6 +228,7 @@ class SelectDateTimeBloc
         bool checkDate = false;
         DateTime tempDate = startTime
             .add(Duration(minutes: schedule.getDuration() * multiplier));
+        int startTimeInMinutes = tempDate.hour*60 + tempDate.minute;
 
         if (tempDate.hour >= endTime.hour &&
             tempDate.minute >= endTime.minute) {
@@ -233,12 +239,17 @@ class SelectDateTimeBloc
           checkDate = false;
         } else {
           for (int i = 0; i < appointment.length; i++) {
-            int startTimeInMinutes = tempDate.hour*60 + tempDate.minute;
+
             int appointmentStartTime = appointment[i].getAppointmentStartTime().toDate().hour*60+appointment[i].getAppointmentStartTime().toDate().minute;
             int appointmentEndTime = appointment[i].getAppointmentEndTime().toDate().hour*60+appointment[i].getAppointmentEndTime().toDate().minute;
-            if(startTimeInMinutes >= appointmentStartTime && startTimeInMinutes <= appointmentEndTime){
+            if(startTimeInMinutes >= appointmentStartTime && startTimeInMinutes < appointmentEndTime){
               checkDate = true;
-              continue;
+              break;
+            }else if(tempDate.hour == appointment[i].getAppointmentStartTime().toDate().hour){
+              if((startTimeInMinutes + schedule.getDuration()) <= appointmentEndTime){
+                checkDate = true;
+                break;
+              }
             }
             /*if (Timestamp.fromDate(tempDate) ==
                 appointment[i].getAppointmentStartTime()) {
@@ -293,9 +304,15 @@ class SelectDateTimeBloc
           for (int i = 0; i < appointment.length; i++) {
             int appointmentStartTime = appointment[i].getAppointmentStartTime().toDate().hour*60+appointment[i].getAppointmentStartTime().toDate().minute;
             int appointmentEndTime = appointment[i].getAppointmentEndTime().toDate().hour*60+appointment[i].getAppointmentEndTime().toDate().minute;
-            if(startTimeInMinutes >= appointmentStartTime && startTimeInMinutes <= appointmentEndTime){
+            if(startTimeInMinutes >= appointmentStartTime && startTimeInMinutes < appointmentEndTime){
               checkDate = true;
-              continue;
+              break;
+            }else if(tempDate.hour == appointment[i].getAppointmentStartTime().toDate().hour) {
+              if ((startTimeInMinutes + schedule.getDuration()) <=
+                  appointmentEndTime) {
+                checkDate = true;
+                break;
+              }
             }
             /* if (Timestamp.fromDate(tempDate) ==
                 appointment[i].getAppointmentStartTime()) {
@@ -337,9 +354,14 @@ class SelectDateTimeBloc
           int appointmentStartTime = appointment[i].getAppointmentStartTime().toDate().hour*60+appointment[i].getAppointmentStartTime().toDate().minute;
           int appointmentEndTime = appointment[i].getAppointmentEndTime().toDate().hour*60+appointment[i].getAppointmentEndTime().toDate().minute;
 
-          if(breakEndTimeInMinutes >= appointmentStartTime && breakEndTimeInMinutes <= appointmentEndTime){
+          if(breakEndTimeInMinutes >= appointmentStartTime && breakEndTimeInMinutes < appointmentEndTime){
             checkBreakEndTime = false;
             break;
+          }else if(breakEndTime.hour == appointment[i].getAppointmentStartTime().toDate().hour){
+            if((startTimeInMinutes + schedule.getDuration()) <= appointmentEndTime){
+              checkBreakEndTime = false;
+              break;
+            }
           }
          /* if (Timestamp.fromDate(breakEndTime) ==
               appointment[i].getAppointmentStartTime()) {
@@ -380,9 +402,14 @@ class SelectDateTimeBloc
             int appointmentStartTime = appointment[i].getAppointmentStartTime().toDate().hour*60+appointment[i].getAppointmentStartTime().toDate().minute;
             int appointmentEndTime = appointment[i].getAppointmentEndTime().toDate().hour*60+appointment[i].getAppointmentEndTime().toDate().minute;
 
-            if(breakEndTimeInMinutes >= appointmentStartTime && breakEndTimeInMinutes <= appointmentEndTime){
+            if(breakEndTimeInMinutes >= appointmentStartTime && breakEndTimeInMinutes < appointmentEndTime){
               checkDate = true;
-              continue;
+              break;
+            }else if(tempDate.hour == appointment[i].getAppointmentStartTime().toDate().hour){
+              if((startTimeInMinutes + schedule.getDuration()) <= appointmentEndTime){
+                checkDate = true;
+                break;
+              }
             }
 
             /*if (Timestamp.fromDate(tempDate) ==
@@ -414,7 +441,6 @@ class SelectDateTimeBloc
         }
       }
     }
-print(schedules);
     return schedules;
   }
 }

@@ -5,7 +5,6 @@ import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/ui/Client/SelectDateTime/components/custom_date.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/professional_dashboard_screen.dart';
 import 'package:appointmentproject/ui/Professional/UpdateAppointmentScreen/update_appointment_screen.dart';
-import 'package:appointmentproject/ui/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,17 +32,23 @@ class ProfessionalEditAppointmentBody extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 20),
-            Text("Select date",style: TextStyle(fontSize: deviceWidth < 365?12:17),),
+            Padding(
+              padding: const EdgeInsets.only(left: 7),
+              child: Text("Select date",style: TextStyle(fontSize: deviceWidth < 365?12:17),),
+            ),
             SizedBox(
               height: 10,
             ),
-            CustomDateView(
-              onTap: (DateTime dateTime) {
+            Padding(
+              padding: const EdgeInsets.only(left: 7),
+              child: CustomDateView(
+                onTap: (DateTime dateTime) {
 
-                BlocProvider.of<ProfessionalEditAppointmentBloc>(context).add(
-                    ProfessionalShowSelectedDayAppointmentsEvent(
-                        professional: _professional, dateTime: dateTime));
-              },
+                  BlocProvider.of<ProfessionalEditAppointmentBloc>(context).add(
+                      ProfessionalShowSelectedDayAppointmentsEvent(
+                          professional: _professional, dateTime: dateTime));
+                },
+              ),
             ),
             SizedBox(
               height: 10,
@@ -169,6 +174,7 @@ class ProfessionalEditAppointmentBody extends StatelessWidget {
       List<Appointment> appointments,
       Professional professional,
       List<Customer> customers) {
+    double deviceWidth = MediaQuery.of(context).size.width;
     return ListView.builder(
       shrinkWrap: true,
       itemCount: appointments.length,
