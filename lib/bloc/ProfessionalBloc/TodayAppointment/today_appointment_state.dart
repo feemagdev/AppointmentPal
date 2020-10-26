@@ -10,3 +10,5 @@ class GetAllTodayAppointmentState extends TodayAppointmentState {
   final List<Customer> customers;
   GetAllTodayAppointmentState({@required this.appointments,@required this.customers});
 }
+
+class TodayAppointmentLoadingState extends TodayAppointmentState {}

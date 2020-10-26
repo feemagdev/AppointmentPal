@@ -35,7 +35,15 @@ class _TodayAppointmentScreenBodyState extends State<TodayAppointmentScreenBody>
                   if(state is TodayAppointmentInitial){
                     return loadingState(context);
                   }else if(state is GetAllTodayAppointmentState){
+                    if(state.appointments.isEmpty){
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("No appointments for today",style: TextStyle(fontSize: 17),),
+                      );
+                    }
                     return appointmentsBuilder(context, state.appointments , professional, state.customers);
+                  }else if(state is TodayAppointmentLoadingState){
+                    return loadingCircularBar();
                   }
                   return Container();
                 },
@@ -48,7 +56,7 @@ class _TodayAppointmentScreenBodyState extends State<TodayAppointmentScreenBody>
   }
 
 
-  Widget _markAppointmentCompleteUI(BuildContext context,Appointment appointment,Professional professional, Customer customer){
+  Widget _markAppointmentCompleteUI(BuildContext context,Appointment appointment,Professional professional, Customer customer,int index){
     return Stack(
       children: [
 
@@ -115,9 +123,28 @@ class _TodayAppointmentScreenBodyState extends State<TodayAppointmentScreenBody>
                             height: 40,
                             child: Align(
                               child: FloatingActionButton(
-                                onPressed: (){},
+                                onPressed: (){
+                                  BlocProvider.of<TodayAppointmentBloc>(context).add(MarkAppointmentComplete(appointment:appointment));
+                                },
                                 child: Icon(Icons.check),
                                 backgroundColor: Colors.lightBlue,
+                                heroTag: "completeButton"+appointment.getAppointmentStartTime().toString(),
+                              ),
+                              alignment: Alignment.topRight,
+                            ),
+                          ),
+                          SizedBox(height: 10,),
+                          Container(
+                            width: 40,
+                            height: 40,
+                            child: Align(
+                              child: FloatingActionButton(
+                                onPressed: (){
+                                  BlocProvider.of<TodayAppointmentBloc>(context).add(MarkAppointmentCancel(appointment:appointment));
+                                },
+                                child: Icon(Icons.close),
+                                backgroundColor: Colors.red,
+                                heroTag: "cancelButton"+appointment.getAppointmentStartTime().toString(),
                               ),
                               alignment: Alignment.topRight,
                             ),
@@ -129,6 +156,10 @@ class _TodayAppointmentScreenBodyState extends State<TodayAppointmentScreenBody>
       ],
     );
 
+  }
+
+  Widget loadingCircularBar(){
+    return Center(child: CircularProgressIndicator());
   }
 
 
@@ -144,17 +175,12 @@ class _TodayAppointmentScreenBodyState extends State<TodayAppointmentScreenBody>
       itemBuilder: (context, index) => Padding(
         padding: const EdgeInsets.only(right: 7, top: 10, left: 7),
         child: _markAppointmentCompleteUI(
-            context, appointments[index], professional, customers[index]),
+            context, appointments[index], professional, customers[index],index),
       ),
     );
   }
 
   Widget loadingState(BuildContext context) {
-    Container(
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
     BlocProvider.of<TodayAppointmentBloc>(context).add(GetAllTodayAppointments());
     return Container();
   }

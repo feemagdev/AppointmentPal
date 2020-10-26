@@ -159,14 +159,13 @@ class AppointmentRepository {
 
   Future<List<Appointment>> getTodayAppointmentOfProfessional (DocumentReference professionalID) async {
     DateTime dateTime = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day);
-    print(DateFormat.yMd().add_jm().format(dateTime));
-    print(professionalID);
     final dbReference = Firestore.instance;
     List<Appointment> appointments = List();
     await dbReference.collection('appointment')
         .where('professionalID',isEqualTo: professionalID)
         .where('appointment_date',isEqualTo: Timestamp.fromDate(dateTime))
         .where('appointment_end_time',isLessThanOrEqualTo: Timestamp.now())
+    .where('appointment_status',isEqualTo: 'booked')
         .getDocuments().then((value) {
           value.documents.forEach((element) {
             Appointment appointment = Appointment.getProfessionalAppointments(element.data, element.reference);
@@ -174,6 +173,15 @@ class AppointmentRepository {
           });
     });
     return appointments;
+  }
+
+  Future<bool> markTheAppointmentComplete(Appointment appointment) async{
+    await appointment.getAppointmentID().updateData({'appointment_status':'completed'});
+    return true;
+  }
+  Future<bool> markTheAppointmentCancel(Appointment appointment) async{
+    await appointment.getAppointmentID().updateData({'appointment_status':'canceled'});
+    return true;
   }
 
 

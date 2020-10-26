@@ -39,3 +39,5 @@ class UpdateAppointmentSelectCustomerState extends UpdateAppointmentState {
 }
 
 class AppointmentUpdatedSuccessfullyState extends UpdateAppointmentState {}
+
+class UpdateAppointmentLoadingState extends UpdateAppointmentState {}
