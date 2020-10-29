@@ -91,8 +91,10 @@ class _ProfessionalAddNewCustomerBodyState
                       return Container();
                     } else if (state is CustomerAlreadyExistState) {
                       customerAlreadyExist = true;
+                      return Container();
                     }else if(state is CustomerCanBeAdded){
                       customerAlreadyExist = false;
+                      return Container();
                     }
                     return Container();
                   },
@@ -132,6 +134,7 @@ class _ProfessionalAddNewCustomerBodyState
                             },
                           ),
                         ),
+                        SizedBox(height: 5,),
                         Container(
                           height: deviceWidth < 365 ? 60 : 70,
                           child: TextFormField(
@@ -161,6 +164,7 @@ class _ProfessionalAddNewCustomerBodyState
                             },
                           ),
                         ),
+                        SizedBox(height: 5,),
                         Container(
                           height: deviceWidth < 365 ? 60 : 70,
                           child: TextFormField(
@@ -180,6 +184,7 @@ class _ProfessionalAddNewCustomerBodyState
                             },
                           ),
                         ),
+                        SizedBox(height: 5,),
                         Container(
                           height: deviceWidth < 365 ? 60 : 70,
                           child: TextFormField(
@@ -199,6 +204,7 @@ class _ProfessionalAddNewCustomerBodyState
                             },
                           ),
                         ),
+                        SizedBox(height: 5,),
                         Container(
                           height: deviceWidth < 365 ? 60 : 70,
                           child: TextFormField(

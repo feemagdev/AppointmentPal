@@ -6,7 +6,7 @@ import 'package:appointmentproject/bloc/AuthBloc/auth_bloc.dart';
 import 'package:appointmentproject/bloc/AuthBloc/auth_state.dart';
 import 'package:appointmentproject/bloc/UserRoleBloc/user_role_bloc.dart';
 import 'package:appointmentproject/bloc/UserRoleBloc/user_role_event.dart';
-import 'package:appointmentproject/ui/Signup/signup_screen.dart';
+import 'package:appointmentproject/ui/Login/login_screen.dart';
 import 'package:appointmentproject/ui/helpers/check_user_role_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,7 +22,7 @@ class LoginHelper extends StatelessWidget {
     return BlocListener<AuthBloc,AuthState>(
       listener: (context,state){
         if(state is UnAuthenticatedState){
-          return navigateToSignUpPage(context);
+          return navigateToLoginPage(context);
         } else if(state is AuthenticatedState){
           return navigateToCheckUserRole(context,state.user);
         }
@@ -40,14 +40,14 @@ class LoginHelper extends StatelessWidget {
   }
 
 
-  navigateToSignUpPage(BuildContext context) {
+  navigateToLoginPage(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context){
-      return SignUpScreen();
+      return LoginScreen();
     }));
   }
 
 
-  navigateToCheckUserRole(BuildContext context,FirebaseUser user) {
+  navigateToCheckUserRole(BuildContext context,User user) {
 
     Navigator.of(context).push(MaterialPageRoute(builder: (context){
       return BlocProvider(

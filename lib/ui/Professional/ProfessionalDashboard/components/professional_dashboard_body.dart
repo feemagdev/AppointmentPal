@@ -1,8 +1,8 @@
 
 import 'package:appointmentproject/bloc/ProfessionalBloc/ProfessionalDashboardBloc/professional_dashboard_bloc.dart';
 import 'package:appointmentproject/model/professional.dart';
-import 'package:appointmentproject/ui/Client/ClientDashboard/components/category_card.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalAddAppointmentScreen/professional_select_date_time_screen.dart';
+import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/components/category_card.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalEditAppointmentScreen/professional_edit_appointment_screen.dart';
 import 'package:appointmentproject/ui/Professional/TodayAppointmentScreen/today_appointment_screen.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';

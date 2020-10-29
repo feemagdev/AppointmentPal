@@ -34,7 +34,7 @@ class ProfessionalSelectCustomerBloc extends Bloc<
       List<Customer> customers = new List();
       customers = await CustomerRepository.defaultConstructor()
           .getAllCustomersOfProfessional(
-              event.professional.getProfessionalID().documentID);
+              event.professional.getProfessionalID().id);
 
       yield ProfessionalSelectCustomerShowAllCustomerState(
           professional: event.professional,

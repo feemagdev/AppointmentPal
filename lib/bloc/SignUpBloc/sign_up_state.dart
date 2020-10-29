@@ -9,7 +9,7 @@ class SignUpInitialState extends SignUpState{}
 class SignUpLoadingState extends SignUpState{}
 
 class SignUpSuccessfulState extends SignUpState{
-  final FirebaseUser user;
+  final User user;
   SignUpSuccessfulState({@required this.user});
 
 }

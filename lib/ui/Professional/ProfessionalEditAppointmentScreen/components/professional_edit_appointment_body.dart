@@ -174,7 +174,6 @@ class ProfessionalEditAppointmentBody extends StatelessWidget {
       List<Appointment> appointments,
       Professional professional,
       List<Customer> customers) {
-    double deviceWidth = MediaQuery.of(context).size.width;
     return ListView.builder(
       shrinkWrap: true,
       itemCount: appointments.length,

@@ -8,7 +8,7 @@ class AuthInitialState extends AuthState{}
 
 class AuthenticatedState extends AuthState{
 
-  final FirebaseUser user;
+  final User user;
   AuthenticatedState({@required this.user});
 
 }

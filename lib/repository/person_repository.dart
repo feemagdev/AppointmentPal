@@ -10,28 +10,28 @@ class PersonRepository {
 
   PersonRepository.defaultConstructor();
 
-  Future<FirebaseUser> registerUser() async {
+  Future<User> registerUser() async {
     person = new Person(email,password);
     return person.registerUser();
   }
 
-  Future<FirebaseUser> signInUser(String email, String password) {
+  Future<User> signInUser(String email, String password) async {
     person = new Person(email,password);
-    return person.signInUser();
+    return await person.signInUser();
   }
 
 
   Future<void> signOut() async =>await Person.defaultConstructor().signOut();
 
 
-  Future<FirebaseUser> getCurrentUser() async =>await Person.defaultConstructor().getCurrentUser();
+  Future<User> getCurrentUser() async =>await Person.defaultConstructor().getCurrentUser();
 
 
-  Future<bool> sendVerificationEmail (FirebaseUser user) async {
+  Future<bool> sendVerificationEmail (User user) async {
     return await Person.defaultConstructor().sendVerificationEmail(user);
   }
 
-  Future<bool> checkUserVerification(FirebaseUser user) async {
+  Future<bool> checkUserVerification(User user) async {
     return await Person.defaultConstructor().checkUserVerification(user);
   }
 

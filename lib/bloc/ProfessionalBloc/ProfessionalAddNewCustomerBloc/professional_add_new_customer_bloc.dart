@@ -34,7 +34,7 @@ class ProfessionalAddNewCustomerBloc extends Bloc<
     if (event is AddNewCustomerButtonPressedEvent) {
       Customer customer = await CustomerRepository.defaultConstructor()
           .addCustomer(
-              event.professional.getProfessionalID().documentID,
+              event.professional.getProfessionalID().id,
               event.name,
               event.phone,
               event.address,
@@ -53,10 +53,12 @@ class ProfessionalAddNewCustomerBloc extends Bloc<
           appointmentStartTime: event.appointmentStartTime,
           appointmentEndTime: event.appointmentEndTime);
     } else if (event is CheckPhoneEvent) {
+      print("phone event");
       bool customerCheck = await CustomerRepository.defaultConstructor()
           .checkCustomerExist(
-              event.phone, event.professional.getProfessionalID().documentID);
+              event.phone, event.professional.getProfessionalID().id);
       if (customerCheck) {
+        print("customer check true");
         yield CustomerAlreadyExistState(professional: event.professional);
       } else {
         yield CustomerCanBeAdded(professional: event.professional);

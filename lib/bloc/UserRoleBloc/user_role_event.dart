@@ -7,6 +7,6 @@ abstract class UserRoleEvent {}
 
 
 class CheckUserRoleEvent extends UserRoleEvent{
-  FirebaseUser user;
+  User user;
   CheckUserRoleEvent({@required this.user});
 }

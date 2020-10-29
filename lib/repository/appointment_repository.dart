@@ -1,6 +1,5 @@
 import 'package:appointmentproject/model/appointment.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
 
 class AppointmentRepository {
   AppointmentRepository.defaultConstructor();
@@ -18,7 +17,7 @@ class AppointmentRepository {
       String professionalContact,
       String serviceName,
       String subServiceName) {
-    final dbReference = Firestore.instance;
+    final dbReference = FirebaseFirestore.instance;
     Appointment appointment = Appointment.bookAppointment();
 
     dbReference.collection('appointment').add(appointment.toMap(
@@ -43,7 +42,7 @@ class AppointmentRepository {
       Timestamp appointmentStartTime,
       Timestamp appointmentEndTime,
       String appointmentStatus) {
-    final dbReference = Firestore.instance;
+    final dbReference = FirebaseFirestore.instance;
     Appointment appointment = Appointment.bookAppointment();
     dbReference.collection('appointment').add(
         appointment.professionalAppointmentMap(
@@ -61,25 +60,21 @@ class AppointmentRepository {
     List<Appointment> appointment = List();
 
     try {
-      final dbReference = Firestore.instance;
+      final dbReference = FirebaseFirestore.instance;
       await dbReference
           .collection('appointment')
           .where('appointment_date', isEqualTo: newTimeStamp)
           .where('professionalID', isEqualTo: professionalID)
-          .getDocuments()
+          .get()
           .then((value) {
-        value.documents.forEach((element) {
+        value.docs.forEach((element) {
           appointment.add(
-              Appointment.notAvailableTime(element.data, element.reference));
-          print('added');
+              Appointment.notAvailableTime(element.data(), element.reference));
         });
       });
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
 
     if (appointment.length == 0) {
-      print('null return');
       return null;
     }
     return appointment;
@@ -94,18 +89,18 @@ class AppointmentRepository {
 
   Future<List<Appointment>> getClientSelectedDayAppointments(
       DocumentReference clientID, Timestamp timestamp) async {
-    final dbReference = Firestore.instance;
+    final dbReference = FirebaseFirestore.instance;
     List<Appointment> appointments = List();
     Timestamp newTimeStamp = changeTime(timestamp);
     await dbReference
         .collection('appointment')
         .where('appointment_date', isEqualTo: newTimeStamp)
         .where('clientID', isEqualTo: clientID)
-        .getDocuments()
+        .get()
         .then((value) {
-      value.documents.forEach((element) {
+      value.docs.forEach((element) {
         Appointment appointment =
-            Appointment.getClientAppointments(element.data, element.reference);
+            Appointment.getClientAppointments(element.data(), element.reference);
         appointments.add(appointment);
       });
     });
@@ -114,18 +109,18 @@ class AppointmentRepository {
 
   Future<List<Appointment>> getProfessionalSelectedDayAppointments(
       DocumentReference professionalID, Timestamp timestamp) async {
-    final dbReference = Firestore.instance;
+    final dbReference = FirebaseFirestore.instance;
     List<Appointment> appointments = List();
     Timestamp newTimeStamp = changeTime(timestamp);
     await dbReference
         .collection('appointment')
         .where('appointment_date', isEqualTo: newTimeStamp)
         .where('professionalID', isEqualTo: professionalID)
-        .getDocuments()
+        .get()
         .then((value) {
-      value.documents.forEach((element) {
+      value.docs.forEach((element) {
         Appointment appointment = Appointment.getProfessionalAppointments(
-            element.data, element.reference);
+            element.data(), element.reference);
         print(element.data);
         appointments.add(appointment);
       });
@@ -134,11 +129,11 @@ class AppointmentRepository {
   }
 
   DocumentReference getAppointmentReference(String appointmentID) {
-    return Firestore.instance.collection('appointment').document(appointmentID);
+    return FirebaseFirestore.instance.collection('appointment').doc(appointmentID);
   }
 
   Future<bool> updateAppointment(Appointment appointment) async {
-    final dbReference = Firestore.instance;
+    final dbReference = FirebaseFirestore.instance;
     Map<String,dynamic> updateMap = appointment.updateMap(
         appointment.getProfessionalID(),
         appointment.getCustomerID(),
@@ -148,10 +143,9 @@ class AppointmentRepository {
 
     await dbReference
         .collection('appointment')
-        .document(appointment.getAppointmentID().documentID)
-        .setData(
-            updateMap,
-            merge: true);
+        .doc(appointment.getAppointmentID().id)
+        .set(
+            updateMap);
 
     return true;
   }
@@ -159,28 +153,27 @@ class AppointmentRepository {
 
   Future<List<Appointment>> getTodayAppointmentOfProfessional (DocumentReference professionalID) async {
     DateTime dateTime = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day);
-    final dbReference = Firestore.instance;
+    final dbReference = FirebaseFirestore.instance;
     List<Appointment> appointments = List();
     await dbReference.collection('appointment')
         .where('professionalID',isEqualTo: professionalID)
         .where('appointment_date',isEqualTo: Timestamp.fromDate(dateTime))
         .where('appointment_end_time',isLessThanOrEqualTo: Timestamp.now())
-    .where('appointment_status',isEqualTo: 'booked')
-        .getDocuments().then((value) {
-          value.documents.forEach((element) {
-            Appointment appointment = Appointment.getProfessionalAppointments(element.data, element.reference);
-            appointments.add(appointment);
-          });
+    .where('appointment_status',isEqualTo: 'booked').get().then((value){
+      value.docs.forEach((element) {
+        Appointment appointment = Appointment.getProfessionalAppointments(element.data(), element.reference);
+        appointments.add(appointment);
+      });
     });
     return appointments;
   }
 
   Future<bool> markTheAppointmentComplete(Appointment appointment) async{
-    await appointment.getAppointmentID().updateData({'appointment_status':'completed'});
+    await appointment.getAppointmentID().update({'appointment_status':'completed'});
     return true;
   }
   Future<bool> markTheAppointmentCancel(Appointment appointment) async{
-    await appointment.getAppointmentID().updateData({'appointment_status':'canceled'});
+    await appointment.getAppointmentID().update({'appointment_status':'canceled'});
     return true;
   }
 

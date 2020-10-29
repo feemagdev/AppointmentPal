@@ -16,7 +16,7 @@ class Company {
 
   Future<Company> getCompany(DocumentReference documentReference) async {
     DocumentSnapshot documentSnapshot = await documentReference.get();
-    Company company = Company.fromMap(documentSnapshot.data);
+    Company company = Company.fromMap(documentSnapshot.data());
     return company;
   }
 

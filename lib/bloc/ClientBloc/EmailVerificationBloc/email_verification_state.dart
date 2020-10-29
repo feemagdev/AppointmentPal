@@ -6,9 +6,8 @@ abstract class EmailVerificationState {}
 class EmailVerificationInitial extends EmailVerificationState {}
 
 class EmailVerified extends EmailVerificationState {
-  final FirebaseUser user;
-  final List<Service> services;
-  EmailVerified({@required this.user,@required this.services});
+  final User user;
+  EmailVerified({@required this.user});
 }
 
 class EmailNotVerified extends EmailVerificationState {}
