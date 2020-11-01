@@ -5,8 +5,9 @@ import 'package:appointmentproject/bloc/LoginBloc/login_state.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/repository/person_repository.dart';
 import 'package:appointmentproject/repository/professional_repository.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
@@ -19,15 +20,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   @override
   Stream<LoginState> mapEventToState(LoginEvent event) async* {
     if (event is LoginButtonPressedEvent) {
-      bool professionalCheck = false;
       try {
         user = await PersonRepository.defaultConstructor()
             .signInUser(event.email, event.password);
         print("return from professional repository");
+
+
         if (user.uid.isNotEmpty) {
           Professional professional = await checkProfessionalRole(user);
           if (professional != null ) {
-            professionalCheck = true;
             yield ProfessionalLoginSuccessState(professional: professional);
           }
         }

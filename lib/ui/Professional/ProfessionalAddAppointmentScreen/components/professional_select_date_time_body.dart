@@ -3,7 +3,7 @@ import 'package:appointmentproject/model/appointment.dart';
 import 'package:appointmentproject/model/customer.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/model/schedule.dart';
-import 'package:appointmentproject/ui/Client/SelectDateTime/components/custom_date.dart';
+import 'file:///C:/Users/faheem/AndroidStudioProjects/appointment_project/lib/ui/Professional/ProfessionalAddAppointmentScreen/components/custom_date.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/professional_dashboard_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalSelectCustomerScreen/professional_select_customer_screen.dart';
 import 'package:appointmentproject/ui/Professional/UpdateAppointmentScreen/update_appointment_screen.dart';

@@ -19,3 +19,8 @@ class ProfessionalTodayAppointmentState extends ProfessionalDashboardState {
   final Professional professional;
   ProfessionalTodayAppointmentState({@required this.professional});
 }
+
+class ProfessionalSettingState extends ProfessionalDashboardState {
+  final Professional professional;
+  ProfessionalSettingState({@required this.professional});
+}

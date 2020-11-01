@@ -20,6 +20,8 @@ class ProfessionalDashboardBloc extends Bloc<ProfessionalDashboardEvent, Profess
       yield ProfessionalEditAppointmentState(professional: event.professional);
     }else if(event is ProfessionalTodayAppointmentEvent){
       yield ProfessionalTodayAppointmentState(professional: event.professional);
+    }else if(event is ProfessionalSettingEvent){
+      yield ProfessionalSettingState(professional: event.professional);
     }
   }
 
