@@ -14,7 +14,7 @@ class Manager {
   Manager(this._name, this._phone, this._country, this._city, this._address,
       this._dob, this._salary, this._company);
 
-  Manager._fromMap(Map snapshot)
+  Manager.fromMap(Map snapshot)
       : _name = snapshot['name'],
         _phone = snapshot['phone'],
         _country = snapshot['country'],
@@ -26,18 +26,7 @@ class Manager {
 
   Manager.defaultConstructor();
 
-  Future<Manager> getManager(DocumentReference documentReference) async {
-    Manager manager;
-    DocumentSnapshot documentSnapshot = await documentReference.get();
-    DocumentReference companyReference = documentSnapshot.data['companyID'];
-    documentSnapshot.data['companyID'] = await getCompanyByReference(companyReference);
-    manager = Manager._fromMap(documentSnapshot.data);
-    return manager;
-  }
 
-  Future<Company> getCompanyByReference(DocumentReference documentReference) async {
-    return await Company.defaultConstructor().getCompany(documentReference);
-  }
 
   Timestamp getDob() {
     return _dob;

@@ -1,9 +1,10 @@
 
 import 'package:appointmentproject/bloc/ProfessionalBloc/ProfessionalDashboardBloc/professional_dashboard_bloc.dart';
 import 'package:appointmentproject/model/professional.dart';
-import 'package:appointmentproject/ui/Client/ClientDashboard/components/category_card.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalAddAppointmentScreen/professional_select_date_time_screen.dart';
+import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/components/category_card.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalEditAppointmentScreen/professional_edit_appointment_screen.dart';
+import 'package:appointmentproject/ui/Professional/SettingScreen/setting_screen.dart';
 import 'package:appointmentproject/ui/Professional/TodayAppointmentScreen/today_appointment_screen.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
 import 'package:appointmentproject/ui/components/background.dart';
@@ -31,6 +32,8 @@ class ProfessionalDashboardBody extends StatelessWidget {
                   navigateToEditAppointmentScreen(context, state.professional);
                 }else if(state is ProfessionalTodayAppointmentState){
                   navigateToTodayAppointmentScreen(context,state.professional);
+                }else if(state is ProfessionalSettingState){
+                  navigateToProfessionalSettingScreen(context,state.professional);
                 }
               },
               child: BlocBuilder<ProfessionalDashboardBloc, ProfessionalDashboardState>(
@@ -108,7 +111,7 @@ class ProfessionalDashboardBody extends StatelessWidget {
             FadeAnimation(1.4, CategoryCard(svgSrc: "assets/icons/payment.svg",title: "payment",)),
             FadeAnimation(1.4, CategoryCard(svgSrc: "assets/icons/history.svg",title: "history",)),
             FadeAnimation(1.4, CategoryCard(svgSrc: "assets/icons/today.svg",title: "today",onTap: (){todayAppointmentTap(context);},)),
-            FadeAnimation(1.4, CategoryCard(svgSrc: "assets/icons/setting.svg",title: "setting",)),
+            FadeAnimation(1.4, CategoryCard(svgSrc: "assets/icons/setting.svg",title: "setting",onTap: (){settingTap(context);},)),
           ],
         ),
       ),
@@ -117,7 +120,6 @@ class ProfessionalDashboardBody extends StatelessWidget {
 
 
   void addAppointmentTap(BuildContext context){
-    print("add appointment tap");
     BlocProvider.of<ProfessionalDashboardBloc>(context).add(ProfessionalAddAppointmentEvent(professional:professional));
   }
 
@@ -128,6 +130,12 @@ class ProfessionalDashboardBody extends StatelessWidget {
   void todayAppointmentTap(BuildContext context) {
     BlocProvider.of<ProfessionalDashboardBloc>(context).add(ProfessionalTodayAppointmentEvent(professional:professional));
   }
+
+  void settingTap(BuildContext context) {
+    BlocProvider.of<ProfessionalDashboardBloc>(context).add(ProfessionalSettingEvent(professional:professional));
+  }
+
+
 
   void navigateToAddAppointmentScreen(BuildContext context,Professional professional) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
@@ -147,6 +155,11 @@ class ProfessionalDashboardBody extends StatelessWidget {
     }));
   }
 
+  void navigateToProfessionalSettingScreen(BuildContext context, Professional professional) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return SettingScreen(professional: professional);
+    }));
+  }
 
 
 

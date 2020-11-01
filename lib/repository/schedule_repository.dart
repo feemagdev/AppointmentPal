@@ -9,24 +9,24 @@ class ScheduleRepository {
 
   Future<Schedule> getProfessionalSchedule(
       DocumentReference professionalID, String dayOfWeek) async {
-    final dbReference = Firestore.instance;
+    final dbReference = FirebaseFirestore.instance;
     print("repository start");
-    print(professionalID.documentID);
+    print(professionalID.id);
     print(dayOfWeek);
     Schedule schedule;
-    await dbReference
+    DocumentSnapshot snapshot = await dbReference
         .collection('schedule')
-        .document(professionalID.documentID)
+        .doc(professionalID.id)
         .collection(dayOfWeekSubCollection)
-        .document(dayOfWeek)
-        .get()
-        .then((value) {
-      if (value.data == null) {
-        print("no data");
-        return null;
-      }
-      schedule = Schedule.professionalSchedule(value.data);
-    });
+        .doc(dayOfWeek)
+        .get();
+
+    if(snapshot.data() == null){
+      print("no data");
+      return null;
+    }else {
+      schedule = Schedule.professionalSchedule(snapshot.data());
+    }
     print("Repository end");
     return schedule;
   }

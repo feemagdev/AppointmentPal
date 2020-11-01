@@ -18,3 +18,8 @@ class ProfessionalTodayAppointmentEvent extends ProfessionalDashboardEvent {
   final Professional professional;
   ProfessionalTodayAppointmentEvent({@required this.professional});
 }
+
+class ProfessionalSettingEvent extends ProfessionalDashboardEvent {
+  final Professional professional;
+  ProfessionalSettingEvent({@required this.professional});
+}

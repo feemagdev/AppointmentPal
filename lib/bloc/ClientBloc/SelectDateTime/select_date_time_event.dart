@@ -32,26 +32,6 @@ class TimeSlotSelectedEvent extends SelectDateTimeEvent {
       this.appointment,this.customer});
 }
 
-class AppointmentIsBookedEvent extends SelectDateTimeEvent {
-  final Professional professional;
-  final SubServices subServices;
-  final Service service;
-  final Client client;
-  final DateTime dateTime;
-  final FirebaseUser user;
-  final String name;
-  final String phone;
-
-  AppointmentIsBookedEvent(
-      {@required this.professional,
-      @required this.client,
-      @required this.service,
-      @required this.subServices,
-      @required this.dateTime,
-      @required this.user,
-      @required this.name,
-      @required this.phone});
-}
 
 class ProfessionalBookedTheAppointmentButtonEvent extends SelectDateTimeEvent {
   final Professional professional;

@@ -1,15 +1,18 @@
 
 
 import 'package:appointmentproject/ui/Welcome/welcome_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle( statusBarColor: Colors.blue, statusBarBrightness: Brightness.dark, ));
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
+    Firebase.initializeApp();
     runApp(SplashScreen());
   });
 }

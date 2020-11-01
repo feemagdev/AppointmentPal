@@ -7,19 +7,20 @@ import 'package:meta/meta.dart';
 part 'professional_dashboard_event.dart';
 part 'professional_dashboard_state.dart';
 
-class ProfessionalDashboardBloc extends Bloc<ProfessionalDashboardEvent, ProfessionalDashboardState> {
-
+class ProfessionalDashboardBloc
+    extends Bloc<ProfessionalDashboardEvent, ProfessionalDashboardState> {
   @override
   Stream<ProfessionalDashboardState> mapEventToState(
     ProfessionalDashboardEvent event,
   ) async* {
-    if(event is ProfessionalAddAppointmentEvent){
+    if (event is ProfessionalAddAppointmentEvent) {
       yield ProfessionalAddAppointmentState(professional: event.professional);
-    }
-    else if(event is ProfessionalEditAppointmentEvent){
+    } else if (event is ProfessionalEditAppointmentEvent) {
       yield ProfessionalEditAppointmentState(professional: event.professional);
-    }else if(event is ProfessionalTodayAppointmentEvent){
+    } else if (event is ProfessionalTodayAppointmentEvent) {
       yield ProfessionalTodayAppointmentState(professional: event.professional);
+    } else if (event is ProfessionalSettingEvent) {
+      yield ProfessionalSettingState(professional: event.professional);
     }
   }
 

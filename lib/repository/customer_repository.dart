@@ -6,37 +6,38 @@ class CustomerRepository {
 
   Future<List<Customer>> getAllCustomersOfProfessional(
       String professionalDocumentID) async {
-    final dbReference = Firestore.instance;
+    final dbReference = FirebaseFirestore.instance;
     List<Customer> customers = new List();
     await dbReference
         .collection('professional')
-        .document(professionalDocumentID)
+        .doc(professionalDocumentID)
         .collection('customer')
-        .getDocuments()
+        .get()
         .then((value) {
-      value.documents.forEach((element) {
+      value.docs.forEach((element) {
         print(element.data);
-        Customer customer = Customer.fromMap(element.data, element.reference);
+        Customer customer = Customer.fromMap(element.data(), element.reference);
         customers.add(customer);
       });
     });
     return customers;
   }
 
-  Future<Customer> addCustomer(
-      String professionalDocumentID, String name, String phone,String address, String city,String country) async {
-    final dbReference = Firestore.instance;
+  Future<Customer> addCustomer(String professionalDocumentID, String name,
+      String phone, String address, String city, String country) async {
+    final dbReference = FirebaseFirestore.instance;
     DocumentReference reference = await dbReference
         .collection('professional')
-        .document(professionalDocumentID)
+        .doc(professionalDocumentID)
         .collection('customer')
-        .add(Customer.defaultConstructor().toMap(name, phone,address,city,country));
+        .add(Customer.defaultConstructor()
+            .toMap(name, phone, address, city, country));
     Customer customer = Customer.defaultConstructor();
     customer.setName(name);
     customer.setPhone(phone);
     customer.setDocumentReference(reference);
 
-    if(reference.documentID.isEmpty){
+    if (reference.id.isEmpty) {
       return null;
     }
     return customer;
@@ -44,21 +45,20 @@ class CustomerRepository {
 
   Future<Customer> getCustomer(DocumentReference documentReference) async {
     Customer customer = Customer.defaultConstructor();
-    await documentReference.get().then((value){
-      customer = Customer.fromMap(value.data, value.reference);
+    await documentReference.get().then((value) {
+      customer = Customer.fromMap(value.data(), value.reference);
     });
     return customer;
   }
-  
-  Future<bool> checkCustomerExist(String phone,String professionalID) async{
-    final dbReference = Firestore.instance;
-    QuerySnapshot snapshot = await dbReference.collection('professional').document(professionalID).collection('customer').where('phone',isEqualTo: phone).getDocuments();
-    return snapshot.documents.isNotEmpty;
 
-    
-    
+  Future<bool> checkCustomerExist(String phone, String professionalID) async {
+    final dbReference = FirebaseFirestore.instance;
+    QuerySnapshot snapshot = await dbReference
+        .collection('professional')
+        .doc(professionalID)
+        .collection('customer')
+        .where('phone', isEqualTo: phone)
+        .get();
+    return snapshot.docs.isNotEmpty;
   }
-
-
-
 }

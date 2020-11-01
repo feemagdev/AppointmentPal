@@ -1,17 +1,13 @@
 import 'dart:async';
 
 import 'package:appointmentproject/model/appointment.dart';
-import 'package:appointmentproject/model/client.dart';
+
 import 'package:appointmentproject/model/customer.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/model/schedule.dart';
-import 'package:appointmentproject/model/service.dart';
-import 'package:appointmentproject/model/sub_services.dart';
 import 'package:appointmentproject/repository/appointment_repository.dart';
-import 'package:appointmentproject/repository/client_repository.dart';
 import 'package:appointmentproject/repository/schedule_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
@@ -82,30 +78,6 @@ class SelectDateTimeBloc
           timeSlots: event.schedules,
           selectedIndex: event.scheduleIndex,
           appointment: event.appointment,customer: event.customer);
-    } else if (event is AppointmentIsBookedEvent) {
-      DocumentReference clientID = ClientRepository.defaultConstructor()
-          .getClientReference(event.user.uid);
-
-      Timestamp dateTime = Timestamp.fromDate(event.dateTime);
-      String appointmentStatus = "booked";
-      String name = event.name;
-      String phone = event.phone;
-
-      AppointmentRepository.defaultConstructor().makeAppointment(
-          event.professional.getProfessionalID(),
-          event.service.getServiceID(),
-          event.subServices.getServiceID(),
-          clientID,
-          dateTime,
-          appointmentStatus,
-          name,
-          phone,
-          event.professional.getName(),
-          event.professional.getPhone(),
-          event.service.getName(),
-          event.subServices.getName());
-
-      yield AppointmentIsBookedState();
     } else if (event is TimeSlotIsSelectedEvent) {
       if (event.appointment == null) {
         yield MoveToSelectCustomerScreenState(

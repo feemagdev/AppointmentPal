@@ -10,12 +10,12 @@ class Person{
   Person(this._email,this._password);
   Person.defaultConstructor();
 
-  Future<FirebaseUser> registerUser() async{
+  Future<User> registerUser() async{
       await firebaseAuth.createUserWithEmailAndPassword(email: this._email,password: this._password);
-      return await firebaseAuth.currentUser();
+      return  firebaseAuth.currentUser;
   }
 
-  Future<FirebaseUser> signInUser() async{
+  Future<User> signInUser() async{
     var result = await firebaseAuth.signInWithEmailAndPassword(
         email: this._email,
         password: this._password
@@ -29,19 +29,19 @@ class Person{
 
 
 
-  Future<FirebaseUser> getCurrentUser() async {
-    FirebaseUser currentUser = await firebaseAuth.currentUser();
+  Future<User> getCurrentUser() async {
+    User currentUser =  firebaseAuth.currentUser;
     return currentUser;
 
   }
 
-  Future<bool> sendVerificationEmail (FirebaseUser user) async {
+  Future<bool> sendVerificationEmail (User user) async {
     await user.sendEmailVerification();
     return true;
   }
 
-  Future<bool> checkUserVerification(FirebaseUser user) async {
-     return user.isEmailVerified;
+  Future<bool> checkUserVerification(User user) async {
+     return user.emailVerified;
   }
 
   Future<void> sendPasswordResetMail (String email) async{

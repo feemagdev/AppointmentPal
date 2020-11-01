@@ -1,6 +1,4 @@
 import 'package:appointmentproject/bloc/SignUpBloc/bloc.dart';
-import 'package:appointmentproject/model/service.dart';
-import 'package:appointmentproject/repository/service_repository.dart';
 import 'package:flutter/services.dart';
 
 
@@ -48,8 +46,6 @@ class SignUpBloc extends Bloc<SignUpEvent,SignUpState>{
     }
   }
 
-  Future<List<Service>> getServicesList(){
-    return ServiceRepository.defaultConstructor().getServicesList(null);
-  }
+
 
 }

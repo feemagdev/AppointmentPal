@@ -14,15 +14,15 @@ class ProfessionalRepository {
   Future<List<Professional>> getListOfProfessionalsBySubService(
       DocumentReference subServiceID) async {
     List<Professional> listOfProfessionals = [];
-    final dbReference = Firestore.instance;
+    final dbReference = FirebaseFirestore.instance;
     dbReference
         .collection('professional')
         .where('sub_serviceID', isEqualTo: subServiceID)
-        .getDocuments()
+        .get()
         .then((value) {
-      value.documents.forEach((element) {
+      value.docs.forEach((element) {
         Professional professional;
-        professional = Professional.fromMap(element.data,element.reference);
+        professional = Professional.fromMap(element.data(),element.reference);
         listOfProfessionals.add(professional);
       });
     });
@@ -30,17 +30,17 @@ class ProfessionalRepository {
   }
 
   DocumentReference getProfessionalReference(String professionalID){
-    return Firestore.instance.collection('professional').document(professionalID);
+    return FirebaseFirestore.instance.collection('professional').doc(professionalID);
 
   }
 
-  Future<Professional> getProfessionalData(FirebaseUser user) async {
-    final dbReference = Firestore.instance;
+  Future<Professional> getProfessionalData(User user) async {
+    final dbReference = FirebaseFirestore.instance;
     Professional professional;
-    DocumentSnapshot snapshot = await dbReference.collection('professional').document(user.uid).get();
+    DocumentSnapshot snapshot = await dbReference.collection('professional').doc(user.uid).get();
 
     if(snapshot.exists){
-      professional = Professional.fromMap(snapshot.data, snapshot.reference);
+      professional = Professional.fromMap(snapshot.data(), snapshot.reference);
       professional.getName();
       return professional;
     }
@@ -51,8 +51,8 @@ class ProfessionalRepository {
 
 
   Future<bool> checkProfessionalDetails(String uid) async {
-    final db = Firestore.instance;
-    DocumentSnapshot data = await db.collection('professional').document(uid).get();
+    final db = FirebaseFirestore.instance;
+    DocumentSnapshot data = await db.collection('professional').doc(uid).get();
     return data.exists;
   }
 
