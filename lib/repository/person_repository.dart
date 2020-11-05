@@ -1,42 +1,44 @@
-import 'package:appointmentproject/model/person.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:meta/meta.dart';
 
 class PersonRepository {
-  Person person;
-  String email;
-  String password;
-  PersonRepository({@required this.email,@required this.password});
-
   PersonRepository.defaultConstructor();
 
-  Future<User> registerUser() async {
-    person = new Person(email,password);
-    return person.registerUser();
+  Future<User> registerUser(String email, String password) async {
+    final firebaseAuth = FirebaseAuth.instance;
+    UserCredential userCredential = await firebaseAuth
+        .createUserWithEmailAndPassword(email: email, password: password);
+    return userCredential.user;
   }
 
   Future<User> signInUser(String email, String password) async {
-    person = new Person(email,password);
-    return await person.signInUser();
+    final firebaseAuth = FirebaseAuth.instance;
+    UserCredential user = await firebaseAuth.signInWithEmailAndPassword(
+        email: email, password: password);
+    return user.user;
   }
 
-
-  Future<void> signOut() async =>await Person.defaultConstructor().signOut();
-
-
-  Future<User> getCurrentUser() async =>await Person.defaultConstructor().getCurrentUser();
-
-
-  Future<bool> sendVerificationEmail (User user) async {
-    return await Person.defaultConstructor().sendVerificationEmail(user);
+  Future<void> signOut() async {
+    final firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth.signOut();
   }
 
-  Future<bool> checkUserVerification(User user) async {
-    return await Person.defaultConstructor().checkUserVerification(user);
+  User getCurrentUser() {
+    final firebaseAuth = FirebaseAuth.instance;
+    User currentUser = firebaseAuth.currentUser;
+    return currentUser;
   }
 
-  Future<void> sendPasswordResetMail (String email) async{
-    return await Person.defaultConstructor().sendPasswordResetMail(email);
+  Future<bool> sendVerificationEmail(User user) async {
+    await user.sendEmailVerification();
+    return true;
   }
 
+  bool checkUserVerification(User user) {
+    return user.emailVerified;
+  }
+
+  Future<void> sendPasswordResetMail(String email) async {
+    final firebaseAuth = FirebaseAuth.instance;
+    return await firebaseAuth.sendPasswordResetEmail(email: email);
+  }
 }

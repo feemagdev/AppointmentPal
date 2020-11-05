@@ -16,16 +16,8 @@ class ProfessionalAddNewCustomerInitial
 }
 
 class CustomerAddedSuccessfullyState extends ProfessionalAddNewCustomerState {
-  final Professional professional;
-  final DateTime appointmentStartTime;
   final Customer customer;
-  final DateTime appointmentEndTime;
-
-  CustomerAddedSuccessfullyState(
-      {@required this.professional,
-      this.appointmentStartTime,
-      this.customer,
-      this.appointmentEndTime});
+  CustomerAddedSuccessfullyState({@required this.customer});
 }
 
 class MoveBackToSelectCustomerScreenState

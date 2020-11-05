@@ -18,13 +18,13 @@ class TodayAppointmentBloc
 
   TodayAppointmentBloc({@required this.professional});
 
-
   @override
   TodayAppointmentState get initialState => TodayAppointmentInitial();
 
   @override
   Stream<TodayAppointmentState> mapEventToState(
-      TodayAppointmentEvent event,) async* {
+    TodayAppointmentEvent event,
+  ) async* {
     if (event is GetAllTodayAppointments) {
       yield TodayAppointmentLoadingState();
       List<Appointment> appointments = List();
@@ -33,49 +33,51 @@ class TodayAppointmentBloc
       if (appointments.isNotEmpty) {
         customers = await getListOfAppointmentCustomers(appointments);
       }
-      yield GetAllTodayAppointmentState(appointments: appointments,customers: customers);
-    } else if(event is MarkAppointmentComplete){
+      yield GetAllTodayAppointmentState(
+          appointments: appointments, customers: customers);
+    } else if (event is MarkAppointmentComplete) {
       yield TodayAppointmentLoadingState();
-      bool checkStatus = await AppointmentRepository.defaultConstructor().markTheAppointmentComplete(event.appointment);
-      if(checkStatus){
+      bool checkStatus = await AppointmentRepository.defaultConstructor()
+          .markTheAppointmentComplete(event.appointment);
+      if (checkStatus) {
         List<Appointment> appointments = List();
         List<Customer> customers = List();
         appointments = await getListOfAppointments();
         if (appointments.isNotEmpty) {
           customers = await getListOfAppointmentCustomers(appointments);
         }
-        yield GetAllTodayAppointmentState(appointments: appointments,customers: customers);
+        yield GetAllTodayAppointmentState(
+            appointments: appointments, customers: customers);
       }
-    }else if(event is MarkAppointmentCancel){
+    } else if (event is MarkAppointmentCancel) {
       yield TodayAppointmentLoadingState();
-      bool checkStatus = await AppointmentRepository.defaultConstructor().markTheAppointmentCancel(event.appointment);
-      if(checkStatus){
+      bool checkStatus = await AppointmentRepository.defaultConstructor()
+          .markTheAppointmentCancel(event.appointment);
+      if (checkStatus) {
         List<Appointment> appointments = List();
         List<Customer> customers = List();
         appointments = await getListOfAppointments();
         if (appointments.isNotEmpty) {
           customers = await getListOfAppointmentCustomers(appointments);
         }
-        yield GetAllTodayAppointmentState(appointments: appointments,customers: customers);
+        yield GetAllTodayAppointmentState(
+            appointments: appointments, customers: customers);
       }
     }
   }
 
-
-
-  Future<List<Appointment>> getListOfAppointments()async{
+  Future<List<Appointment>> getListOfAppointments() async {
     return await AppointmentRepository.defaultConstructor()
         .getTodayAppointmentOfProfessional(professional.getProfessionalID());
   }
 
-  Future<List<Customer>> getListOfAppointmentCustomers (List<Appointment> appointments)async{
+  Future<List<Customer>> getListOfAppointmentCustomers(
+      List<Appointment> appointments) async {
     List<Customer> customers = List();
-    await Future.forEach(appointments, (element) async{
-      customers.add(await CustomerRepository.defaultConstructor().getCustomer(element.getCustomerID()));
+    await Future.forEach(appointments, (element) async {
+      customers.add(await CustomerRepository.defaultConstructor()
+          .getCustomer(element.getProfessionalID(), element.getCustomerID()));
     });
     return customers;
   }
-
 }
-
-

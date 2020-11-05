@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:appointmentproject/model/appointment.dart';
 
 import 'package:appointmentproject/model/customer.dart';
+import 'package:appointmentproject/model/manager.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/model/schedule.dart';
 import 'package:appointmentproject/repository/appointment_repository.dart';
@@ -20,9 +21,13 @@ class SelectDateTimeBloc
   final Professional professional;
   final Appointment appointment;
   final Customer customer;
+  final Manager manager;
 
   SelectDateTimeBloc(
-      {@required this.professional, this.appointment, this.customer});
+      {@required this.professional,
+      this.appointment,
+      this.customer,
+      this.manager});
 
   @override
   SelectDateTimeState get initialState => SelectDateTimeInitial(
@@ -35,14 +40,12 @@ class SelectDateTimeBloc
     if (event is ShowAvailableTimeEvent) {
       yield SelectDateTimeLoadingState();
       Schedule schedule =
-          await getProfessionalSchedule(event.professional, event.dateTime);
+      await getProfessionalSchedule(professional, event.dateTime);
 
       if (schedule == null) {
         yield NoScheduleAvailable(
-            professional: event.professional,
-            dateTime: event.dateTime,
-            customer: event.customer,
-            appointment: event.appointment);
+            dateTime: event.dateTime
+        );
       } else {
         DateTime dateTime = event.dateTime;
         if (dateTime == null) {
@@ -50,38 +53,30 @@ class SelectDateTimeBloc
         }
 
         List<Appointment> appointment =
-            await AppointmentRepository.defaultConstructor()
-                .getNotAvailableTime(Timestamp.fromDate(dateTime),
-                    event.professional.getProfessionalID());
+        await AppointmentRepository.defaultConstructor()
+            .getNotAvailableTime(Timestamp.fromDate(dateTime),
+            professional.getProfessionalID());
 
         List<DateTime> timeSlots = makeScheduleTimeSlots(
             schedule, dateTime.year, dateTime.month, dateTime.day, appointment);
         if (timeSlots.isEmpty || timeSlots.length == 0) {
           yield NoScheduleAvailable(
-              professional: event.professional,
-              dateTime: event.dateTime,
-              customer: event.customer,
-              appointment: event.appointment);
+              dateTime: event.dateTime
+          );
         } else {
           yield ShowAvailableTimeState(
-              professional: event.professional,
-              schedule: schedule,
-              timeSlots: timeSlots,
-              customer: event.customer,
-              appointment: event.appointment);
+            schedule: schedule,
+            timeSlots: timeSlots,);
         }
       }
     } else if (event is TimeSlotSelectedEvent) {
       yield TimeSlotSelectedState(
-          professional: event.professional,
-          schedule: event.schedule,
-          timeSlots: event.schedules,
-          selectedIndex: event.scheduleIndex,
-          appointment: event.appointment,customer: event.customer);
+        schedule: event.schedule,
+        timeSlots: event.schedules,
+        selectedIndex: event.scheduleIndex,);
     } else if (event is TimeSlotIsSelectedEvent) {
-      if (event.appointment == null) {
+      if (appointment == null) {
         yield MoveToSelectCustomerScreenState(
-          professional: event.professional,
           appointmentStartTime: event.appointmentStartTime,
           appointmentEndTime: event.appointmentEndTime,
         );
@@ -91,15 +86,13 @@ class SelectDateTimeBloc
         appointment.setAppointmentEndTime(
             Timestamp.fromDate(event.appointmentEndTime));
         yield MoveToUpdateAppointmentScreenState(
-            professional: event.professional,
-            appointment: event.appointment,
-            customer: event.customer);
+            appointment: appointment,
+            customer: customer);
       }
     } else if (event is MoveToDashboardScreenEvent) {
-      yield MoveToDashboardScreenState(professional: event.professional);
+      yield MoveToDashboardScreenState();
     } else if (event is MoveToUpdateAppointmentScreenEvent) {
       yield MoveToUpdateAppointmentScreenState(
-          professional: event.professional,
           appointment: event.appointment,
           customer: event.customer);
     }
@@ -157,19 +150,41 @@ class SelectDateTimeBloc
       checkInitialDate = true;
     } else {
       for (int i = 0; i < appointment.length; i++) {
-        int startTimeInMinutes = startTime.hour*60+startTime.minute;
-        int appointmentStartTime = appointment[i].getAppointmentStartTime().toDate().hour*60+appointment[i].getAppointmentStartTime().toDate().minute;
-        int appointmentEndTime = appointment[i].getAppointmentEndTime().toDate().hour*60+appointment[i].getAppointmentEndTime().toDate().minute;
-        if(startTimeInMinutes >= appointmentStartTime && startTimeInMinutes <= appointmentEndTime){
+        int startTimeInMinutes = startTime.hour * 60 + startTime.minute;
+        int appointmentStartTime =
+            appointment[i]
+                .getAppointmentStartTime()
+                .toDate()
+                .hour * 60 +
+                appointment[i]
+                    .getAppointmentStartTime()
+                    .toDate()
+                    .minute;
+        int appointmentEndTime =
+            appointment[i]
+                .getAppointmentEndTime()
+                .toDate()
+                .hour * 60 +
+                appointment[i]
+                    .getAppointmentEndTime()
+                    .toDate()
+                    .minute;
+        if (startTimeInMinutes >= appointmentStartTime &&
+            startTimeInMinutes <= appointmentEndTime) {
           checkInitialDate = false;
           break;
-        }else if(startTime.hour == appointment[i].getAppointmentStartTime().toDate().hour){
-          if((startTimeInMinutes + schedule.getDuration()) <= appointmentEndTime){
+        } else if (startTime.hour ==
+            appointment[i]
+                .getAppointmentStartTime()
+                .toDate()
+                .hour) {
+          if ((startTimeInMinutes + schedule.getDuration()) <=
+              appointmentEndTime) {
             checkInitialDate = false;
             break;
           }
         }
-      /*  if (Timestamp.fromDate(startTime) ==
+        /*  if (Timestamp.fromDate(startTime) ==
             appointment[i].getAppointmentStartTime()) {
           checkInitialDate = false;
           break;
@@ -179,18 +194,19 @@ class SelectDateTimeBloc
     int startTimeInMinutes = startTime.hour * 60 + startTime.minute;
     int currentTimeInMinutes = DateTime.now().hour * 60 + DateTime.now().minute;
 
-    if(startTime.day == DateTime.now().day){
+    if (startTime.day == DateTime
+        .now()
+        .day) {
       if (startTimeInMinutes > currentTimeInMinutes) {
         if (checkInitialDate) {
           schedules.add(startTime);
         }
       }
-    } else{
-      if(checkInitialDate){
+    } else {
+      if (checkInitialDate) {
         schedules.add(startTime);
       }
     }
-
 
     if (schedule.getBreakEndTime() == -1 &&
         schedule.getBreakEndTimeMinutes() == -1 &&
@@ -200,7 +216,7 @@ class SelectDateTimeBloc
         bool checkDate = false;
         DateTime tempDate = startTime
             .add(Duration(minutes: schedule.getDuration() * multiplier));
-        int startTimeInMinutes = tempDate.hour*60 + tempDate.minute;
+        int startTimeInMinutes = tempDate.hour * 60 + tempDate.minute;
 
         if (tempDate.hour >= endTime.hour &&
             tempDate.minute >= endTime.minute) {
@@ -211,14 +227,35 @@ class SelectDateTimeBloc
           checkDate = false;
         } else {
           for (int i = 0; i < appointment.length; i++) {
-
-            int appointmentStartTime = appointment[i].getAppointmentStartTime().toDate().hour*60+appointment[i].getAppointmentStartTime().toDate().minute;
-            int appointmentEndTime = appointment[i].getAppointmentEndTime().toDate().hour*60+appointment[i].getAppointmentEndTime().toDate().minute;
-            if(startTimeInMinutes >= appointmentStartTime && startTimeInMinutes < appointmentEndTime){
+            int appointmentStartTime =
+                appointment[i]
+                    .getAppointmentStartTime()
+                    .toDate()
+                    .hour * 60 +
+                    appointment[i]
+                        .getAppointmentStartTime()
+                        .toDate()
+                        .minute;
+            int appointmentEndTime =
+                appointment[i]
+                    .getAppointmentEndTime()
+                    .toDate()
+                    .hour * 60 +
+                    appointment[i]
+                        .getAppointmentEndTime()
+                        .toDate()
+                        .minute;
+            if (startTimeInMinutes >= appointmentStartTime &&
+                startTimeInMinutes < appointmentEndTime) {
               checkDate = true;
               break;
-            }else if(tempDate.hour == appointment[i].getAppointmentStartTime().toDate().hour){
-              if((startTimeInMinutes + schedule.getDuration()) <= appointmentEndTime){
+            } else if (tempDate.hour ==
+                appointment[i]
+                    .getAppointmentStartTime()
+                    .toDate()
+                    .hour) {
+              if ((startTimeInMinutes + schedule.getDuration()) <=
+                  appointmentEndTime) {
                 checkDate = true;
                 break;
               }
@@ -257,10 +294,11 @@ class SelectDateTimeBloc
         bool checkDate = false;
         DateTime tempDate = startTime
             .add(Duration(minutes: schedule.getDuration() * multiplier));
-        int startTimeInMinutes = tempDate.hour*60 + tempDate.minute;
-        int breakStartTimeInMinutes = breakStartTime.hour * 60 + breakStartTime.minute;
+        int startTimeInMinutes = tempDate.hour * 60 + tempDate.minute;
+        int breakStartTimeInMinutes =
+            breakStartTime.hour * 60 + breakStartTime.minute;
 
-        if(startTimeInMinutes >= breakStartTimeInMinutes){
+        if (startTimeInMinutes >= breakStartTimeInMinutes) {
           break;
         }
 
@@ -269,17 +307,37 @@ class SelectDateTimeBloc
           break;
         }*/
 
-
         if (appointment == null) {
           checkDate = false;
         } else {
           for (int i = 0; i < appointment.length; i++) {
-            int appointmentStartTime = appointment[i].getAppointmentStartTime().toDate().hour*60+appointment[i].getAppointmentStartTime().toDate().minute;
-            int appointmentEndTime = appointment[i].getAppointmentEndTime().toDate().hour*60+appointment[i].getAppointmentEndTime().toDate().minute;
-            if(startTimeInMinutes >= appointmentStartTime && startTimeInMinutes < appointmentEndTime){
+            int appointmentStartTime =
+                appointment[i]
+                    .getAppointmentStartTime()
+                    .toDate()
+                    .hour * 60 +
+                    appointment[i]
+                        .getAppointmentStartTime()
+                        .toDate()
+                        .minute;
+            int appointmentEndTime =
+                appointment[i]
+                    .getAppointmentEndTime()
+                    .toDate()
+                    .hour * 60 +
+                    appointment[i]
+                        .getAppointmentEndTime()
+                        .toDate()
+                        .minute;
+            if (startTimeInMinutes >= appointmentStartTime &&
+                startTimeInMinutes < appointmentEndTime) {
               checkDate = true;
               break;
-            }else if(tempDate.hour == appointment[i].getAppointmentStartTime().toDate().hour) {
+            } else if (tempDate.hour ==
+                appointment[i]
+                    .getAppointmentStartTime()
+                    .toDate()
+                    .hour) {
               if ((startTimeInMinutes + schedule.getDuration()) <=
                   appointmentEndTime) {
                 checkDate = true;
@@ -320,22 +378,45 @@ class SelectDateTimeBloc
       if (appointment == null) {
         checkBreakEndTime = true;
       } else {
-        int breakEndTimeInMinutes  = breakEndTime.hour*60 + breakEndTime.minute;
+        int breakEndTimeInMinutes =
+            breakEndTime.hour * 60 + breakEndTime.minute;
 
         for (int i = 0; i < appointment.length; i++) {
-          int appointmentStartTime = appointment[i].getAppointmentStartTime().toDate().hour*60+appointment[i].getAppointmentStartTime().toDate().minute;
-          int appointmentEndTime = appointment[i].getAppointmentEndTime().toDate().hour*60+appointment[i].getAppointmentEndTime().toDate().minute;
+          int appointmentStartTime =
+              appointment[i]
+                  .getAppointmentStartTime()
+                  .toDate()
+                  .hour * 60 +
+                  appointment[i]
+                      .getAppointmentStartTime()
+                      .toDate()
+                      .minute;
+          int appointmentEndTime =
+              appointment[i]
+                  .getAppointmentEndTime()
+                  .toDate()
+                  .hour * 60 +
+                  appointment[i]
+                      .getAppointmentEndTime()
+                      .toDate()
+                      .minute;
 
-          if(breakEndTimeInMinutes >= appointmentStartTime && breakEndTimeInMinutes < appointmentEndTime){
+          if (breakEndTimeInMinutes >= appointmentStartTime &&
+              breakEndTimeInMinutes < appointmentEndTime) {
             checkBreakEndTime = false;
             break;
-          }else if(breakEndTime.hour == appointment[i].getAppointmentStartTime().toDate().hour){
-            if((startTimeInMinutes + schedule.getDuration()) <= appointmentEndTime){
+          } else if (breakEndTime.hour ==
+              appointment[i]
+                  .getAppointmentStartTime()
+                  .toDate()
+                  .hour) {
+            if ((startTimeInMinutes + schedule.getDuration()) <=
+                appointmentEndTime) {
               checkBreakEndTime = false;
               break;
             }
           }
-         /* if (Timestamp.fromDate(breakEndTime) ==
+          /* if (Timestamp.fromDate(breakEndTime) ==
               appointment[i].getAppointmentStartTime()) {
             checkBreakEndTime = false;
             break;
@@ -359,7 +440,7 @@ class SelectDateTimeBloc
         int breakEndTimeInMinutes = tempDate.hour * 60 + tempDate.minute;
         int endTimeInMinutes = endTime.hour * 60 + endTime.minute;
 
-        if(breakEndTimeInMinutes >= endTimeInMinutes ){
+        if (breakEndTimeInMinutes >= endTimeInMinutes) {
           break;
         }
 
@@ -371,14 +452,36 @@ class SelectDateTimeBloc
           checkDate = false;
         } else {
           for (int i = 0; i < appointment.length; i++) {
-            int appointmentStartTime = appointment[i].getAppointmentStartTime().toDate().hour*60+appointment[i].getAppointmentStartTime().toDate().minute;
-            int appointmentEndTime = appointment[i].getAppointmentEndTime().toDate().hour*60+appointment[i].getAppointmentEndTime().toDate().minute;
+            int appointmentStartTime =
+                appointment[i]
+                    .getAppointmentStartTime()
+                    .toDate()
+                    .hour * 60 +
+                    appointment[i]
+                        .getAppointmentStartTime()
+                        .toDate()
+                        .minute;
+            int appointmentEndTime =
+                appointment[i]
+                    .getAppointmentEndTime()
+                    .toDate()
+                    .hour * 60 +
+                    appointment[i]
+                        .getAppointmentEndTime()
+                        .toDate()
+                        .minute;
 
-            if(breakEndTimeInMinutes >= appointmentStartTime && breakEndTimeInMinutes < appointmentEndTime){
+            if (breakEndTimeInMinutes >= appointmentStartTime &&
+                breakEndTimeInMinutes < appointmentEndTime) {
               checkDate = true;
               break;
-            }else if(tempDate.hour == appointment[i].getAppointmentStartTime().toDate().hour){
-              if((startTimeInMinutes + schedule.getDuration()) <= appointmentEndTime){
+            } else if (tempDate.hour ==
+                appointment[i]
+                    .getAppointmentStartTime()
+                    .toDate()
+                    .hour) {
+              if ((startTimeInMinutes + schedule.getDuration()) <=
+                  appointmentEndTime) {
                 checkDate = true;
                 break;
               }

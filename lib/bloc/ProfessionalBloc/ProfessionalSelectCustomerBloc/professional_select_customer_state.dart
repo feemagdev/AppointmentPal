@@ -4,57 +4,23 @@ part of 'professional_select_customer_bloc.dart';
 abstract class ProfessionalSelectCustomerState {}
 
 class ProfessionalSelectCustomerInitial
-    extends ProfessionalSelectCustomerState {
-  final Professional professional;
-  final DateTime appointmentStartTime;
-  final DateTime appointmentEndTime;
-
-
-  ProfessionalSelectCustomerInitial(
-      {@required this.professional,
-      @required this.appointmentStartTime,
-      @required this.appointmentEndTime});
-}
+    extends ProfessionalSelectCustomerState {}
 
 class ProfessionalSelectCustomerShowAllCustomerState
     extends ProfessionalSelectCustomerState {
-  final Professional professional;
   final List<Customer> customers;
-  final DateTime appointmentStartTime;
-  final DateTime appointmentEndTime;
 
-
-  ProfessionalSelectCustomerShowAllCustomerState(
-      {@required this.professional,
-      @required this.customers,
-      @required this.appointmentStartTime,
-      @required this.appointmentEndTime});
+  ProfessionalSelectCustomerShowAllCustomerState({
+    @required this.customers,
+  });
 }
 
-class AddCustomerButtonPressedState extends ProfessionalSelectCustomerState {
-  final Professional professional;
-  final DateTime appointmentStartTime;
-  final DateTime appointmentEndTime;
-
-
-  AddCustomerButtonPressedState(
-      {@required this.professional,
-      @required this.appointmentStartTime,
-      this.appointmentEndTime});
-}
+class AddCustomerButtonPressedState extends ProfessionalSelectCustomerState {}
 
 class CustomerIsSelectedState extends ProfessionalSelectCustomerState {
-  final Professional professional;
-  final DateTime appointmentStartTime;
-  final DateTime appointmentEndTime;
   final Customer customer;
-  final Appointment appointment;
 
-  CustomerIsSelectedState(
-      {@required this.professional,
-      @required this.appointmentStartTime,
-      @required this.appointmentEndTime,
-      @required this.customer,this.appointment});
+  CustomerIsSelectedState({@required this.customer});
 }
 
 class MoveBackToSelectDateTimeScreenState

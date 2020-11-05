@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:appointmentproject/model/appointment.dart';
 import 'package:appointmentproject/model/customer.dart';
+import 'package:appointmentproject/model/manager.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/repository/customer_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,13 +19,15 @@ class ProfessionalSelectCustomerBloc extends Bloc<
   final DateTime appointmentEndTime;
   final Appointment appointment;
   final Customer customer;
+  final Manager manager;
 
   ProfessionalSelectCustomerBloc(
       {@required this.professional,
       @required this.appointmentStartTime,
       @required this.appointmentEndTime,
       this.appointment,
-      this.customer});
+      this.customer,
+      this.manager});
 
   @override
   Stream<ProfessionalSelectCustomerState> mapEventToState(
@@ -33,37 +36,24 @@ class ProfessionalSelectCustomerBloc extends Bloc<
     if (event is ProfessionalSelectCustomerShowAllCustomerEvent) {
       List<Customer> customers = new List();
       customers = await CustomerRepository.defaultConstructor()
-          .getAllCustomersOfProfessional(
-              event.professional.getProfessionalID().id);
+          .getAllCustomersOfProfessional(professional.getProfessionalID());
 
       yield ProfessionalSelectCustomerShowAllCustomerState(
-          professional: event.professional,
-          customers: customers,
-          appointmentStartTime: event.appointmentStartTime,
-          appointmentEndTime: event.appointmentEndTime);
+        customers: customers,
+      );
     } else if (event is AddCustomerButtonPressedEvent) {
-      yield AddCustomerButtonPressedState(
-          professional: event.professional,
-          appointmentStartTime: event.appointmentStartTime,
-          appointmentEndTime: event.appointmentEndTime);
+      yield AddCustomerButtonPressedState();
     } else if (event is CustomerIsSelectedEvent) {
-      yield CustomerIsSelectedState(
-          professional: event.professional,
-          customer: event.customer,
-          appointmentStartTime: event.appointmentStartTime,
-          appointmentEndTime: event.appointmentEndTime);
+      yield CustomerIsSelectedState(customer: event.customer);
     } else if (event is MoveBackToSelectDateTimeScreenEvent) {
       yield MoveBackToSelectDateTimeScreenState(
           professional: event.professional);
-    }else if(event is MoveBackToUpdateAppointmentScreenEvent){
-      yield CustomerIsSelectedState(professional: professional, appointmentStartTime: appointmentStartTime, appointmentEndTime: appointmentEndTime, customer: customer,appointment: appointment);
+    } else if (event is MoveBackToUpdateAppointmentScreenEvent) {
+      yield CustomerIsSelectedState(customer: customer);
     }
   }
 
   @override
   ProfessionalSelectCustomerState get initialState =>
-      ProfessionalSelectCustomerInitial(
-          professional: professional,
-          appointmentStartTime: appointmentStartTime,
-          appointmentEndTime: appointmentEndTime);
+      ProfessionalSelectCustomerInitial();
 }

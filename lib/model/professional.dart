@@ -1,8 +1,7 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Professional {
-  DocumentReference _professionalID;
+  String _professionalID;
   String _name;
   String _phone;
   String _country;
@@ -10,14 +9,12 @@ class Professional {
   String _address;
   Timestamp _dob;
   String _image;
-  int _appointmentCharges;
   int _experience;
-  DocumentReference _subServices;
-  GeoPoint _appointmentLocation;
+  String _managerID;
 
   Professional.defaultConstructor();
 
-  Professional.fromMap(Map snapshot,DocumentReference professionalID)
+  Professional.fromMap(Map snapshot, String professionalID)
       : _professionalID = professionalID,
         _name = snapshot['name'],
         _phone = snapshot['phone'],
@@ -26,15 +23,8 @@ class Professional {
         _address = snapshot['address'],
         _dob = snapshot['dob'],
         _image = snapshot['image'],
-        _appointmentCharges = snapshot['appointmentCharges'],
         _experience = snapshot['experience'],
-        _subServices = snapshot['sub_serviceID'],
-        _appointmentLocation = snapshot['appointmentLocation'];
-
-
-
-
-
+        _managerID = snapshot['managerID'];
 
   Timestamp getDob() {
     return _dob;
@@ -92,12 +82,12 @@ class Professional {
     _image = image;
   }
 
-  int getAppointmentCharges() {
-    return _appointmentCharges;
+  String getManagerID() {
+    return _managerID;
   }
 
-  void setAppointmentCharges(int appointmentCharges) {
-    _appointmentCharges = appointmentCharges;
+  void setMnanagerID(String managerID) {
+    _managerID = managerID;
   }
 
   int getExperience() {
@@ -108,27 +98,11 @@ class Professional {
     _experience = experience;
   }
 
-  DocumentReference getSubServices() {
-    return _subServices;
-  }
-
-  void setSubServices(DocumentReference subServices) {
-    _subServices = subServices;
-  }
-
-  GeoPoint getAppointmentLocation() {
-    return _appointmentLocation;
-  }
-
-  void setAppointmentLocation(GeoPoint appointmentLocation) {
-    _appointmentLocation = appointmentLocation;
-  }
-
-  DocumentReference getProfessionalID() {
+  String getProfessionalID() {
     return _professionalID;
   }
 
-  void setProfessionalID(DocumentReference professionalID) {
+  void setProfessionalID(String professionalID) {
     _professionalID = professionalID;
   }
 }

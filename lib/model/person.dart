@@ -1,55 +1,22 @@
-import 'dart:async';
-
-
-import 'package:firebase_auth/firebase_auth.dart';
-class Person{
-  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+class Person {
   String _email;
   String _password;
 
-  Person(this._email,this._password);
   Person.defaultConstructor();
 
-  Future<User> registerUser() async{
-      await firebaseAuth.createUserWithEmailAndPassword(email: this._email,password: this._password);
-      return  firebaseAuth.currentUser;
+  String getEmail() {
+    return _email;
   }
 
-  Future<User> signInUser() async{
-    var result = await firebaseAuth.signInWithEmailAndPassword(
-        email: this._email,
-        password: this._password
-    );
-    return result.user;
+  void setEmail(String email) {
+    _email = email;
   }
 
-  Future<void> signOut() async{
-    await firebaseAuth.signOut();
+  String getPassword() {
+    return _password;
   }
 
-
-
-  Future<User> getCurrentUser() async {
-    User currentUser =  firebaseAuth.currentUser;
-    return currentUser;
-
+  void setPassword(String password) {
+    _password = password;
   }
-
-  Future<bool> sendVerificationEmail (User user) async {
-    await user.sendEmailVerification();
-    return true;
-  }
-
-  Future<bool> checkUserVerification(User user) async {
-     return user.emailVerified;
-  }
-
-  Future<void> sendPasswordResetMail (String email) async{
-    return await firebaseAuth.sendPasswordResetEmail(email: email);
-  }
-
-
-
-
-
 }

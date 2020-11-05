@@ -1,7 +1,9 @@
 
 import 'package:appointmentproject/bloc/ProfessionalBloc/AppointmentBookingBloc/appointment_booking_bloc.dart';
 import 'package:appointmentproject/model/customer.dart';
+import 'package:appointmentproject/model/manager.dart';
 import 'package:appointmentproject/model/professional.dart';
+import 'package:appointmentproject/ui/Manager/ManagerDashboard/manager_dashboard_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/professional_dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,10 +17,12 @@ class AppointmentBookingScreenBody extends StatefulWidget {
 
 class _AppointmentBookingScreenBodyState
     extends State<AppointmentBookingScreenBody> {
-  Professional professional;
 
   @override
   Widget build(BuildContext context) {
+    Professional professional =
+        BlocProvider.of<AppointmentBookingBloc>(context).professional;
+    Manager manager = BlocProvider.of<AppointmentBookingBloc>(context).manager;
     double deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
@@ -26,7 +30,7 @@ class _AppointmentBookingScreenBodyState
         leading: IconButton(
           icon: Icon(Icons.close),
           onPressed: () {
-            showAlertDialog(context, professional);
+            showAlertDialog(context, professional, manager);
           },
         ),
       ),
@@ -36,19 +40,20 @@ class _AppointmentBookingScreenBodyState
             BlocListener<AppointmentBookingBloc, AppointmentBookingState>(
               listener: (context, state) {
                 if(state is AppointmentBookedSuccessfully){
-                  showSuccessfulDialog(context, "Appointment booked successfully", professional);
+                  showSuccessfulDialog(
+                      context, "Appointment booked successfully", professional,
+                      manager);
                 }
               },
               child:
-                  BlocBuilder<AppointmentBookingBloc, AppointmentBookingState>(
+              BlocBuilder<AppointmentBookingBloc, AppointmentBookingState>(
                 builder: (context, state) {
                   if (state is AppointmentBookingInitial) {
-                    professional = state.professional;
                     return appointmentBookingUI(
                         state.appointmentStartTime,
                         state.appointmentEndTime,
                         state.customer,
-                        state.professional,
+                        professional,
                         deviceWidth);
                   }
                   return Container();
@@ -182,7 +187,8 @@ class _AppointmentBookingScreenBodyState
     );
   }
 
-  showAlertDialog(BuildContext context, Professional professional) {
+  showAlertDialog(BuildContext context, Professional professional,
+      Manager manager) {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -194,9 +200,13 @@ class _AppointmentBookingScreenBodyState
                 children: [
                   FlatButton(
                     child: Text("Yes"),
-                    onPressed: () => {
-                      Navigator.of(context).pop(),
-                      navigateToDashboardScreen(context, professional)
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      if (manager == null) {
+                        navigateToDashboardScreen(context, professional);
+                      } else {
+                        navigateToManagerDashboardScreen(context, manager);
+                      }
                     },
                   ),
                   FlatButton(
@@ -210,8 +220,8 @@ class _AppointmentBookingScreenBodyState
         });
   }
 
-  showSuccessfulDialog(
-      BuildContext context, String message, Professional professional) {
+  showSuccessfulDialog(BuildContext context, String message,
+      Professional professional, Manager manager) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -224,9 +234,13 @@ class _AppointmentBookingScreenBodyState
             actions: [
               FlatButton(
                 child: Text("Close"),
-                onPressed: () => {
-                  Navigator.of(context).pop(),
-                  navigateToDashboardScreen(context, professional)
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  if (manager == null) {
+                    navigateToDashboardScreen(context, professional);
+                  } else {
+                    navigateToManagerDashboardScreen(context, manager);
+                  }
                 },
               )
             ],
@@ -234,11 +248,19 @@ class _AppointmentBookingScreenBodyState
         });
   }
 
-  void navigateToDashboardScreen(
-      BuildContext context, Professional professional) {
+  void navigateToDashboardScreen(BuildContext context,
+      Professional professional) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalDashboard(
         professional: professional,
+      );
+    }));
+  }
+
+  void navigateToManagerDashboardScreen(BuildContext context, Manager manager) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ManagerDashboardScreen(
+        manager: manager,
       );
     }));
   }
