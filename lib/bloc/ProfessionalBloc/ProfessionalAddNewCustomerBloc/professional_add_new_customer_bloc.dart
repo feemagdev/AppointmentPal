@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:appointmentproject/model/appointment.dart';
 import 'package:appointmentproject/model/customer.dart';
+import 'package:appointmentproject/model/manager.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/repository/customer_repository.dart';
 import 'package:bloc/bloc.dart';
@@ -19,13 +20,15 @@ class ProfessionalAddNewCustomerBloc extends Bloc<
   final DateTime appointmentEndTime;
   final Appointment appointment;
   final Customer customer;
+  final Manager manager;
 
   ProfessionalAddNewCustomerBloc(
       {@required this.professional,
       this.appointmentStartTime,
       this.appointmentEndTime,
       this.appointment,
-      this.customer});
+      this.customer,
+      this.manager});
 
   @override
   Stream<ProfessionalAddNewCustomerState> mapEventToState(
@@ -33,30 +36,16 @@ class ProfessionalAddNewCustomerBloc extends Bloc<
   ) async* {
     if (event is AddNewCustomerButtonPressedEvent) {
       Customer customer = await CustomerRepository.defaultConstructor()
-          .addCustomer(
-              event.professional.getProfessionalID().id,
-              event.name,
-              event.phone,
-              event.address,
-              event.city,
-              event.country);
+          .addCustomer(event.professional.getProfessionalID(), event.name,
+          event.phone, event.address, event.city, event.country);
       if (customer != null) {
-        yield CustomerAddedSuccessfullyState(
-            professional: professional,
-            appointmentStartTime: event.appointmentStartTime,
-            customer: customer,
-            appointmentEndTime: event.appointmentEndTime);
+        yield CustomerAddedSuccessfullyState(customer: customer);
       }
-    } else if (event is MoveBackToSelectCustomerScreenEvent) {
-      yield MoveBackToSelectCustomerScreenState(
-          professional: event.professional,
-          appointmentStartTime: event.appointmentStartTime,
-          appointmentEndTime: event.appointmentEndTime);
     } else if (event is CheckPhoneEvent) {
       print("phone event");
       bool customerCheck = await CustomerRepository.defaultConstructor()
           .checkCustomerExist(
-              event.phone, event.professional.getProfessionalID().id);
+          event.phone, event.professional.getProfessionalID());
       if (customerCheck) {
         print("customer check true");
         yield CustomerAlreadyExistState(professional: event.professional);

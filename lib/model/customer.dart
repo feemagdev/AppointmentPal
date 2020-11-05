@@ -1,15 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Customer {
-  DocumentReference _customerID;
+  String _customerID;
   String _name;
   String _phone;
   String _address;
   String _city;
   String _country;
 
-  Map<String, dynamic> toMap(
-      String name, String phone, String address, String city, String country) {
+  Map<String, dynamic> toMap(String name, String phone, String address,
+      String city, String country) {
     return {
       'name': name,
       'phone': phone,
@@ -21,7 +19,7 @@ class Customer {
 
   Customer.defaultConstructor();
 
-  Customer.fromMap(Map snapshot, DocumentReference customerID)
+  Customer.fromMap(Map snapshot, String customerID)
       : _name = snapshot['name'],
         _phone = snapshot['phone'],
         _address = snapshot['address'],
@@ -29,7 +27,7 @@ class Customer {
         _country = snapshot['country'],
         _customerID = customerID;
 
-  DocumentReference getCustomerID() {
+  String getCustomerID() {
     return _customerID;
   }
 
@@ -73,7 +71,7 @@ class Customer {
     _country = country;
   }
 
-  void setDocumentReference(DocumentReference customerID) {
+  void setCustomerID(String customerID) {
     _customerID = customerID;
   }
 }

@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Appointment {
-  DocumentReference _appointmentID;
-  DocumentReference _professionalID;
-  DocumentReference _customerID;
+  String _appointmentID;
+  String _professionalID;
+  String _customerID;
   Timestamp _appointmentStartTime;
   Timestamp _appointmentEndTime;
   Timestamp _appointmentDate;
@@ -14,8 +14,8 @@ class Appointment {
   Appointment.updateAppointment();
 
   Map<String, dynamic> updateMap(
-      DocumentReference professionalID,
-      DocumentReference customerID,
+      String professionalID,
+      String customerID,
       Timestamp appointmentStartTime,
       Timestamp appointmentEndTime,
       Timestamp appointmentDate) {
@@ -28,40 +28,8 @@ class Appointment {
     };
   }
 
-  Map<String, dynamic> toMap(
-      DocumentReference professionalID,
-      DocumentReference serviceID,
-      DocumentReference subServiceID,
-      DocumentReference clientID,
-      Timestamp appointmentDateTime,
-      Timestamp appointmentDate,
-      String appointmentStatus,
-      String clientName,
-      String clientPhone,
-      String professionalName,
-      String professionalContact,
-      String serviceName,
-      String subServiceName) {
-    return {
-      'professionalID': professionalID,
-      'clientID': clientID,
-      'serviceID': serviceID,
-      'sub_serviceID': subServiceID,
-      'appointment_date_time': appointmentDateTime,
-      'appointment_date': appointmentDate,
-      'appointment_status': appointmentStatus,
-      'client_name': clientName,
-      'client_phone': clientPhone,
-      'professional_name': professionalName,
-      'professional_contact': professionalContact,
-      'service_name': serviceName,
-      'sub_service_name': subServiceName
-    };
-  }
-
-  Map<String, dynamic> professionalAppointmentMap(
-      DocumentReference professionalID,
-      DocumentReference customerID,
+  Map<String, dynamic> professionalAppointmentMap(String professionalID,
+      String customerID,
       Timestamp appointmentStartTime,
       Timestamp appointmentEndTime,
       Timestamp appointmentDate,
@@ -76,22 +44,20 @@ class Appointment {
     };
   }
 
-  Appointment.notAvailableTime(Map snapshot, DocumentReference appointmentID)
+  Appointment.notAvailableTime(Map snapshot, String appointmentID)
       : _appointmentID = appointmentID,
         _appointmentDate = snapshot['appointment_date'],
         _appointmentStartTime = snapshot['appointment_start_time'],
         _appointmentEndTime = snapshot['appointment_end_time'];
 
-  Appointment.getClientAppointments(
-      Map snapshot, DocumentReference appointmentID)
+  Appointment.getClientAppointments(Map snapshot, String appointmentID)
       : _appointmentID = appointmentID,
         _appointmentDate = snapshot['appointment_date'],
         _appointmentStartTime = snapshot['appointment_start_time'],
         _professionalID = snapshot['professionalID'],
         _appointmentEndTime = snapshot['appointment_end_time'];
 
-  Appointment.getProfessionalAppointments(
-      Map snapshot, DocumentReference appointmentID)
+  Appointment.getProfessionalAppointments(Map snapshot, String appointmentID)
       : _appointmentID = appointmentID,
         _appointmentDate = snapshot['appointment_date'],
         _appointmentStartTime = snapshot['appointment_start_time'],
@@ -100,15 +66,15 @@ class Appointment {
         _appointmentStatus = snapshot['appointment_status'],
         _customerID = snapshot['customerID'];
 
-  DocumentReference getAppointmentID() {
+  String getAppointmentID() {
     return _appointmentID;
   }
 
-  DocumentReference getCustomerID() {
+  String getCustomerID() {
     return _customerID;
   }
 
-  DocumentReference getProfessionalID() {
+  String getProfessionalID() {
     return _professionalID;
   }
 
@@ -135,9 +101,8 @@ class Appointment {
   void setAppointmentEndTime(Timestamp appointmentEndTime) {
     _appointmentEndTime = appointmentEndTime;
   }
-  void setCustomerID(DocumentReference customerID){
+
+  void setCustomerID(String customerID) {
     _customerID = customerID;
   }
-
-
 }

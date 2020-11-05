@@ -11,33 +11,25 @@ class SelectDateTimeInitial extends SelectDateTimeState {
 }
 
 class ShowAvailableTimeState extends SelectDateTimeState{
-  final Professional professional;
   final Schedule schedule;
   final List<DateTime> timeSlots;
-  final Appointment appointment;
-  final Customer customer;
-  ShowAvailableTimeState({@required this.professional,@required this.schedule,@required this.timeSlots,this.appointment,this.customer});
-
+  ShowAvailableTimeState({@required this.schedule, @required this.timeSlots});
 }
 
 
 class NoScheduleAvailable extends SelectDateTimeState {
-  final Professional professional;
   final DateTime dateTime;
-  final Appointment appointment;
-  final Customer customer;
-  NoScheduleAvailable({@required this.professional,@required this.dateTime,this.customer,this.appointment});
+
+  NoScheduleAvailable({@required this.dateTime});
 }
 
 
 class TimeSlotSelectedState extends SelectDateTimeState{
-  final Professional professional;
   final Schedule schedule;
   final List<DateTime> timeSlots;
   final int selectedIndex;
-  final Appointment appointment;
-  final Customer customer;
-  TimeSlotSelectedState({@required this.professional,this.schedule,this.timeSlots,this.selectedIndex,this.appointment,this.customer});
+
+  TimeSlotSelectedState({this.schedule, this.timeSlots, this.selectedIndex});
 }
 
 
@@ -54,27 +46,25 @@ class ProfessionalUpdateAppointmentState extends SelectDateTimeState {
 }
 
 class MoveToSelectCustomerScreenState extends SelectDateTimeState {
-  final Professional professional;
   final DateTime appointmentStartTime;
   final DateTime appointmentEndTime;
 
-  MoveToSelectCustomerScreenState({@required this.professional,@required this.appointmentStartTime,@required this.appointmentEndTime});
+  MoveToSelectCustomerScreenState(
+      {@required this.appointmentStartTime, @required this.appointmentEndTime});
 }
 
 class MoveToUpdateAppointmentScreenState extends SelectDateTimeState {
-  final Professional professional;
+
   final Appointment appointment;
   final Customer customer;
-  MoveToUpdateAppointmentScreenState({@required this.professional,@required this.appointment,@required this.customer});
+
+  MoveToUpdateAppointmentScreenState(
+      {@required this.appointment, @required this.customer});
 
 }
 
 
-class MoveToDashboardScreenState extends SelectDateTimeState {
-  final Professional professional;
-
-  MoveToDashboardScreenState({@required this.professional});
-}
+class MoveToDashboardScreenState extends SelectDateTimeState {}
 
 
 class SelectDateTimeLoadingState extends SelectDateTimeState {}

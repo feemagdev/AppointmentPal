@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:appointmentproject/model/customer.dart';
+import 'package:appointmentproject/model/manager.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/repository/appointment_repository.dart';
 import 'package:bloc/bloc.dart';
@@ -17,12 +18,14 @@ class AppointmentBookingBloc
   final Customer customer;
   final DateTime appointmentStartTime;
   final DateTime appointmentEndTime;
+  final Manager manager;
 
   AppointmentBookingBloc(
       {@required this.professional,
       @required this.customer,
       @required this.appointmentStartTime,
-      @required this.appointmentEndTime});
+      @required this.appointmentEndTime,
+      this.manager});
 
   @override
   Stream<AppointmentBookingState> mapEventToState(
@@ -41,7 +44,6 @@ class AppointmentBookingBloc
 
   @override
   AppointmentBookingState get initialState => AppointmentBookingInitial(
-      professional: professional,
       customer: customer,
       appointmentStartTime: appointmentStartTime,
       appointmentEndTime: appointmentEndTime);

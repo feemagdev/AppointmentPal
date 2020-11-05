@@ -12,36 +12,51 @@ import 'package:meta/meta.dart';
 part 'professional_edit_appointment_event.dart';
 part 'professional_edit_appointment_state.dart';
 
-class ProfessionalEditAppointmentBloc extends Bloc<ProfessionalEditAppointmentEvent, ProfessionalEditAppointmentState> {
+class ProfessionalEditAppointmentBloc extends Bloc<
+    ProfessionalEditAppointmentEvent, ProfessionalEditAppointmentState> {
   final Professional professional;
+
   ProfessionalEditAppointmentBloc({@required this.professional});
 
   @override
   Stream<ProfessionalEditAppointmentState> mapEventToState(
     ProfessionalEditAppointmentEvent event,
   ) async* {
-    if(event is ProfessionalShowSelectedDayAppointmentsEvent){
+    if (event is ProfessionalShowSelectedDayAppointmentsEvent) {
       yield ProfessionalEditAppointmentLoadingState();
       List<Appointment> appointments = List();
       List<Customer> customers = List();
       DateTime dateTime = event.dateTime;
-      if(dateTime == null){
+      if (dateTime == null) {
         dateTime = DateTime.now();
       }
-      appointments = await AppointmentRepository.defaultConstructor().getProfessionalSelectedDayAppointments(event.professional.getProfessionalID(),Timestamp.fromDate(dateTime));
-      if(appointments.isNotEmpty || appointments.length != 0){
+      appointments = await AppointmentRepository.defaultConstructor()
+          .getProfessionalSelectedDayAppointments(
+              event.professional.getProfessionalID(),
+              Timestamp.fromDate(dateTime));
+      if (appointments.isNotEmpty || appointments.length != 0) {
         await Future.forEach(appointments, (element) async {
-          customers.add(await CustomerRepository.defaultConstructor().getCustomer(element.getCustomerID()));
+          customers.add(await CustomerRepository.defaultConstructor()
+              .getCustomer(
+                  element.getProfessionalID(), element.getCustomerID()));
         });
       }
-      yield ProfessionalShowSelectedDayAppointmentsState(professional: event.professional,appointments: appointments,customers:customers);
-    }else if(event is ProfessionalEditAppointmentSelectedEvent) {
-      yield ProfessionalAppointmentIsSelectedState(appointment: event.appointment,professional: event.professional,customer: event.customer);
-    }else if(event is MoveToDashboardScreenFromEditAppointmentEvent){
-      yield MoveToDashboardScreenFromEditAppointmentState(professional: event.professional);
+      yield ProfessionalShowSelectedDayAppointmentsState(
+          professional: event.professional,
+          appointments: appointments,
+          customers: customers);
+    } else if (event is ProfessionalEditAppointmentSelectedEvent) {
+      yield ProfessionalAppointmentIsSelectedState(
+          appointment: event.appointment,
+          professional: event.professional,
+          customer: event.customer);
+    } else if (event is MoveToDashboardScreenFromEditAppointmentEvent) {
+      yield MoveToDashboardScreenFromEditAppointmentState(
+          professional: event.professional);
     }
   }
 
   @override
-  ProfessionalEditAppointmentState get initialState => ProfessionalEditAppointmentInitial(professional: professional);
+  ProfessionalEditAppointmentState get initialState =>
+      ProfessionalEditAppointmentInitial(professional: professional);
 }

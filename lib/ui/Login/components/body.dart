@@ -1,10 +1,10 @@
-
-
 import 'package:appointmentproject/bloc/LoginBloc/login_bloc.dart';
 import 'package:appointmentproject/bloc/LoginBloc/login_event.dart';
 import 'package:appointmentproject/bloc/LoginBloc/login_state.dart';
+import 'package:appointmentproject/model/manager.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/ui/Client/ForgotPassword/forgot_password_screen.dart';
+import 'package:appointmentproject/ui/Manager/ManagerDashboard/manager_dashboard_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/professional_dashboard_screen.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
 import 'package:appointmentproject/ui/components/background.dart';
@@ -16,169 +16,173 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
-
 class Body extends StatelessWidget {
-
-
-
   @override
   Widget build(BuildContext context) {
-
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
     String email;
     String password;
     return Background(
       child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            BlocListener<LoginBloc, LoginState>(
-              listener: (context, state) {
-                if (state is ProfessionalLoginSuccessState) {
-                  navigateToProfessionalHomePage(context, state.professional);
-                }else if(state is ForgotPasswordState){
-                  navigateToForgotPasswordPage(context);
-                }
-              },
-              child: BlocBuilder<LoginBloc, LoginState>(
-                  builder: (context, state) {
-                if (state is LoginInitialState) {
-                  return buildInitialUi();
-                } else if (state is LoginLoadingState) {
-                  return buildLoadingUi();
-                } else if (state is ProfessionalLoginSuccessState) {
-                  return Container();
-                }else if (state is LoginFailureState) {
-                  WidgetsBinding.instance.addPostFrameCallback((_){
-                    showErrorDialog(state.message, context);
-                  });
-                }else if(state is ForgotPasswordState){
-                  return Container();
-                }
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          BlocListener<LoginBloc, LoginState>(
+            listener: (context, state) {
+              if (state is ProfessionalLoginSuccessState) {
+                navigateToProfessionalHomePage(context, state.professional);
+              } else if (state is ForgotPasswordState) {
+                navigateToForgotPasswordPage(context);
+              } else if (state is ManagerLoginSuccessState) {
+                naviagetToManagerDashboard(context, state.manager);
+              }
+            },
+            child:
+                BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
+              if (state is LoginInitialState) {
+                return buildInitialUi();
+              } else if (state is LoginLoadingState) {
+                return buildLoadingUi();
+              } else if (state is ProfessionalLoginSuccessState) {
                 return Container();
-              }),
-            ),
-            SizedBox(height: deviceHeight * 0.10),
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  FadeAnimation(
-                      1,
-                      Text(
-                        "Login",
-                        style: TextStyle(color: Colors.white, fontSize: deviceWidth < 400 ? 15 : 25,)),
-                      ),
-                  SizedBox(height: 10),
-                  FadeAnimation(
-                      1.3,
-                      Text(
-                        "Welcome Back",
-                        style: TextStyle(color: Colors.white, fontSize: deviceWidth < 400 ? 12 : 20,),
+              } else if (state is LoginFailureState) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  showErrorDialog(state.message, context);
+                });
+              } else if (state is ForgotPasswordState) {
+                return Container();
+              }
+              return Container();
+            }),
+          ),
+          SizedBox(height: deviceHeight * 0.10),
+          Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                FadeAnimation(
+                  1,
+                  Text("Login",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: deviceWidth < 400 ? 15 : 25,
                       )),
-                ],
-              ),
-            ),
-            SizedBox(height: 10),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(60),
-                        topRight: Radius.circular(60))),
-                child: Center(
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.all(30),
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(height: 60,),
-                          FadeAnimation(
-                              1.4,
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: Color.fromRGBO(59, 193, 226, 0.7),
-                                          blurRadius: 20,
-                                          offset: Offset(0, 10))
-                                    ]),
-                                child: Column(
-                                  children: <Widget>[
-                                    RoundedInputField(
-                                      icon: Icon(Icons.email),
-                                      hintText: "Email",
-                                      onChanged: (value) {
-                                        email = value;
-                                      },
-                                    ),
-                                    RoundedPasswordField(
-                                      onChanged: (value) {
-                                        password = value;
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              )),
-                          SizedBox(height: 40),
-                          FadeAnimation(
-                              1.5,
-                              GestureDetector(
-                                child: Text(
-                                  "Forgot Password?",
-                                  style: TextStyle(
-                                      color: Colors.grey,
-                                    fontSize: deviceWidth < 400 ? 15:20,
-                                  ),
-
-                                ),
-                                onTap: (){
-                                  print("forgot button tap");
-                                  BlocProvider.of<LoginBloc>(context).add(ForgotPasswordButtonPressedEvent());
-                                },
-                              )),
-                          SizedBox(height: 40),
-                          FadeAnimation(
-                              1.6,
-                              RoundedButton(
-                                height: deviceWidth < 400 ? 40:60,
-                                color: Colors.blue,
-                                textColor: Colors.white,
-                                fontSize: deviceWidth < 400 ? 15:20,
-                                text: "Login",
-                                press: ()  {
-                                  print(email);
-                                  if (email == null ||
-                                      !EmailValidator.validate(email)) {
-                                    String message = "invalid email";
-                                    showErrorDialog(message, context);
-                                    return;
-                                  }
-                                  if (password.length <= 5) {
-                                    String message = "too short";
-                                    showErrorDialog(message, context);
-                                    return;
-                                  }
-                                  BlocProvider.of<LoginBloc>(context).add(LoginButtonPressedEvent(
-                                        email: email, password: password));
-
-                                },
-                              )),
-                          SizedBox(height: 30),
-                        ],
+                ),
+                SizedBox(height: 10),
+                FadeAnimation(
+                    1.3,
+                    Text(
+                      "Welcome Back",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: deviceWidth < 400 ? 12 : 20,
                       ),
+                    )),
+              ],
+            ),
+          ),
+          SizedBox(height: 10),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(60),
+                      topRight: Radius.circular(60))),
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.all(30),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          height: 60,
+                        ),
+                        FadeAnimation(
+                            1.4,
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color:
+                                            Color.fromRGBO(59, 193, 226, 0.7),
+                                        blurRadius: 20,
+                                        offset: Offset(0, 10))
+                                  ]),
+                              child: Column(
+                                children: <Widget>[
+                                  RoundedInputField(
+                                    icon: Icon(Icons.email),
+                                    hintText: "Email",
+                                    onChanged: (value) {
+                                      email = value;
+                                    },
+                                  ),
+                                  RoundedPasswordField(
+                                    onChanged: (value) {
+                                      password = value;
+                                    },
+                                  ),
+                                ],
+                              ),
+                            )),
+                        SizedBox(height: 40),
+                        FadeAnimation(
+                            1.5,
+                            GestureDetector(
+                              child: Text(
+                                "Forgot Password?",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: deviceWidth < 400 ? 15 : 20,
+                                ),
+                              ),
+                              onTap: () {
+                                print("forgot button tap");
+                                BlocProvider.of<LoginBloc>(context)
+                                    .add(ForgotPasswordButtonPressedEvent());
+                              },
+                            )),
+                        SizedBox(height: 40),
+                        FadeAnimation(
+                            1.6,
+                            RoundedButton(
+                              height: deviceWidth < 400 ? 40 : 60,
+                              color: Colors.blue,
+                              textColor: Colors.white,
+                              fontSize: deviceWidth < 400 ? 15 : 20,
+                              text: "Login",
+                              press: () {
+                                print(email);
+                                if (email == null ||
+                                    !EmailValidator.validate(email)) {
+                                  String message = "invalid email";
+                                  showErrorDialog(message, context);
+                                  return;
+                                }
+                                if (password.length <= 5) {
+                                  String message = "too short";
+                                  showErrorDialog(message, context);
+                                  return;
+                                }
+                                BlocProvider.of<LoginBloc>(context).add(
+                                    LoginButtonPressedEvent(
+                                        email: email, password: password));
+                              },
+                            )),
+                        SizedBox(height: 30),
+                      ],
                     ),
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -201,18 +205,14 @@ class Body extends StatelessWidget {
     );
   }
 
-
-
-
-
-  void navigateToProfessionalHomePage(BuildContext context, Professional professional) {
+  void navigateToProfessionalHomePage(BuildContext context,
+      Professional professional) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return ProfessionalDashboard(professional: professional,);
+      return ProfessionalDashboard(
+        professional: professional,
+      );
     }));
   }
-
-
-
 
   void navigateToForgotPasswordPage(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
@@ -239,7 +239,10 @@ class Body extends StatelessWidget {
         });
   }
 
-
-
-
+  void naviagetToManagerDashboard(BuildContext context, Manager manager) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      print(manager.getName());
+      return ManagerDashboardScreen(manager: manager);
+    }));
+  }
 }

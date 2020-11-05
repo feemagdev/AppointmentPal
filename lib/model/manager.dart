@@ -1,39 +1,29 @@
-import 'package:appointmentproject/model/company.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Manager {
+  String _managerID;
   String _name;
   String _phone;
   String _country;
   String _city;
   String _address;
-  Timestamp _dob;
-  int _salary;
-  Company _company;
+  String _companyID;
 
-  Manager(this._name, this._phone, this._country, this._city, this._address,
-      this._dob, this._salary, this._company);
-
-  Manager.fromMap(Map snapshot)
-      : _name = snapshot['name'],
+  Manager.fromMap(Map snapshot, String managerID)
+      : _managerID = managerID,
+        _name = snapshot['name'],
         _phone = snapshot['phone'],
         _country = snapshot['country'],
         _city = snapshot['city'],
         _address = snapshot['address'],
-        _dob = snapshot['dob'],
-        _salary = snapshot['salary'],
-        _company = snapshot['companyID'];
+        _companyID = snapshot['companyID'];
 
   Manager.defaultConstructor();
 
-
-
-  Timestamp getDob() {
-    return _dob;
+  String getManagerID() {
+    return _managerID;
   }
 
-  void setDob(Timestamp dob) {
-    _dob = dob;
+  void setManagerID(String managerID) {
+    _managerID = managerID;
   }
 
   String getCity() {
@@ -76,19 +66,7 @@ class Manager {
     _name = name;
   }
 
-  int getSalary() {
-    return _salary;
-  }
-
-  void setSalary(int salary) {
-    _salary = salary;
-  }
-
-  Company getCompany() {
-    return _company;
-  }
-
-  void setCompany(Company company){
-    _company = company;
+  String getCompanyID() {
+    return _companyID;
   }
 }
