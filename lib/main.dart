@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle( statusBarColor: Colors.blue, statusBarBrightness: Brightness.dark, ));
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) {
-    Firebase.initializeApp();
+      .then((_) async{
+    await Firebase.initializeApp();
     runApp(SplashScreen());
   });
 }
