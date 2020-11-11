@@ -37,6 +37,7 @@ dependencies:
   cloud_functions: ^0.6.0+1
   random_string: ^2.1.0
   rflutter_alert: ^1.1.0
+  flutter_time_picker_spinner: ^1.0.6+1
 
 
 dev_dependencies:

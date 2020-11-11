@@ -5,25 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 class ProfessionalRepository {
   ProfessionalRepository.defaultConstructor();
 
-  Future<List<Professional>> getListOfProfessionalsBySubService(
-      DocumentReference subServiceID) async {
-    List<Professional> listOfProfessionals = [];
-    final dbReference = FirebaseFirestore.instance;
-    dbReference
-        .collection('professional')
-        .where('sub_serviceID', isEqualTo: subServiceID)
-        .get()
-        .then((value) {
-      value.docs.forEach((element) {
-        Professional professional;
-        professional =
-            Professional.fromMap(element.data(), element.reference.id);
-        listOfProfessionals.add(professional);
-      });
-    });
-    return listOfProfessionals;
-  }
-
   Future<Professional> getProfessionalData(User user) async {
     final dbReference = FirebaseFirestore.instance;
     Professional professional;
@@ -66,10 +47,10 @@ class ProfessionalRepository {
     return true;
   }
 
-  DocumentReference getProfessionalDocumentRefernece(String professionalID) {
+  DocumentReference getProfessionalDocumentReference(String professionalID) {
     final dbReference = FirebaseFirestore.instance;
     DocumentReference documentReference =
-        dbReference.collection('professional').doc(professionalID);
+    dbReference.collection('professional').doc(professionalID);
     return documentReference;
   }
 
@@ -78,7 +59,8 @@ class ProfessionalRepository {
     final dbReference = FirebaseFirestore.instance;
     List<Professional> professionals = List();
     QuerySnapshot snapshot =
-        await dbReference.collection('professional').where('managerID').get();
+    await dbReference.collection('professional').where(
+        'managerID', isEqualTo: managerID).get();
     snapshot.docs.forEach((element) {
       professionals
           .add(Professional.fromMap(element.data(), element.reference.id));

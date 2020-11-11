@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:appointmentproject/model/appointment.dart';
 import 'package:appointmentproject/model/customer.dart';
+import 'package:appointmentproject/model/manager.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/repository/appointment_repository.dart';
 import 'package:appointmentproject/repository/customer_repository.dart';
@@ -15,8 +16,9 @@ part 'professional_edit_appointment_state.dart';
 class ProfessionalEditAppointmentBloc extends Bloc<
     ProfessionalEditAppointmentEvent, ProfessionalEditAppointmentState> {
   final Professional professional;
+  final Manager manager;
 
-  ProfessionalEditAppointmentBloc({@required this.professional});
+  ProfessionalEditAppointmentBloc({@required this.professional, this.manager});
 
   @override
   Stream<ProfessionalEditAppointmentState> mapEventToState(
@@ -32,8 +34,8 @@ class ProfessionalEditAppointmentBloc extends Bloc<
       }
       appointments = await AppointmentRepository.defaultConstructor()
           .getProfessionalSelectedDayAppointments(
-              event.professional.getProfessionalID(),
-              Timestamp.fromDate(dateTime));
+          professional.getProfessionalID(),
+          Timestamp.fromDate(dateTime));
       if (appointments.isNotEmpty || appointments.length != 0) {
         await Future.forEach(appointments, (element) async {
           customers.add(await CustomerRepository.defaultConstructor()
@@ -42,21 +44,18 @@ class ProfessionalEditAppointmentBloc extends Bloc<
         });
       }
       yield ProfessionalShowSelectedDayAppointmentsState(
-          professional: event.professional,
           appointments: appointments,
           customers: customers);
     } else if (event is ProfessionalEditAppointmentSelectedEvent) {
       yield ProfessionalAppointmentIsSelectedState(
           appointment: event.appointment,
-          professional: event.professional,
           customer: event.customer);
     } else if (event is MoveToDashboardScreenFromEditAppointmentEvent) {
-      yield MoveToDashboardScreenFromEditAppointmentState(
-          professional: event.professional);
+      yield MoveToDashboardScreenFromEditAppointmentState();
     }
   }
 
   @override
   ProfessionalEditAppointmentState get initialState =>
-      ProfessionalEditAppointmentInitial(professional: professional);
+      ProfessionalEditAppointmentInitial();
 }

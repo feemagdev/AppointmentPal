@@ -7,14 +7,14 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
 part 'manager_select_professional_event.dart';
-
 part 'manager_select_professional_state.dart';
 
 class ManagerSelectProfessionalBloc extends Bloc<ManagerSelectProfessionalEvent,
     ManagerSelectProfessionalState> {
   final Manager manager;
+  final String route;
 
-  ManagerSelectProfessionalBloc({@required this.manager});
+  ManagerSelectProfessionalBloc({@required this.manager, this.route});
 
   @override
   Stream<ManagerSelectProfessionalState> mapEventToState(
@@ -41,7 +41,7 @@ class ManagerSelectProfessionalBloc extends Bloc<ManagerSelectProfessionalEvent,
           filteredList: filtered, professionalsList: professionals);
     } else if (event is ManagerProfessionalSelectedEvent) {
       yield ManagerProfessionalSelectedState(
-          professional: event.professional, manager: manager);
+          professional: event.professional);
     }
   }
 

@@ -4,30 +4,11 @@ part of 'update_appointment_bloc.dart';
 abstract class UpdateAppointmentEvent {}
 
 
-class UpdateAppointmentDateTimeEvent extends UpdateAppointmentEvent {
-  final Professional professional;
-  final Customer customer;
-  final Appointment appointment;
+class UpdateAppointmentDateTimeEvent extends UpdateAppointmentEvent {}
 
-  UpdateAppointmentDateTimeEvent({@required this.professional,@required this.appointment,@required this.customer});
+class MoveToEditAppointmentScreenEvent extends UpdateAppointmentEvent {}
 
-}
-
-class MoveToEditAppointmentScreenEvent extends UpdateAppointmentEvent {
-  final Professional professional;
-  MoveToEditAppointmentScreenEvent({@required this.professional});
-}
-
-
-class UpdateAppointmentSelectCustomerEvent extends UpdateAppointmentEvent {
-  final Professional professional;
-  final Appointment appointment;
-  final Customer customer;
-
-  UpdateAppointmentSelectCustomerEvent({@required this.professional,@required this.appointment,@required this.customer});
-
-
-}
+class UpdateAppointmentSelectCustomerEvent extends UpdateAppointmentEvent {}
 
 class UpdateAppointmentButtonPressedEvent extends UpdateAppointmentEvent {
   final Appointment appointment;

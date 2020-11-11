@@ -4,10 +4,13 @@ import 'package:appointmentproject/model/customer.dart';
 import 'package:appointmentproject/model/manager.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/ui/Professional/AppointmentBookingScreen/appointment_booking_screen.dart';
+import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/professional_dashboard_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalSelectCustomerScreen/professional_select_customer_screen.dart';
+import 'package:appointmentproject/ui/Professional/SettingScreen/setting_screen.dart';
 import 'package:appointmentproject/ui/Professional/UpdateAppointmentScreen/update_appointment_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class ProfessionalAddNewCustomerBody extends StatefulWidget {
   @override
@@ -52,8 +55,20 @@ class _ProfessionalAddNewCustomerBodyState
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            navigateToSelectCustomerScreen(professional, appointmentEndTime,
-                appointmentStartTime, context, appointment, customer, manager);
+            if (appointment == null) {
+              if (appointmentStartTime == null) {
+                navigateToProfessionalSettingScreen(context, professional);
+              } else {
+                navigateToSelectCustomerScreen(
+                    professional,
+                    appointmentEndTime,
+                    appointmentStartTime,
+                    context,
+                    appointment,
+                    customer,
+                    manager);
+              }
+            }
           },
         ),
       ),
@@ -67,15 +82,44 @@ class _ProfessionalAddNewCustomerBodyState
                   ProfessionalAddNewCustomerState>(
                 listener: (context, state) {
                   if (state is CustomerAddedSuccessfullyState) {
-                    if(appointment == null){
-                      moveToAppointmentBookingScreen(
-                          professional,
-                          state.customer,
-                          appointmentStartTime,
-                          appointmentEndTime, manager);
-                    }else{
-                      moveToUpdateAppointmentScreen(context,state.customer,professional,appointment);
-                    }
+                    Alert(
+                      context: context,
+                      type: AlertType.success,
+                      title: "Success",
+                      desc: "Customer Added Successfully",
+                      buttons: [
+                        DialogButton(
+                          child: Text(
+                            "OK",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            if (appointment == null) {
+                              if (appointmentStartTime == null) {
+                                navigateToProfessionalDashboard(
+                                    context, professional);
+                              } else {
+                                moveToAppointmentBookingScreen(
+                                    professional,
+                                    state.customer,
+                                    appointmentStartTime,
+                                    appointmentEndTime,
+                                    manager);
+                              }
+                            } else {
+                              moveToUpdateAppointmentScreen(
+                                  context,
+                                  state.customer,
+                                  professional,
+                                  appointment,
+                                  manager);
+                            }
+                          },
+                          width: 120,
+                        )
+                      ],
+                    ).show();
                   }
                 },
                 child: BlocBuilder<ProfessionalAddNewCustomerBloc,
@@ -298,9 +342,27 @@ class _ProfessionalAddNewCustomerBodyState
     }));
   }
 
-  void moveToUpdateAppointmentScreen(BuildContext context, Customer customer, Professional professional, Appointment appointment) {
+  void moveToUpdateAppointmentScreen(BuildContext context, Customer customer,
+      Professional professional, Appointment appointment, Manager manager) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return UpdateAppointmentScreen(professional: professional, appointment: appointment, customer: customer);
+      return UpdateAppointmentScreen(professional: professional,
+        appointment: appointment,
+        customer: customer,
+        manager: manager,);
+    }));
+  }
+
+  void navigateToProfessionalDashboard(BuildContext context,
+      Professional professional) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ProfessionalDashboard(professional: professional);
+    }));
+  }
+
+  void navigateToProfessionalSettingScreen(BuildContext context,
+      Professional professional) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return SettingScreen(professional: professional);
     }));
   }
 }

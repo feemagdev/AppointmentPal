@@ -46,6 +46,9 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
             } else if (appointment == null && manager != null) {
               print("select date time");
               navigateToSelectDateTimeScreen(context, professional, manager);
+            } else if (appointment != null && manager != null) {
+              navigateToUpdateAppointmentScreen(
+                  context, professional, appointment, customer, manager);
             }
           },
         ),
@@ -113,8 +116,8 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
                           appointmentEndTime,
                           context);
                     } else {
-                      navigateToUpdateAppointmentScreen(
-                          context, professional, appointment, state.customer);
+                      navigateToUpdateAppointmentScreen(context, professional,
+                          appointment, state.customer, manager);
                     }
                   } else if (state is MoveBackToSelectDateTimeScreenState) {
                     navigateToAddAppointmentScreen(context, state.professional);
@@ -279,12 +282,13 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
   }
 
   void navigateToUpdateAppointmentScreen(BuildContext context,
-      Professional professional, Appointment appointment, Customer customer) {
+      Professional professional, Appointment appointment, Customer customer,
+      Manager manager) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return UpdateAppointmentScreen(
-          professional: professional,
-          appointment: appointment,
-          customer: customer);
+        professional: professional,
+        appointment: appointment,
+        customer: customer, manager: manager,);
     }));
   }
 

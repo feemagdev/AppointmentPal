@@ -43,6 +43,25 @@ class TimeSlotIsSelectedEvent extends SelectDateTimeEvent {
       {@required this.appointmentStartTime, @required this.appointmentEndTime});
 }
 
+class CustomTimeSlotSelectedEvent extends SelectDateTimeEvent {
+  final List<CustomTimeSlots> customTimeSlots;
+  final int selectedIndex;
+  final DateTime selectedDateTime;
+
+  CustomTimeSlotSelectedEvent(
+      {@required this.customTimeSlots,
+      @required this.selectedIndex,
+      @required this.selectedDateTime});
+}
+
+class CustomTimeSlotIsSelectedEvent extends SelectDateTimeEvent {
+  final CustomTimeSlots customTimeSlots;
+  final DateTime dateTime;
+
+  CustomTimeSlotIsSelectedEvent(
+      {@required this.customTimeSlots, @required this.dateTime});
+}
+
 class MoveToDashboardScreenEvent extends SelectDateTimeEvent {
   final Professional professional;
 
@@ -54,7 +73,8 @@ class MoveToUpdateAppointmentScreenEvent extends SelectDateTimeEvent {
   final Appointment appointment;
   final Customer customer;
 
-  MoveToUpdateAppointmentScreenEvent({@required this.professional,
-    @required this.appointment,
-    @required this.customer});
+  MoveToUpdateAppointmentScreenEvent(
+      {@required this.professional,
+      @required this.appointment,
+      @required this.customer});
 }

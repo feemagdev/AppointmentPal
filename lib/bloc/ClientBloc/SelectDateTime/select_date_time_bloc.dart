@@ -1,19 +1,21 @@
 import 'dart:async';
 
 import 'package:appointmentproject/model/appointment.dart';
-
+import 'package:appointmentproject/model/custom_time_slots.dart';
 import 'package:appointmentproject/model/customer.dart';
 import 'package:appointmentproject/model/manager.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/model/schedule.dart';
+import 'package:appointmentproject/model/week_days_availability.dart';
 import 'package:appointmentproject/repository/appointment_repository.dart';
+import 'package:appointmentproject/repository/custom_time_slots_repository.dart';
 import 'package:appointmentproject/repository/schedule_repository.dart';
+import 'package:appointmentproject/repository/week_days_availability_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
 part 'select_date_time_event.dart';
-
 part 'select_date_time_state.dart';
 
 class SelectDateTimeBloc
@@ -30,8 +32,7 @@ class SelectDateTimeBloc
       this.manager});
 
   @override
-  SelectDateTimeState get initialState => SelectDateTimeInitial(
-      professional: professional, appointment: appointment, customer: customer);
+  SelectDateTimeState get initialState => SelectDateTimeInitial();
 
   @override
   Stream<SelectDateTimeState> mapEventToState(
@@ -39,41 +40,81 @@ class SelectDateTimeBloc
   ) async* {
     if (event is ShowAvailableTimeEvent) {
       yield SelectDateTimeLoadingState();
-      Schedule schedule =
-      await getProfessionalSchedule(professional, event.dateTime);
+      DateTime dateTime = event.dateTime;
+      if (dateTime == null) {
+        dateTime = DateTime.now();
+      }
+      WeekDaysAvailability weekDaysAvailability =
+          await WeekDaysAvailabilityRepository.defaultConstructor()
+              .getListOfAvailableWeekDays(professional.getProfessionalID());
 
-      if (schedule == null) {
-        yield NoScheduleAvailable(
-            dateTime: event.dateTime
-        );
-      } else {
-        DateTime dateTime = event.dateTime;
-        if (dateTime == null) {
-          dateTime = DateTime.now();
-        }
+      print(
+          "print week days ${weekDaysAvailability.getWednesdayAvailability()}");
+      bool dayCheck = getWeekdayAvailability(dateTime, weekDaysAvailability);
+      if (dayCheck) {
+        List<CustomTimeSlots> customTimeSlots = List();
+        customTimeSlots = await CustomTimeSlotRepository.defaultConstructor()
+            .getListOfCustomTimeSlotsOfSpecificDay(
+                getDay(dateTime), professional.getProfessionalID());
 
-        List<Appointment> appointment =
-        await AppointmentRepository.defaultConstructor()
-            .getNotAvailableTime(Timestamp.fromDate(dateTime),
-            professional.getProfessionalID());
-
-        List<DateTime> timeSlots = makeScheduleTimeSlots(
-            schedule, dateTime.year, dateTime.month, dateTime.day, appointment);
-        if (timeSlots.isEmpty || timeSlots.length == 0) {
-          yield NoScheduleAvailable(
-              dateTime: event.dateTime
-          );
+        if (customTimeSlots.isEmpty) {
+          yield NoScheduleAvailable(dateTime: event.dateTime);
         } else {
-          yield ShowAvailableTimeState(
-            schedule: schedule,
-            timeSlots: timeSlots,);
+          List<Appointment> appointment = List();
+          appointment = await AppointmentRepository.defaultConstructor()
+              .getNotAvailableTime(Timestamp.fromDate(dateTime),
+                  professional.getProfessionalID());
+
+          if (appointment.isEmpty) {
+            yield ShowCustomTimeSlotsState(
+                customTimeSlots: customTimeSlots,
+                selectedDateTime: event.dateTime);
+          } else {
+            List<CustomTimeSlots> timeSlots =
+                makeCustomScheduleTimeSlots(appointment, customTimeSlots);
+            if (timeSlots.isEmpty || timeSlots.length == 0) {
+              yield NoScheduleAvailable(dateTime: event.dateTime);
+            } else {
+              yield ShowCustomTimeSlotsState(
+                  customTimeSlots: timeSlots, selectedDateTime: event.dateTime);
+            }
+          }
+        }
+      } else {
+        Schedule schedule =
+            await getProfessionalSchedule(professional, event.dateTime);
+
+        if (schedule == null) {
+          yield NoScheduleAvailable(dateTime: event.dateTime);
+        } else {
+          DateTime dateTime = event.dateTime;
+          if (dateTime == null) {
+            dateTime = DateTime.now();
+          }
+
+          List<Appointment> appointment =
+              await AppointmentRepository.defaultConstructor()
+                  .getNotAvailableTime(Timestamp.fromDate(dateTime),
+                      professional.getProfessionalID());
+
+          List<DateTime> timeSlots = makeScheduleTimeSlots(schedule,
+              dateTime.year, dateTime.month, dateTime.day, appointment);
+          if (timeSlots.isEmpty || timeSlots.length == 0) {
+            yield NoScheduleAvailable(dateTime: event.dateTime);
+          } else {
+            yield ShowAvailableTimeState(
+              schedule: schedule,
+              timeSlots: timeSlots,
+            );
+          }
         }
       }
     } else if (event is TimeSlotSelectedEvent) {
       yield TimeSlotSelectedState(
         schedule: event.schedule,
         timeSlots: event.schedules,
-        selectedIndex: event.scheduleIndex,);
+        selectedIndex: event.scheduleIndex,
+      );
     } else if (event is TimeSlotIsSelectedEvent) {
       if (appointment == null) {
         yield MoveToSelectCustomerScreenState(
@@ -85,21 +126,74 @@ class SelectDateTimeBloc
             Timestamp.fromDate(event.appointmentStartTime));
         appointment.setAppointmentEndTime(
             Timestamp.fromDate(event.appointmentEndTime));
-        yield MoveToUpdateAppointmentScreenState(
-            appointment: appointment,
-            customer: customer);
+        yield MoveToUpdateAppointmentScreenState(appointment: appointment);
+      }
+    } else if (event is CustomTimeSlotSelectedEvent) {
+      yield CustomTimeSlotSelectedState(
+          customTimeSlots: event.customTimeSlots,
+          selectedIndex: event.selectedIndex,
+          selectedDateTime: event.selectedDateTime);
+    } else if (event is CustomTimeSlotIsSelectedEvent) {
+      DateTime appointmentStartTime = DateTime(
+          event.dateTime.year,
+          event.dateTime.month,
+          event.dateTime.day,
+          event.customTimeSlots
+              .getFromTime()
+              .hour,
+          event.customTimeSlots
+              .getFromTime()
+              .minute);
+      DateTime appointmentToTime = DateTime(
+          event.dateTime.year,
+          event.dateTime.month,
+          event.dateTime.day,
+          event.customTimeSlots
+              .getToTime()
+              .hour,
+          event.customTimeSlots
+              .getToTime()
+              .minute);
+      if (appointment == null) {
+        yield MoveToSelectCustomerScreenState(
+          appointmentStartTime: appointmentStartTime,
+          appointmentEndTime: appointmentToTime,
+        );
+      } else {
+        appointment
+            .setAppointmentStartTime(Timestamp.fromDate(appointmentStartTime));
+        appointment
+            .setAppointmentEndTime(Timestamp.fromDate(appointmentToTime));
+        yield MoveToUpdateAppointmentScreenState(appointment: appointment);
       }
     } else if (event is MoveToDashboardScreenEvent) {
       yield MoveToDashboardScreenState();
     } else if (event is MoveToUpdateAppointmentScreenEvent) {
-      yield MoveToUpdateAppointmentScreenState(
-          appointment: event.appointment,
-          customer: event.customer);
+      yield MoveToUpdateAppointmentScreenState(appointment: event.appointment);
     }
   }
 
-  Future<Schedule> getProfessionalSchedule(
-      Professional professional, DateTime dateTime) async {
+  bool getWeekdayAvailability(DateTime dateTime,
+      WeekDaysAvailability weekDaysAvailability) {
+    if (getDay(dateTime) == 'Monday') {
+      return weekDaysAvailability.getMondayAvailability();
+    } else if (getDay(dateTime) == 'Tuesday') {
+      return weekDaysAvailability.getTuesdayAvailability();
+    } else if (getDay(dateTime) == 'Wednesday') {
+      return weekDaysAvailability.getWednesdayAvailability();
+    } else if (getDay(dateTime) == 'Thursday') {
+      return weekDaysAvailability.getThursdayAvailability();
+    } else if (getDay(dateTime) == 'Friday') {
+      return weekDaysAvailability.getFridayAvailability();
+    } else if (getDay(dateTime) == 'Saturday') {
+      return weekDaysAvailability.getSaturdayAvailability();
+    } else {
+      return weekDaysAvailability.getSundayAvailability();
+    }
+  }
+
+  Future<Schedule> getProfessionalSchedule(Professional professional,
+      DateTime dateTime) async {
     String convertedDay;
     if (dateTime == null) {
       dateTime = DateTime.now();
@@ -517,5 +611,98 @@ class SelectDateTimeBloc
       }
     }
     return schedules;
+  }
+
+  List<CustomTimeSlots> makeCustomScheduleTimeSlots(
+      List<Appointment> appointments, List<CustomTimeSlots> customTimeSlots) {
+    int customTimeIndex = 0;
+    List<CustomTimeSlots> newCustomList = List();
+    while (true) {
+      int fromCheckMinutes =
+          customTimeSlots[customTimeIndex]
+              .getFromTime()
+              .hour * 60 +
+              customTimeSlots[customTimeIndex]
+                  .getFromTime()
+                  .minute;
+      int toCheckMinutes =
+          customTimeSlots[customTimeIndex]
+              .getToTime()
+              .hour * 60 +
+              customTimeSlots[customTimeIndex]
+                  .getToTime()
+                  .minute;
+
+      int appointmentIndex = 0;
+      bool check1 = false;
+
+      while (true) {
+        int fromTimeMinutes = appointments[appointmentIndex]
+            .getAppointmentStartTime()
+            .toDate()
+            .hour *
+            60 +
+            appointments[appointmentIndex]
+                .getAppointmentStartTime()
+                .toDate()
+                .minute;
+
+        int toTimeMinutes = appointments[appointmentIndex]
+            .getAppointmentEndTime()
+            .toDate()
+            .hour *
+            60 +
+            appointments[appointmentIndex]
+                .getAppointmentEndTime()
+                .toDate()
+                .minute;
+
+        if (fromCheckMinutes > fromTimeMinutes &&
+            toCheckMinutes < toTimeMinutes) {
+          check1 = true;
+          break;
+        } else if (fromTimeMinutes > fromCheckMinutes &&
+            toTimeMinutes < toCheckMinutes) {
+          check1 = true;
+          break;
+        } else if (fromCheckMinutes > fromTimeMinutes &&
+            fromCheckMinutes < toTimeMinutes) {
+          check1 = true;
+          break;
+        } else if (fromCheckMinutes < fromTimeMinutes &&
+            toCheckMinutes > fromTimeMinutes) {
+          check1 = true;
+          break;
+        } else if (fromCheckMinutes == fromTimeMinutes &&
+            toCheckMinutes == toTimeMinutes) {
+          check1 = true;
+          break;
+        } else if (fromTimeMinutes <= fromCheckMinutes &&
+            toTimeMinutes > toCheckMinutes) {
+          check1 = true;
+          break;
+        } else if (fromTimeMinutes >= fromCheckMinutes &&
+            toTimeMinutes < toCheckMinutes) {
+          check1 = true;
+          break;
+        } else if (fromTimeMinutes > fromCheckMinutes &&
+            toTimeMinutes <= toCheckMinutes) {
+          check1 = true;
+          break;
+        }
+        appointmentIndex++;
+        if (appointmentIndex == appointments.length) {
+          break;
+        }
+      }
+      if (check1 == false) {
+        newCustomList.add(customTimeSlots[customTimeIndex]);
+      }
+      customTimeIndex++;
+      if (customTimeIndex == customTimeSlots.length) {
+        break;
+      }
+    }
+    return newCustomList;
   }
 }
