@@ -3,19 +3,14 @@ part of 'select_date_time_bloc.dart';
 @immutable
 abstract class SelectDateTimeState {}
 
-class SelectDateTimeInitial extends SelectDateTimeState {
-  final Professional professional;
-  final Appointment appointment;
-  final Customer customer;
-  SelectDateTimeInitial({@required this.professional,this.appointment,this.customer});
-}
+class SelectDateTimeInitial extends SelectDateTimeState {}
 
-class ShowAvailableTimeState extends SelectDateTimeState{
+class ShowAvailableTimeState extends SelectDateTimeState {
   final Schedule schedule;
   final List<DateTime> timeSlots;
+
   ShowAvailableTimeState({@required this.schedule, @required this.timeSlots});
 }
-
 
 class NoScheduleAvailable extends SelectDateTimeState {
   final DateTime dateTime;
@@ -23,15 +18,13 @@ class NoScheduleAvailable extends SelectDateTimeState {
   NoScheduleAvailable({@required this.dateTime});
 }
 
-
-class TimeSlotSelectedState extends SelectDateTimeState{
+class TimeSlotSelectedState extends SelectDateTimeState {
   final Schedule schedule;
   final List<DateTime> timeSlots;
   final int selectedIndex;
 
   TimeSlotSelectedState({this.schedule, this.timeSlots, this.selectedIndex});
 }
-
 
 class AppointmentIsBookedState extends SelectDateTimeState {}
 
@@ -54,19 +47,30 @@ class MoveToSelectCustomerScreenState extends SelectDateTimeState {
 }
 
 class MoveToUpdateAppointmentScreenState extends SelectDateTimeState {
-
   final Appointment appointment;
-  final Customer customer;
 
-  MoveToUpdateAppointmentScreenState(
-      {@required this.appointment, @required this.customer});
-
+  MoveToUpdateAppointmentScreenState({@required this.appointment});
 }
 
+class ShowCustomTimeSlotsState extends SelectDateTimeState {
+  final List<CustomTimeSlots> customTimeSlots;
+  final DateTime selectedDateTime;
+
+  ShowCustomTimeSlotsState(
+      {@required this.customTimeSlots, @required this.selectedDateTime});
+}
+
+class CustomTimeSlotSelectedState extends SelectDateTimeState {
+  final List<CustomTimeSlots> customTimeSlots;
+  final int selectedIndex;
+  final DateTime selectedDateTime;
+
+  CustomTimeSlotSelectedState(
+      {@required this.customTimeSlots,
+      @required this.selectedIndex,
+      @required this.selectedDateTime});
+}
 
 class MoveToDashboardScreenState extends SelectDateTimeState {}
 
-
 class SelectDateTimeLoadingState extends SelectDateTimeState {}
-
-

@@ -7,3 +7,5 @@ class ManagerDashboardInitial extends ManagerDashboardState {}
 class ManagerDashboardAddProfessionalState extends ManagerDashboardState {}
 
 class ManagerDashboardAddAppointmentState extends ManagerDashboardState {}
+
+class ManagerDashboardEditAppointmentState extends ManagerDashboardState {}

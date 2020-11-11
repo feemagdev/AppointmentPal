@@ -23,8 +23,5 @@ class ProfessionalSearchingState extends ManagerSelectProfessionalState {
 
 class ManagerProfessionalSelectedState extends ManagerSelectProfessionalState {
   final Professional professional;
-  final Manager manager;
-
-  ManagerProfessionalSelectedState(
-      {@required this.professional, @required this.manager});
+  ManagerProfessionalSelectedState({@required this.professional});
 }

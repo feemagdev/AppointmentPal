@@ -3,6 +3,7 @@ import 'package:appointmentproject/model/manager.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/ui/Manager/ManagerDashboard/manager_dashboard_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalAddAppointmentScreen/professional_select_date_time_screen.dart';
+import 'package:appointmentproject/ui/Professional/ProfessionalEditAppointmentScreen/professional_edit_appointment_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,15 +19,18 @@ class _ManagerSelectProfessionalBodyState
   Widget build(BuildContext context) {
     List<Professional> professionals = List();
     List<Professional> filteredProfessionals = List();
-    Manager manager =
+    final Manager _manager =
         BlocProvider.of<ManagerSelectProfessionalBloc>(context).manager;
+    final String route =
+        BlocProvider.of<ManagerSelectProfessionalBloc>(context).route;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Select Professional"),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            navigateToManagerDashboardScreen(context, manager);
+            navigateToManagerDashboardScreen(context, _manager);
           },
         ),
       ),
@@ -37,8 +41,13 @@ class _ManagerSelectProfessionalBodyState
               ManagerSelectProfessionalState>(
             listener: (context, state) {
               if (state is ManagerProfessionalSelectedState) {
-                navigateToSelectDateTimeScreen(
-                    context, state.professional, state.manager);
+                if (route == "edit_appointment") {
+                  navigateToManagerSelectAppointmentScreen(
+                      context, state.professional, _manager);
+                } else {
+                  navigateToSelectDateTimeScreen(
+                      context, state.professional, _manager);
+                }
               }
             },
             child: BlocBuilder<ManagerSelectProfessionalBloc,
@@ -169,6 +178,14 @@ class _ManagerSelectProfessionalBodyState
       return ManagerDashboardScreen(
         manager: manager,
       );
+    }));
+  }
+
+  void navigateToManagerSelectAppointmentScreen(BuildContext context,
+      Professional professional, Manager manager) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ProfessionalEditAppointmentScreen(
+          professional: professional, manager: manager);
     }));
   }
 }

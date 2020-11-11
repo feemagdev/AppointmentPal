@@ -22,8 +22,8 @@ class AppointmentRepository {
             appointmentStatus));
   }
 
-  Future<List<Appointment>> getNotAvailableTime(Timestamp timeStamp,
-      String professionalID) async {
+  Future<List<Appointment>> getNotAvailableTime(
+      Timestamp timeStamp, String professionalID) async {
     Timestamp newTimeStamp = changeTime(timeStamp);
     List<Appointment> appointment = List();
 
@@ -43,7 +43,7 @@ class AppointmentRepository {
     } catch (e) {}
 
     if (appointment.length == 0) {
-      return null;
+      return appointment;
     }
     return appointment;
   }
@@ -84,6 +84,7 @@ class AppointmentRepository {
         .collection('appointment')
         .where('appointment_date', isEqualTo: newTimeStamp)
         .where('professionalID', isEqualTo: professionalID)
+        .orderBy('appointment_start_time')
         .get()
         .then((value) {
       value.docs.forEach((element) {

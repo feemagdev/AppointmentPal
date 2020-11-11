@@ -5,3 +5,5 @@ abstract class ManagerDashboardEvent {}
 class ManagerDashboardAddProfessionalEvent extends ManagerDashboardEvent {}
 
 class ManagerDashboardAddAppointmentEvent extends ManagerDashboardEvent {}
+
+class ManagerDashboardEditAppointmentEvent extends ManagerDashboardEvent {}

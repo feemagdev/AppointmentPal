@@ -1,11 +1,8 @@
-
-
-
-
-
 import 'package:appointmentproject/bloc/ProfessionalBloc/SettingScreenBloc/setting_screen_bloc.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/ui/Professional/ManualBusinessHoursScreen/manual_business_hours_weekday_screen.dart';
+import 'package:appointmentproject/ui/Professional/ProfessionalAddNewCustomer/professional_add_new_customer_screen.dart';
+import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/professional_dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,8 +12,6 @@ class SettingScreenBody extends StatefulWidget {
 }
 
 class _SettingScreenBodyState extends State<SettingScreenBody> {
-
-
   @override
   Widget build(BuildContext context) {
     final Professional _professional = BlocProvider.of<SettingScreenBloc>(context).professional;
@@ -24,7 +19,9 @@ class _SettingScreenBodyState extends State<SettingScreenBody> {
       appBar: AppBar(
         title: Text("Setting"),
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            navigateToProfessionalDashboardScreen(_professional, context);
+          },
           icon: Icon(Icons.arrow_back),
         ),
       ),
@@ -106,16 +103,29 @@ class _SettingScreenBodyState extends State<SettingScreenBody> {
         ),
       ),
     );
-
   }
 
-  void navigateToAddCustomerScreen(BuildContext context, Professional professional) {}
+  void navigateToAddCustomerScreen(BuildContext context,
+      Professional professional) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ProfessionalAddNewCustomerScreen(professional: professional);
+    }));
+  }
 
-  void navigateToAutomatedScheduleScreen(BuildContext context, Professional professional) {}
+  void navigateToAutomatedScheduleScreen(BuildContext context,
+      Professional professional) {}
 
-  void navigateToManualBusinessHoursState(BuildContext context, Professional professional) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context){
+  void navigateToManualBusinessHoursState(BuildContext context,
+      Professional professional) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ManualBusinessHoursWeekDayScreen(professional: professional);
+    }));
+  }
+
+  void navigateToProfessionalDashboardScreen(Professional professional,
+      BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ProfessionalDashboard(professional: professional);
     }));
   }
 

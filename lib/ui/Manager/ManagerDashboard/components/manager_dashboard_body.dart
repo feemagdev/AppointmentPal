@@ -4,7 +4,6 @@ import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/ui/Manager/ManagerAddProfessional/manager_add_professional_screen.dart';
 import 'package:appointmentproject/ui/Manager/ManagerSelectProfessional/manager_select_professional_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/components/category_card.dart';
-import 'package:appointmentproject/ui/Professional/ProfessionalEditAppointmentScreen/professional_edit_appointment_screen.dart';
 import 'package:appointmentproject/ui/Professional/SettingScreen/setting_screen.dart';
 import 'package:appointmentproject/ui/Professional/TodayAppointmentScreen/today_appointment_screen.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
@@ -29,6 +28,8 @@ class ManagerDashboardBody extends StatelessWidget {
                 navigateToAddProfessionalScreen(context, _manager);
               } else if (state is ManagerDashboardAddAppointmentState) {
                 navigateToAddAppointmentScreen(context, _manager);
+              } else if (state is ManagerDashboardEditAppointmentState) {
+                navigateToEditAppointmentScreen(context, _manager);
               }
             },
             child: BlocBuilder<ManagerDashboardBloc, ManagerDashboardState>(
@@ -154,8 +155,8 @@ class ManagerDashboardBody extends StatelessWidget {
   }
 
   void editAppointmentTap(BuildContext context) {
-    // BlocProvider.of<ProfessionalDashboardBloc>(context)
-    //     .add(ProfessionalEditAppointmentEvent(professional: professional));
+    BlocProvider.of<ManagerDashboardBloc>(context)
+        .add(ManagerDashboardEditAppointmentEvent());
   }
 
   void viewAppointment(BuildContext context) {
@@ -175,14 +176,17 @@ class ManagerDashboardBody extends StatelessWidget {
 
   void navigateToAddAppointmentScreen(BuildContext context, Manager manager) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return ManagerSelectProfessionalScreen(manager: manager);
+      return ManagerSelectProfessionalScreen(
+        manager: manager,
+        route: "add_appointment",
+      );
     }));
   }
 
-  void navigateToEditAppointmentScreen(
-      BuildContext context, Professional professional) {
+  void navigateToEditAppointmentScreen(BuildContext context, Manager manager) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return ProfessionalEditAppointmentScreen(professional: professional);
+      return ManagerSelectProfessionalScreen(
+        manager: manager, route: "edit_appointment",);
     }));
   }
 

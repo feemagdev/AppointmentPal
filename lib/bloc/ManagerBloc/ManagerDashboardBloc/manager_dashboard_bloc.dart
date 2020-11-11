@@ -5,7 +5,6 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
 part 'manager_dashboard_event.dart';
-
 part 'manager_dashboard_state.dart';
 
 class ManagerDashboardBloc
@@ -22,6 +21,8 @@ class ManagerDashboardBloc
       yield ManagerDashboardAddProfessionalState();
     } else if (event is ManagerDashboardAddAppointmentEvent) {
       yield ManagerDashboardAddAppointmentState();
+    } else if (event is ManagerDashboardEditAppointmentEvent) {
+      yield ManagerDashboardEditAppointmentState();
     }
   }
 

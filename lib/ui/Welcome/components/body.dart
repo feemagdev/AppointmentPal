@@ -19,7 +19,7 @@ class _Home extends State<Body> {
 
   void initState (){
     super.initState();
-    new Future.delayed(const Duration(seconds: 10),(){
+    new Future.delayed(const Duration(seconds: 3), () {
       navigateToLoginHelper(context);
     });
   }
