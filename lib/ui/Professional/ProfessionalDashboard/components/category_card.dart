@@ -16,9 +16,9 @@ class CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
-    double widthOfImage = 75;
-    double heightOfImage = 75;
-    double fontSize = 15;
+    double widthOfImage = 65;
+    double heightOfImage = 65;
+    double fontSize = 14;
     if(deviceWidth < 365 && deviceWidth > 330){
       widthOfImage = 50;
       heightOfImage = 50;
