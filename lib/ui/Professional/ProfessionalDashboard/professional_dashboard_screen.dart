@@ -1,4 +1,3 @@
-
 import 'package:appointmentproject/bloc/ProfessionalBloc/ProfessionalDashboardBloc/professional_dashboard_bloc.dart';
 import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/components/professional_dashboard_body.dart';
@@ -14,16 +13,9 @@ class ProfessionalDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
-      child: BlocProvider(
-        create: (context)=>ProfessionalDashboardBloc(),
-        child: Scaffold(
-          body: ProfessionalDashboardBody(professional: professional),
-        ),
-      ),
+    return BlocProvider(
+      create: (context) => ProfessionalDashboardBloc(),
+      child: ProfessionalDashboardBody(professional: professional),
     );
   }
 }

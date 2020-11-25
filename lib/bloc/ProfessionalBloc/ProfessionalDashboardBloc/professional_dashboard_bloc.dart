@@ -21,6 +21,8 @@ class ProfessionalDashboardBloc
       yield ProfessionalTodayAppointmentState(professional: event.professional);
     } else if (event is ProfessionalSettingEvent) {
       yield ProfessionalSettingState(professional: event.professional);
+    } else if (event is ProfessionalHistoryEvent) {
+      yield ProfessionalHistoryState(professional: event.professional);
     }
   }
 

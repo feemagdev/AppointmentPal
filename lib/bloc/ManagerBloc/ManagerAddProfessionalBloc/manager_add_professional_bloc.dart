@@ -23,6 +23,7 @@ class ManagerAddProfessionalBloc
     ManagerAddProfessionalEvent event,
   ) async* {
     if (event is ManagerAddProfessionalButtonPressedEvent) {
+      yield ManagerAddProfessionalLoadingState();
       User user;
       try {
         user = await PersonRepository.defaultConstructor()
@@ -41,6 +42,10 @@ class ManagerAddProfessionalBloc
                 managerID: manager.getManagerID());
 
         if (addedSuccessfully) {
+          print(user.email);
+          PersonRepository.defaultConstructor().signOut();
+          PersonRepository.defaultConstructor()
+              .signInUser(event.managerEmail, event.managerPassword);
           yield ManagerAddedProfessionalSuccessfullyState();
         }
       } catch (e) {
@@ -60,6 +65,36 @@ class ManagerAddProfessionalBloc
           yield ProfessionalNotRegisteredSuccessfullyState(
               errorMessage: e.toString());
         }
+      }
+    } else if (event is ManagerAddProfessionalVerificationEvent) {
+      yield ManagerAddProfessionalLoadingState();
+      String emailCheck =
+          PersonRepository.defaultConstructor().getCurrentUser().email;
+      if (emailCheck == event.email) {
+        try {
+          await PersonRepository.defaultConstructor()
+              .signInUserCredentials(event.email, event.password);
+          yield ManagerVerifiedSuccessfully(
+              email: event.email, password: event.password);
+        } catch (e) {
+          String errorMessage = "";
+          if (e is FirebaseAuthException) {
+            if (e.code == "user-not-found") {
+              errorMessage = "you are not registered with us";
+            } else if (e.code == "wrong-password") {
+              errorMessage = "your password is wrong";
+            } else if (e.code == "too-many-requests") {
+              errorMessage = "Too many requests please try again later";
+            } else {
+              errorMessage = "undefined error or network problem";
+              yield ManagerVerificationFailedState(message: e.toString());
+            }
+            yield ManagerVerificationFailedState(message: errorMessage);
+          }
+        }
+      } else {
+        yield ManagerVerificationFailedState(
+            message: "Please use your login email");
       }
     }
   }

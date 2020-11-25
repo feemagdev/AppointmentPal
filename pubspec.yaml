@@ -37,6 +37,7 @@ dependencies:
   random_string: ^2.1.0
   rflutter_alert: ^1.1.0
   flutter_time_picker_spinner: ^1.0.6+1
+  group_radio_button: ^1.0.1
 
 
 dev_dependencies:
@@ -86,5 +87,12 @@ flutter:
     - family: Megrim
       fonts:
         - asset: fonts/Megrim-Regular.ttf
+    - family: Proxima
+      fonts:
+        - asset: fonts/Proxima Nova Regular.otf
+        - asset: fonts/Proxima Nova Black.otf
+        - asset: fonts/Proxima Nova Bold.otf
+        - asset: fonts/Proxima Nova Extrabold.otf
+        - asset: fonts/Proxima Nova Thin.otf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

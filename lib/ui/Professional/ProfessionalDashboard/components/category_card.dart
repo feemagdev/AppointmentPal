@@ -16,25 +16,23 @@ class CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
-    double widthOfImage = 65;
-    double heightOfImage = 65;
-    double fontSize = 14;
-    if(deviceWidth < 365 && deviceWidth > 330){
-      widthOfImage = 50;
-      heightOfImage = 50;
-      fontSize = 12;
-    }
-    else if(deviceWidth < 330){
-      widthOfImage = 50;
-      heightOfImage = 50;
+    double widthOfImage = 40;
+    double heightOfImage = 40;
+    double fontSize = 17;
+    if (deviceWidth < 365 && deviceWidth > 330) {
+      widthOfImage = 30;
+      heightOfImage = 30;
+      fontSize = 15;
+    } else if (deviceWidth < 330) {
+      widthOfImage = 30;
+      heightOfImage = 30;
       fontSize = 10;
     }
 
     return Material(
       type: MaterialType.card,
-      borderRadius: BorderRadius.circular(25),
       clipBehavior: Clip.antiAlias,
-      color:  Color.fromRGBO(234, 245, 245, 1),
+      color: Color.fromRGBO(248, 249, 251, 1),
       child: InkWell(
         onTap: onTap,
         child: Padding(
@@ -46,15 +44,15 @@ class CategoryCard extends StatelessWidget {
               SvgPicture.asset(
                 svgSrc,
                 width: widthOfImage,
-                height: heightOfImage,),
-              SizedBox(height: 10,),
+                height: heightOfImage,
+              ),
+              SizedBox(
+                height: 10,
+              ),
               Text(title,
                   textAlign: TextAlign.center,
-                  style:
-                  TextStyle(
+                  style: TextStyle(
                     fontSize: fontSize,
-                    fontWeight: FontWeight.w600,
-                    color:Color.fromRGBO(56, 178, 227, 1),
                   )),
             ],
           ),
@@ -62,5 +60,4 @@ class CategoryCard extends StatelessWidget {
       ),
     );
   }
-
 }

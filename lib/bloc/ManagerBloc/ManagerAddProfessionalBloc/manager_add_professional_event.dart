@@ -10,6 +10,8 @@ class ManagerAddProfessionalButtonPressedEvent
   final String address;
   final String city;
   final String country;
+  final String managerEmail;
+  final String managerPassword;
 
   ManagerAddProfessionalButtonPressedEvent(
       {@required this.name,
@@ -17,5 +19,12 @@ class ManagerAddProfessionalButtonPressedEvent
       @required this.address,
       @required this.city,
       @required this.country,
-      @required this.phone});
+      @required this.phone,@required this.managerEmail,@required this.managerPassword});
 }
+
+class ManagerAddProfessionalVerificationEvent extends ManagerAddProfessionalEvent {
+  final String email;
+  final String password;
+  ManagerAddProfessionalVerificationEvent({@required this.email,@required this.password});
+}
+

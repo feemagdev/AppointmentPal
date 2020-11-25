@@ -13,7 +13,7 @@ class CustomTimeSlotRepository {
         .collection('CustomTimeSlot')
         .doc(professionalID)
         .collection(day)
-        .add(customTimeSlots.toMap(from, to));
+        .add(customTimeSlots.toMap(changeDate(from), changeDate(to)));
     if (documentReference.id.isNotEmpty) {
       return true;
     } else {
@@ -44,5 +44,22 @@ class CustomTimeSlotRepository {
       });
       return customTimeSlots;
     }
+  }
+
+  Future<bool> deleteCustomTimeSlot(
+      String timeSlotID, String professionalID, String day) async {
+    final dbReference = FirebaseFirestore.instance;
+    dbReference
+        .collection('CustomTimeSlot')
+        .doc(professionalID)
+        .collection(day)
+        .doc(timeSlotID)
+        .delete();
+
+    return true;
+  }
+
+  DateTime changeDate(DateTime dateTime) {
+    return DateTime(2020, 11, 9, dateTime.hour, dateTime.minute);
   }
 }

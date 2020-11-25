@@ -20,9 +20,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Stream<LoginState> mapEventToState(LoginEvent event) async* {
     if (event is LoginButtonPressedEvent) {
       try {
+        yield LoginLoadingState();
         user = await PersonRepository.defaultConstructor()
             .signInUser(event.email, event.password);
-        print("return from professional repository");
 
         if (user.uid.isNotEmpty) {
           Professional professional = await checkProfessionalRole(user);

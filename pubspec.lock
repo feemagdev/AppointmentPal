@@ -224,6 +224,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  group_radio_button:
+    dependency: "direct main"
+    description:
+      name: group_radio_button
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   horizontal_calendar_widget:
     dependency: "direct main"
     description:
