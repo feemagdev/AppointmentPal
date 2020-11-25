@@ -1,6 +1,5 @@
 import 'package:appointmentproject/model/manager.dart';
 import 'package:appointmentproject/model/professional.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 
 abstract class LoginState {}
@@ -9,9 +8,7 @@ class LoginInitialState extends LoginState {
   LoginInitialState();
 }
 
-class LoginLoadingState extends LoginState {
-  LoginLoadingState(User user);
-}
+class LoginLoadingState extends LoginState {}
 
 class ProfessionalLoginSuccessState extends LoginState {
   final Professional professional;

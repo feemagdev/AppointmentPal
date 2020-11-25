@@ -6,6 +6,7 @@ class Manager {
   String _city;
   String _address;
   String _companyID;
+  String _image;
 
   Manager.fromMap(Map snapshot, String managerID)
       : _managerID = managerID,
@@ -14,6 +15,7 @@ class Manager {
         _country = snapshot['country'],
         _city = snapshot['city'],
         _address = snapshot['address'],
+        _image = snapshot['image'],
         _companyID = snapshot['companyID'];
 
   Manager.defaultConstructor();
@@ -68,5 +70,13 @@ class Manager {
 
   String getCompanyID() {
     return _companyID;
+  }
+
+  void setImage(String image) {
+    _image = image;
+  }
+
+  String getImage() {
+    return _image;
   }
 }

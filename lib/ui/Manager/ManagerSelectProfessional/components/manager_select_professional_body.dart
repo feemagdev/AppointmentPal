@@ -4,6 +4,7 @@ import 'package:appointmentproject/model/professional.dart';
 import 'package:appointmentproject/ui/Manager/ManagerDashboard/manager_dashboard_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalAddAppointmentScreen/professional_select_date_time_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalEditAppointmentScreen/professional_edit_appointment_screen.dart';
+import 'package:appointmentproject/ui/Professional/ProfileScreen/professional_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -43,6 +44,9 @@ class _ManagerSelectProfessionalBodyState
               if (state is ManagerProfessionalSelectedState) {
                 if (route == "edit_appointment") {
                   navigateToManagerSelectAppointmentScreen(
+                      context, state.professional, _manager);
+                } else if (route == "profile") {
+                  navigateToProfessionalProfileScreen(
                       context, state.professional, _manager);
                 } else {
                   navigateToSelectDateTimeScreen(
@@ -181,11 +185,21 @@ class _ManagerSelectProfessionalBodyState
     }));
   }
 
-  void navigateToManagerSelectAppointmentScreen(BuildContext context,
-      Professional professional, Manager manager) {
+  void navigateToManagerSelectAppointmentScreen(
+      BuildContext context, Professional professional, Manager manager) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalEditAppointmentScreen(
           professional: professional, manager: manager);
+    }));
+  }
+
+  void navigateToProfessionalProfileScreen(
+      BuildContext context, Professional professional, Manager manager) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ProfessionalProfileScreen(
+        professional: professional,
+        manager: manager,
+      );
     }));
   }
 }

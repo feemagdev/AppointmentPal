@@ -11,3 +11,8 @@ class ProfessionalAddCustomTimeSlotEvent extends AddCustomTimeSlotEvent {
 
   ProfessionalAddCustomTimeSlotEvent({@required this.from, @required this.to});
 }
+
+class DeleteCustomTimeSlotEvent extends AddCustomTimeSlotEvent {
+  final CustomTimeSlots customTimeSlots;
+  DeleteCustomTimeSlotEvent({@required this.customTimeSlots});
+}

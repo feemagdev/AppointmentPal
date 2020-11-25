@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Schedule {
-  DocumentReference _professionalID;
+  String _professionalID;
   int _startTime;
   int _startTimeMinutes;
   int _endTime;
@@ -13,8 +11,9 @@ class Schedule {
   int _duration;
   String _dayOfWeek;
 
-  Schedule.professionalSchedule(Map snapshot)
-      : _startTime = snapshot['start_time'],
+  Schedule.professionalSchedule(Map snapshot, String professionalID)
+      : _professionalID = professionalID,
+        _startTime = snapshot['start_time'],
         _endTime = snapshot['end_time'],
         _breakStartTime = snapshot['break_start_time'],
         _breakEndTime = snapshot['break_end_time'],
@@ -24,11 +23,13 @@ class Schedule {
         _breakStartTimeMinutes = snapshot['break_start_time_minutes'],
         _breakEndTimeMinutes = snapshot['break_end_time_minutes'];
 
-  DocumentReference getProfessionalID() {
+  Schedule.defaultConstructor();
+
+  String getProfessionalID() {
     return _professionalID;
   }
 
-  void setProfessionalID(DocumentReference professionalID) {
+  void setProfessionalID(String professionalID) {
     _professionalID = professionalID;
   }
 
@@ -111,8 +112,4 @@ class Schedule {
   void setDayOfWeek(String dayOfWeek) {
     _dayOfWeek = dayOfWeek;
   }
-
-
-
-
 }

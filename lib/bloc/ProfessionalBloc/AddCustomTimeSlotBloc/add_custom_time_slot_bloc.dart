@@ -60,6 +60,16 @@ class AddCustomTimeSlotBloc
       yield AddCustomSlotLoadingState();
       yield GetCustomTimeSlotsState(
           customTimeSlots: await getCustomTimeSlotList());
+    } else if (event is DeleteCustomTimeSlotEvent) {
+      yield AddCustomSlotLoadingState();
+      bool check = await CustomTimeSlotRepository.defaultConstructor()
+          .deleteCustomTimeSlot(event.customTimeSlots.getTimeSlotID(),
+              professional.getProfessionalID(), day);
+      if (check) {
+        yield CustomTimeSlotDeletedSuccessfully();
+        yield GetCustomTimeSlotsState(
+            customTimeSlots: await getCustomTimeSlotList());
+      }
     }
   }
 

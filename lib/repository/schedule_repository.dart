@@ -21,8 +21,33 @@ class ScheduleRepository {
     if (snapshot.data() == null) {
       return null;
     } else {
-      schedule = Schedule.professionalSchedule(snapshot.data());
+      schedule =
+          Schedule.professionalSchedule(snapshot.data(), snapshot.reference.id);
     }
     return schedule;
+  }
+
+  Future<bool> updateSchedule(
+      Schedule schedule, String professionalID, String day) async {
+    final dbReference = FirebaseFirestore.instance;
+    Map<String, dynamic> scheduleMap = {
+      'start_time': schedule.getStartTime(),
+      'start_time_minutes': schedule.getStartTimeMinutes(),
+      'end_time': schedule.getEndTime(),
+      'end_time_minutes': schedule.getEndTimeMinutes(),
+      'break_start_time': schedule.getBreakStartTime(),
+      'break_start_time_minutes': schedule.getBreakStartTimeMinutes(),
+      'break_end_time': schedule.getBreakEndTime(),
+      'break_end_time_minutes': schedule.getBreakEndTimeMinutes(),
+      'duration': schedule.getDuration()
+    };
+    await dbReference
+        .collection(scheduleCollection)
+        .doc(professionalID)
+        .collection(dayOfWeekSubCollection)
+        .doc(day)
+        .set(scheduleMap);
+
+    return true;
   }
 }

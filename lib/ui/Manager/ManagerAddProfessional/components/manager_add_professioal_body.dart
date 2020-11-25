@@ -42,10 +42,13 @@ class _MnagaerAddProfessionalBodyState
                     ManagerAddProfessionalState>(
                   listener: (context, state) {
                     if (state is ManagerAddedProfessionalSuccessfullyState) {
-                      navigateToDashboard(_manager, context);
+                      String msg = "Professional added successfully";
+                      showSuccessDialog(msg, _manager);
                     } else if (state
                         is ProfessionalNotRegisteredSuccessfullyState) {
                       showAlertDialog(state.errorMessage);
+                    } else if (state is ManagerVerificationFailedState) {
+                      showAlertDialog(state.message);
                     }
                   },
                   child: BlocBuilder<ManagerAddProfessionalBloc,
@@ -56,6 +59,10 @@ class _MnagaerAddProfessionalBodyState
                       } else if (state
                           is ProfessionalNotRegisteredSuccessfullyState) {
                         return _professionalForm(context, _manager);
+                      } else if (state is ManagerAddProfessionalLoadingState) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (state is ManagerVerifiedSuccessfully) {
+                        addUserNow(state.email, state.password);
                       }
                       return _professionalForm(context, _manager);
                     },
@@ -226,8 +233,8 @@ class _MnagaerAddProfessionalBodyState
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter your experience';
-                } else if (int.parse(value) > 50) {
-                  return "experience cannot be greater than 50";
+                } else if (int.parse(value) > 60) {
+                  return "experience cannot be greater than 60";
                 }
                 return null;
               },
@@ -243,17 +250,52 @@ class _MnagaerAddProfessionalBodyState
               onPressed: () {
                 if (_formKey.currentState.validate()) {
                   print("validated");
-                  BlocProvider.of<ManagerAddProfessionalBloc>(context).add(
-                      ManagerAddProfessionalButtonPressedEvent(
-                          email: emailController.text,
-                          name: nameController.text,
-                          phone: phoneController.text,
-                          address: addressController.text,
-                          city: cityController.text,
-                          country: countryController.text));
+                  String managerEmail;
+                  String managerPass;
+                  Alert(
+                      context: context,
+                      title: "Verification",
+                      content: Column(
+                        children: <Widget>[
+                          TextField(
+                            decoration: InputDecoration(
+                              icon: Icon(Icons.account_circle),
+                              labelText: 'Email',
+                            ),
+                            onChanged: (value) {
+                              managerEmail = value;
+                            },
+                          ),
+                          TextField(
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              icon: Icon(Icons.lock),
+                              labelText: 'Password',
+                            ),
+                            onChanged: (value) {
+                              managerPass = value;
+                            },
+                          ),
+                        ],
+                      ),
+                      buttons: [
+                        DialogButton(
+                          onPressed: () {
+                            BlocProvider.of<ManagerAddProfessionalBloc>(context)
+                                .add(ManagerAddProfessionalVerificationEvent(
+                                    email: managerEmail,
+                                    password: managerPass));
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            "Verify",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                        )
+                      ]).show();
                 }
               },
-              child: Text('Add new customer'),
+              child: Text('Add Professional'),
             ),
           )
         ],
@@ -290,9 +332,44 @@ class _MnagaerAddProfessionalBodyState
     ).show();
   }
 
+  showSuccessDialog(String msg, Manager manager) {
+    Alert(
+      context: context,
+      type: AlertType.success,
+      title: "",
+      desc: msg,
+      buttons: [
+        DialogButton(
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+            navigateToDashboard(manager, context);
+          },
+          width: 120,
+        )
+      ],
+    ).show();
+  }
+
   void navigateToDashboard(Manager manager, BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ManagerDashboardScreen(manager: manager);
     }));
+  }
+
+  void addUserNow(String managerEmail, String managerPassword) {
+    BlocProvider.of<ManagerAddProfessionalBloc>(context).add(
+        ManagerAddProfessionalButtonPressedEvent(
+            email: emailController.text,
+            name: nameController.text,
+            phone: phoneController.text,
+            address: addressController.text,
+            city: cityController.text,
+            country: countryController.text,
+            managerEmail: managerEmail,
+            managerPassword: managerPassword));
   }
 }

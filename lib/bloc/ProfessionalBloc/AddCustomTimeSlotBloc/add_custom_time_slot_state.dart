@@ -19,6 +19,8 @@ class GetCustomTimeSlotsState extends AddCustomTimeSlotState {
   GetCustomTimeSlotsState({@required this.customTimeSlots});
 }
 
+class CustomTimeSlotDeletedSuccessfully extends AddCustomTimeSlotState {}
+
 class CustomTimeSlotNotAdded extends AddCustomTimeSlotState {}
 
 class WrongTimeSelectedState extends AddCustomTimeSlotState {}

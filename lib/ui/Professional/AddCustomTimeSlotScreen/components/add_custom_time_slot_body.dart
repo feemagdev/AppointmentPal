@@ -51,8 +51,11 @@ class _AddCustomTimeSlotBodyState extends State<AddCustomTimeSlotBody> {
                       "This time slot has clash with already created time slot";
                   errorDialog(message);
                 } else if (state is WrongTimeSelectedState) {
-                  String message = "start time cannot be less than end time";
+                  String message = "Start time cannot be less than End time";
                   errorDialog(message);
+                } else if (state is CustomTimeSlotDeletedSuccessfully) {
+                  String message = "Time slot deleted successfully";
+                  successDialog(message);
                 }
               },
               child: BlocBuilder<AddCustomTimeSlotBloc, AddCustomTimeSlotState>(
@@ -217,10 +220,13 @@ class _AddCustomTimeSlotBodyState extends State<AddCustomTimeSlotBody> {
                     IconButton(
                         icon: Icon(
                           Icons.delete,
-                          color: Colors.red[400],
+                          color: Colors.red[500],
                         ),
                         onPressed: () {
                           print('deleted');
+                          BlocProvider.of<AddCustomTimeSlotBloc>(context).add(
+                              DeleteCustomTimeSlotEvent(
+                                  customTimeSlots: customTimeSlots[index]));
                         })
                   ],
                 ),
@@ -235,6 +241,29 @@ class _AddCustomTimeSlotBodyState extends State<AddCustomTimeSlotBody> {
       context: context,
       type: AlertType.error,
       title: "Error",
+      desc: message,
+      buttons: [
+        DialogButton(
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+            BlocProvider.of<AddCustomTimeSlotBloc>(context)
+                .add(GetCustomTimeSlotEvent());
+          },
+          width: 120,
+        )
+      ],
+    ).show();
+  }
+
+  successDialog(String message) {
+    Alert(
+      context: context,
+      type: AlertType.success,
+      title: "Success",
       desc: message,
       buttons: [
         DialogButton(

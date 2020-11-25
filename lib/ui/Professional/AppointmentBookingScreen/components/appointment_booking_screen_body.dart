@@ -1,4 +1,3 @@
-
 import 'package:appointmentproject/bloc/ProfessionalBloc/AppointmentBookingBloc/appointment_booking_bloc.dart';
 import 'package:appointmentproject/model/customer.dart';
 import 'package:appointmentproject/model/manager.dart';
@@ -17,7 +16,6 @@ class AppointmentBookingScreenBody extends StatefulWidget {
 
 class _AppointmentBookingScreenBodyState
     extends State<AppointmentBookingScreenBody> {
-
   @override
   Widget build(BuildContext context) {
     Professional professional =
@@ -38,15 +36,14 @@ class _AppointmentBookingScreenBodyState
         child: Column(
           children: [
             BlocListener<AppointmentBookingBloc, AppointmentBookingState>(
-              listener: (context, state) {
-                if(state is AppointmentBookedSuccessfully){
-                  showSuccessfulDialog(
-                      context, "Appointment booked successfully", professional,
-                      manager);
+              listener: (context, state) async {
+                if (state is AppointmentBookedSuccessfully) {
+                  await showSuccessfulDialog(context,
+                      "Appointment booked successfully", professional, manager);
                 }
               },
               child:
-              BlocBuilder<AppointmentBookingBloc, AppointmentBookingState>(
+                  BlocBuilder<AppointmentBookingBloc, AppointmentBookingState>(
                 builder: (context, state) {
                   if (state is AppointmentBookingInitial) {
                     return appointmentBookingUI(
@@ -66,8 +63,12 @@ class _AppointmentBookingScreenBodyState
     );
   }
 
-  Widget appointmentBookingUI(DateTime appointmentStartTime, DateTime appointmentEndTime,
-      Customer customer, Professional professional, double deviceWidth) {
+  Widget appointmentBookingUI(
+      DateTime appointmentStartTime,
+      DateTime appointmentEndTime,
+      Customer customer,
+      Professional professional,
+      double deviceWidth) {
     double fontSize = 12;
     double iconSize = 20;
     if (deviceWidth < 360) {
@@ -88,9 +89,9 @@ class _AppointmentBookingScreenBodyState
               CircleAvatar(
                   backgroundColor: Colors.grey[300],
                   child: Icon(
-                Icons.access_time_outlined,
-                size: iconSize,
-              )),
+                    Icons.access_time_outlined,
+                    size: iconSize,
+                  )),
               SizedBox(
                 width: 10,
               ),
@@ -144,7 +145,7 @@ class _AppointmentBookingScreenBodyState
           Row(
             children: [
               CircleAvatar(
-                backgroundColor: Colors.grey[300],
+                  backgroundColor: Colors.grey[300],
                   child: Icon(
                     Icons.person_outline,
                     size: iconSize,
@@ -173,11 +174,12 @@ class _AppointmentBookingScreenBodyState
             child: RaisedButton(
               child: Text("Add Appointment"),
               onPressed: () {
-                BlocProvider.of<AppointmentBookingBloc>(context).add(AddAppointmentButtonPressedEvent(
-                    professional: professional,
-                    customer: customer,
-                    appointmentStartTime: appointmentStartTime,
-                appointmentEndTime:appointmentEndTime));
+                BlocProvider.of<AppointmentBookingBloc>(context).add(
+                    AddAppointmentButtonPressedEvent(
+                        professional: professional,
+                        customer: customer,
+                        appointmentStartTime: appointmentStartTime,
+                        appointmentEndTime: appointmentEndTime));
                 print("Appointment added");
               },
             ),
@@ -187,8 +189,8 @@ class _AppointmentBookingScreenBodyState
     );
   }
 
-  showAlertDialog(BuildContext context, Professional professional,
-      Manager manager) {
+  showAlertDialog(
+      BuildContext context, Professional professional, Manager manager) {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -221,8 +223,8 @@ class _AppointmentBookingScreenBodyState
   }
 
   showSuccessfulDialog(BuildContext context, String message,
-      Professional professional, Manager manager) {
-    showDialog(
+      Professional professional, Manager manager) async {
+    await showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -236,20 +238,21 @@ class _AppointmentBookingScreenBodyState
                 child: Text("Close"),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  if (manager == null) {
-                    navigateToDashboardScreen(context, professional);
-                  } else {
-                    navigateToManagerDashboardScreen(context, manager);
-                  }
                 },
               )
             ],
           );
-        });
+        }).then((value) {
+      if (manager == null) {
+        navigateToDashboardScreen(context, professional);
+      } else {
+        navigateToManagerDashboardScreen(context, manager);
+      }
+    });
   }
 
-  void navigateToDashboardScreen(BuildContext context,
-      Professional professional) {
+  void navigateToDashboardScreen(
+      BuildContext context, Professional professional) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalDashboard(
         professional: professional,

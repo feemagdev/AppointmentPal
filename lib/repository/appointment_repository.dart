@@ -84,6 +84,7 @@ class AppointmentRepository {
         .collection('appointment')
         .where('appointment_date', isEqualTo: newTimeStamp)
         .where('professionalID', isEqualTo: professionalID)
+        .where('appointment_status', isEqualTo: 'booked')
         .orderBy('appointment_start_time')
         .get()
         .then((value) {
@@ -123,13 +124,7 @@ class AppointmentRepository {
   Future<List<Appointment>> getTodayAppointmentOfProfessional(
       String professionalID) async {
     DateTime dateTime =
-    DateTime(DateTime
-        .now()
-        .year, DateTime
-        .now()
-        .month, DateTime
-        .now()
-        .day);
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     final dbReference = FirebaseFirestore.instance;
     List<Appointment> appointments = List();
     await dbReference
@@ -165,5 +160,83 @@ class AppointmentRepository {
         .doc(appointment.getAppointmentID())
         .update({'appointment_status': 'canceled'});
     return true;
+  }
+
+  Future<List<Appointment>> getCompletedAppointmentList(
+      String professionalID, DateTime dateTime) async {
+    final dbReference = FirebaseFirestore.instance;
+    List<Appointment> appointmentList = List();
+    DateTime checkingDate =
+        DateTime(dateTime.year, dateTime.month, dateTime.day);
+    print(changeTime(Timestamp.fromDate(checkingDate)));
+    QuerySnapshot querySnapshot = await dbReference
+        .collection('appointment')
+        .where('professionalID', isEqualTo: professionalID)
+        .where('appointment_date',
+            isEqualTo: changeTime(Timestamp.fromDate(checkingDate)))
+        .where('appointment_status', isEqualTo: 'completed')
+        .orderBy('appointment_start_time')
+        .get();
+    querySnapshot.docs.forEach((element) {
+      print(element.data());
+      Appointment appointment = Appointment.getProfessionalAppointments(
+          element.data(), element.reference.id);
+      appointmentList.add(appointment);
+    });
+    return appointmentList;
+  }
+
+  Future<List<Appointment>> getCanceledAppointmentList(
+      String professionalID, DateTime dateTime) async {
+    final dbReference = FirebaseFirestore.instance;
+    List<Appointment> appointmentList = List();
+    DateTime checkingDate =
+        DateTime(dateTime.year, dateTime.month, dateTime.day);
+    print(changeTime(Timestamp.fromDate(checkingDate)));
+    QuerySnapshot querySnapshot = await dbReference
+        .collection('appointment')
+        .where('professionalID', isEqualTo: professionalID)
+        .where('appointment_date',
+            isEqualTo: changeTime(Timestamp.fromDate(checkingDate)))
+        .where('appointment_status', isEqualTo: 'canceled')
+        .orderBy('appointment_start_time')
+        .get();
+    querySnapshot.docs.forEach((element) {
+      print(element.data());
+      Appointment appointment = Appointment.getProfessionalAppointments(
+          element.data(), element.reference.id);
+      appointmentList.add(appointment);
+    });
+    return appointmentList;
+  }
+
+  Future<int> getTotalNumberOfCompletedAppointments(
+      String professionalID) async {
+    final dbReference = FirebaseFirestore.instance;
+    int totalApponitments = 0;
+
+    QuerySnapshot query = await dbReference
+        .collection('appointment')
+        .where('professionalID', isEqualTo: professionalID)
+        .where('appointment_status', isEqualTo: 'completed')
+        .get();
+
+    totalApponitments = query.size;
+    return totalApponitments;
+  }
+
+  Future<int> getTotalNumberOfCanceledAppointments(
+      String professionalID) async {
+    final dbReference = FirebaseFirestore.instance;
+    int totalApponitments = 0;
+
+    QuerySnapshot query = await dbReference
+        .collection('appointment')
+        .where('professionalID', isEqualTo: professionalID)
+        .where('appointment_status', isEqualTo: 'canceled')
+        .get();
+
+    totalApponitments = query.size;
+    return totalApponitments;
   }
 }
