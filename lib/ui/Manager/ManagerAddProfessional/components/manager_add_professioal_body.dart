@@ -31,6 +31,12 @@ class _MnagaerAddProfessionalBodyState
     return Scaffold(
         appBar: AppBar(
           title: Text("Add Professional"),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              navigateToDashboard(_manager, context);
+            },
+          ),
         ),
         body: SingleChildScrollView(
             child: Padding(

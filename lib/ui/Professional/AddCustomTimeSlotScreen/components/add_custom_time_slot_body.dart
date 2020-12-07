@@ -23,58 +23,66 @@ class _AddCustomTimeSlotBodyState extends State<AddCustomTimeSlotBody> {
   Widget build(BuildContext context) {
     final Professional professional =
         BlocProvider.of<AddCustomTimeSlotBloc>(context).professional;
-    final String day = BlocProvider.of<AddCustomTimeSlotBloc>(context).day;
 
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: Text("Add Time Slot"),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            navigateToManualBusinessHoursScreen(context, professional);
-          },
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            addCustomTimeSlotButton(),
-            SizedBox(
-              height: 20,
-            ),
-            BlocListener<AddCustomTimeSlotBloc, AddCustomTimeSlotState>(
-              listener: (context, state) {
-                if (state is CustomTimeSlotNotAdded) {
-                  String message =
-                      "This time slot has clash with already created time slot";
-                  errorDialog(message);
-                } else if (state is WrongTimeSelectedState) {
-                  String message = "Start time cannot be less than End time";
-                  errorDialog(message);
-                } else if (state is CustomTimeSlotDeletedSuccessfully) {
-                  String message = "Time slot deleted successfully";
-                  successDialog(message);
-                }
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.grey[100],
+          appBar: AppBar(
+            title: Text("Add Time Slot"),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                navigateToManualBusinessHoursScreen(context, professional);
               },
-              child: BlocBuilder<AddCustomTimeSlotBloc, AddCustomTimeSlotState>(
-                builder: (context, state) {
-                  if (state is AddCustomTimeSlotInitial) {
-                    return loadingState(context);
-                  } else if (state is GetCustomTimeSlotsState) {
-                    return listOfCustomTimeSlots(state.customTimeSlots);
-                  } else if (state
-                      is CustomSlotTimeSlotAddedSuccessfullyState) {
-                    return listOfCustomTimeSlots(state.customTimeSlots);
-                  } else if (state is AddCustomSlotLoadingState) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  return Container();
-                },
-              ),
             ),
-          ],
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              children: [
+                addCustomTimeSlotButton(),
+                SizedBox(
+                  height: 20,
+                ),
+                BlocListener<AddCustomTimeSlotBloc, AddCustomTimeSlotState>(
+                  listener: (context, state) {
+                    if (state is CustomTimeSlotNotAdded) {
+                      String message =
+                          "This time slot has clash with already created time slot";
+                      errorDialog(message);
+                    } else if (state is WrongTimeSelectedState) {
+                      String message =
+                          "Start time cannot be less than End time";
+                      errorDialog(message);
+                    } else if (state is CustomTimeSlotDeletedSuccessfully) {
+                      String message = "Time slot deleted successfully";
+                      successDialog(message);
+                    }
+                  },
+                  child: BlocBuilder<AddCustomTimeSlotBloc,
+                      AddCustomTimeSlotState>(
+                    builder: (context, state) {
+                      if (state is AddCustomTimeSlotInitial) {
+                        return loadingState(context);
+                      } else if (state is GetCustomTimeSlotsState) {
+                        return listOfCustomTimeSlots(state.customTimeSlots);
+                      } else if (state
+                          is CustomSlotTimeSlotAddedSuccessfullyState) {
+                        return listOfCustomTimeSlots(state.customTimeSlots);
+                      } else if (state is AddCustomSlotLoadingState) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      return Container();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

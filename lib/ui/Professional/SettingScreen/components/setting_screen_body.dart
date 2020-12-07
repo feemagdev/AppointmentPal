@@ -17,41 +17,50 @@ class _SettingScreenBodyState extends State<SettingScreenBody> {
   Widget build(BuildContext context) {
     final Professional _professional =
         BlocProvider.of<SettingScreenBloc>(context).professional;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Setting"),
-        leading: IconButton(
-          onPressed: () {
-            navigateToProfessionalDashboardScreen(_professional, context);
-          },
-          icon: Icon(Icons.arrow_back),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Container(
-          child: Column(
-            children: [
-              BlocListener<SettingScreenBloc, SettingScreenState>(
-                listener: (context, state) {
-                  if (state is AddCustomerState) {
-                    navigateToAddCustomerScreen(context, _professional);
-                  } else if (state is AutomatedScheduleState) {
-                    navigateToAutomatedScheduleScreen(context, _professional);
-                  } else if (state is ManualBusinessHoursState) {
-                    navigateToManualBusinessHoursState(context, _professional);
-                  }
-                },
-                child: BlocBuilder<SettingScreenBloc, SettingScreenState>(
-                  builder: (context, state) {
-                    if (state is SettingScreenInitial) {
-                      return settingBuilder(context);
-                    }
-                    return settingBuilder(context);
-                  },
-                ),
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Setting"),
+            leading: IconButton(
+              onPressed: () {
+                navigateToProfessionalDashboardScreen(_professional, context);
+              },
+              icon: Icon(Icons.arrow_back),
+            ),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              child: Column(
+                children: [
+                  BlocListener<SettingScreenBloc, SettingScreenState>(
+                    listener: (context, state) {
+                      if (state is AddCustomerState) {
+                        navigateToAddCustomerScreen(context, _professional);
+                      } else if (state is AutomatedScheduleState) {
+                        navigateToAutomatedScheduleScreen(
+                            context, _professional);
+                      } else if (state is ManualBusinessHoursState) {
+                        navigateToManualBusinessHoursState(
+                            context, _professional);
+                      }
+                    },
+                    child: BlocBuilder<SettingScreenBloc, SettingScreenState>(
+                      builder: (context, state) {
+                        if (state is SettingScreenInitial) {
+                          return settingBuilder(context);
+                        }
+                        return settingBuilder(context);
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

@@ -31,7 +31,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           } else {
             print(user.uid);
             Manager manager = await checkManagerRole(user);
-            yield ManagerLoginSuccessState(manager: manager);
+            if (manager != null) {
+              yield ManagerLoginSuccessState(manager: manager);
+            } else {
+              print("user not filled state run");
+              yield UserDetailNotFilledState(uid: user.uid);
+            }
           }
         }
       } catch (e) {
@@ -44,20 +49,21 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           } else if (e.code == "too-many-requests") {
             errorMessage = "Too many requests please try again later";
           } else {
-            errorMessage = "undefined error or network problem";
-            yield LoginFailureState(message: e.toString());
+            errorMessage = e.toString();
           }
           yield LoginFailureState(message: errorMessage);
         }
       }
     } else if (event is ForgotPasswordButtonPressedEvent) {
       yield ForgotPasswordState();
+    } else if (event is MoveToSignUpScreenEvent) {
+      yield MoveToSignUpScreenState();
     }
   }
 
   Future<Professional> checkProfessionalRole(User user) async {
     return await ProfessionalRepository.defaultConstructor()
-        .getProfessionalData(user);
+        .getProfessionalData(user.uid);
   }
 
   Future<Manager> checkManagerRole(User user) async {

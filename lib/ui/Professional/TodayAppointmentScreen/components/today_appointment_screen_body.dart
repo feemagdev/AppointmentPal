@@ -1,65 +1,85 @@
-
-
 import 'package:appointmentproject/bloc/ProfessionalBloc/TodayAppointment/today_appointment_bloc.dart';
 import 'package:appointmentproject/model/appointment.dart';
 import 'package:appointmentproject/model/customer.dart';
 import 'package:appointmentproject/model/professional.dart';
+import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/professional_dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 class TodayAppointmentScreenBody extends StatefulWidget {
   @override
-  _TodayAppointmentScreenBodyState createState() => _TodayAppointmentScreenBodyState();
+  _TodayAppointmentScreenBodyState createState() =>
+      _TodayAppointmentScreenBodyState();
 }
 
-class _TodayAppointmentScreenBodyState extends State<TodayAppointmentScreenBody> {
-
-
-
+class _TodayAppointmentScreenBodyState
+    extends State<TodayAppointmentScreenBody> {
   @override
   Widget build(BuildContext context) {
-    Professional professional = BlocProvider.of<TodayAppointmentBloc>(context).professional;
+    Professional professional =
+        BlocProvider.of<TodayAppointmentBloc>(context).professional;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Today Appointments"),
-      ),
-      body: Container(
-        child: Column(
-          children: [
-            BlocListener<TodayAppointmentBloc,TodayAppointmentState>(
-              listener: (context,state){},
-              child: BlocBuilder<TodayAppointmentBloc,TodayAppointmentState>(
-                builder: (context,state){
-                  if(state is TodayAppointmentInitial){
-                    return loadingState(context);
-                  }else if(state is GetAllTodayAppointmentState){
-                    if(state.appointments.isEmpty){
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text("No appointments for today",style: TextStyle(fontSize: 17),),
-                      );
-                    }
-                    return appointmentsBuilder(context, state.appointments , professional, state.customers);
-                  }else if(state is TodayAppointmentLoadingState){
-                    return loadingCircularBar();
-                  }
-                  return Container();
-                },
-              ),
-            )
-          ],
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Today Appointments"),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                navigateToProfessionalDashboard(context, professional);
+              },
+            ),
+          ),
+          body: Container(
+            child: Column(
+              children: [
+                BlocListener<TodayAppointmentBloc, TodayAppointmentState>(
+                  listener: (context, state) {},
+                  child:
+                      BlocBuilder<TodayAppointmentBloc, TodayAppointmentState>(
+                    builder: (context, state) {
+                      if (state is TodayAppointmentInitial) {
+                        return loadingState(context);
+                      } else if (state is GetAllTodayAppointmentState) {
+                        if (state.appointments.isEmpty) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "No appointments for today",
+                              style: TextStyle(fontSize: 17),
+                            ),
+                          );
+                        }
+                        return appointmentsBuilder(context, state.appointments,
+                            professional, state.customers);
+                      } else if (state is TodayAppointmentLoadingState) {
+                        return loadingCircularBar();
+                      }
+                      return Container();
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-
-  Widget _markAppointmentCompleteUI(BuildContext context,Appointment appointment,Professional professional, Customer customer,int index){
+  Widget _markAppointmentCompleteUI(
+      BuildContext context,
+      Appointment appointment,
+      Professional professional,
+      Customer customer,
+      int index) {
     return Stack(
       children: [
-
         Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -123,28 +143,40 @@ class _TodayAppointmentScreenBodyState extends State<TodayAppointmentScreenBody>
                             height: 40,
                             child: Align(
                               child: FloatingActionButton(
-                                onPressed: (){
-                                  BlocProvider.of<TodayAppointmentBloc>(context).add(MarkAppointmentComplete(appointment:appointment));
+                                onPressed: () {
+                                  BlocProvider.of<TodayAppointmentBloc>(context)
+                                      .add(MarkAppointmentComplete(
+                                          appointment: appointment));
                                 },
                                 child: Icon(Icons.check),
                                 backgroundColor: Colors.lightBlue,
-                                heroTag: "completeButton"+appointment.getAppointmentStartTime().toString(),
+                                heroTag: "completeButton" +
+                                    appointment
+                                        .getAppointmentStartTime()
+                                        .toString(),
                               ),
                               alignment: Alignment.topRight,
                             ),
                           ),
-                          SizedBox(height: 10,),
+                          SizedBox(
+                            height: 10,
+                          ),
                           Container(
                             width: 40,
                             height: 40,
                             child: Align(
                               child: FloatingActionButton(
-                                onPressed: (){
-                                  BlocProvider.of<TodayAppointmentBloc>(context).add(MarkAppointmentCancel(appointment:appointment));
+                                onPressed: () {
+                                  BlocProvider.of<TodayAppointmentBloc>(context)
+                                      .add(MarkAppointmentCancel(
+                                          appointment: appointment));
                                 },
                                 child: Icon(Icons.close),
                                 backgroundColor: Colors.red,
-                                heroTag: "cancelButton"+appointment.getAppointmentStartTime().toString(),
+                                heroTag: "cancelButton" +
+                                    appointment
+                                        .getAppointmentStartTime()
+                                        .toString(),
                               ),
                               alignment: Alignment.topRight,
                             ),
@@ -152,16 +184,13 @@ class _TodayAppointmentScreenBodyState extends State<TodayAppointmentScreenBody>
                         ],
                       )
                     ]))),
-
       ],
     );
-
   }
 
-  Widget loadingCircularBar(){
+  Widget loadingCircularBar() {
     return Center(child: CircularProgressIndicator());
   }
-
 
   Widget appointmentsBuilder(
       BuildContext context,
@@ -174,15 +203,22 @@ class _TodayAppointmentScreenBodyState extends State<TodayAppointmentScreenBody>
       scrollDirection: Axis.vertical,
       itemBuilder: (context, index) => Padding(
         padding: const EdgeInsets.only(right: 7, top: 10, left: 7),
-        child: _markAppointmentCompleteUI(
-            context, appointments[index], professional, customers[index],index),
+        child: _markAppointmentCompleteUI(context, appointments[index],
+            professional, customers[index], index),
       ),
     );
   }
 
   Widget loadingState(BuildContext context) {
-    BlocProvider.of<TodayAppointmentBloc>(context).add(GetAllTodayAppointments());
+    BlocProvider.of<TodayAppointmentBloc>(context)
+        .add(GetAllTodayAppointments());
     return Container();
   }
 
+  void navigateToProfessionalDashboard(
+      BuildContext context, Professional professional) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ProfessionalDashboard(professional: professional);
+    }));
+  }
 }

@@ -22,42 +22,52 @@ class _AppointmentBookingScreenBodyState
         BlocProvider.of<AppointmentBookingBloc>(context).professional;
     Manager manager = BlocProvider.of<AppointmentBookingBloc>(context).manager;
     double deviceWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("New Appointment"),
-        leading: IconButton(
-          icon: Icon(Icons.close),
-          onPressed: () {
-            showAlertDialog(context, professional, manager);
-          },
-        ),
-      ),
-      body: Container(
-        child: Column(
-          children: [
-            BlocListener<AppointmentBookingBloc, AppointmentBookingState>(
-              listener: (context, state) async {
-                if (state is AppointmentBookedSuccessfully) {
-                  await showSuccessfulDialog(context,
-                      "Appointment booked successfully", professional, manager);
-                }
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("New Appointment"),
+            leading: IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                showAlertDialog(context, professional, manager);
               },
-              child:
-                  BlocBuilder<AppointmentBookingBloc, AppointmentBookingState>(
-                builder: (context, state) {
-                  if (state is AppointmentBookingInitial) {
-                    return appointmentBookingUI(
-                        state.appointmentStartTime,
-                        state.appointmentEndTime,
-                        state.customer,
-                        professional,
-                        deviceWidth);
-                  }
-                  return Container();
-                },
-              ),
-            )
-          ],
+            ),
+          ),
+          body: Container(
+            child: Column(
+              children: [
+                BlocListener<AppointmentBookingBloc, AppointmentBookingState>(
+                  listener: (context, state) async {
+                    if (state is AppointmentBookedSuccessfully) {
+                      await showSuccessfulDialog(
+                          context,
+                          "Appointment booked successfully",
+                          professional,
+                          manager);
+                    }
+                  },
+                  child: BlocBuilder<AppointmentBookingBloc,
+                      AppointmentBookingState>(
+                    builder: (context, state) {
+                      if (state is AppointmentBookingInitial) {
+                        return appointmentBookingUI(
+                            state.appointmentStartTime,
+                            state.appointmentEndTime,
+                            state.customer,
+                            professional,
+                            deviceWidth);
+                      }
+                      return Container();
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );

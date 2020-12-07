@@ -72,6 +72,10 @@ class Manager {
     return _companyID;
   }
 
+  void setCompanyID(String companyID) {
+    _companyID = companyID;
+  }
+
   void setImage(String image) {
     _image = image;
   }

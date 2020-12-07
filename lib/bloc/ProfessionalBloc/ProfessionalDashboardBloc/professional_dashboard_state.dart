@@ -29,3 +29,7 @@ class ProfessionalHistoryState extends ProfessionalDashboardState {
   final Professional professional;
   ProfessionalHistoryState({@required this.professional});
 }
+
+class ProfessionalLogOutSuccessfullyState extends ProfessionalDashboardState {}
+
+class ProfessionalDashboardLoadingState extends ProfessionalDashboardState {}

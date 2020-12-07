@@ -3,9 +3,11 @@ import 'package:appointmentproject/bloc/LoginBloc/login_event.dart';
 import 'package:appointmentproject/bloc/LoginBloc/login_state.dart';
 import 'package:appointmentproject/model/manager.dart';
 import 'package:appointmentproject/model/professional.dart';
+import 'package:appointmentproject/ui/Client/CompleteDetails/complete_detail_screen.dart';
 import 'package:appointmentproject/ui/Client/ForgotPassword/forgot_password_screen.dart';
 import 'package:appointmentproject/ui/Manager/ManagerDashboard/manager_dashboard_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/professional_dashboard_screen.dart';
+import 'package:appointmentproject/ui/Signup/signup_screen.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
 import 'package:email_validator/email_validator.dart';
 
@@ -24,38 +26,53 @@ class _LoginBodyState extends State<LoginBody> {
   TextEditingController _passwrodController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Center(
-          child: Stack(
-            children: [
-              BlocListener<LoginBloc, LoginState>(
-                listener: (context, state) {
-                  if (state is ProfessionalLoginSuccessState) {
-                    navigateToProfessionalHomePage(context, state.professional);
-                  } else if (state is ForgotPasswordState) {
-                    navigateToForgotPasswordPage(context);
-                  } else if (state is ManagerLoginSuccessState) {
-                    naviagetToManagerDashboard(context, state.manager);
-                  } else if (state is LoginFailureState) {
-                    infoDialogAlert(state.message);
-                  }
-                },
-                child: BlocBuilder<LoginBloc, LoginState>(
-                    builder: (context, state) {
-                  if (state is LoginInitialState) {
-                    return SingleChildScrollView(child: loginFormUI());
-                  } else if (state is LoginLoadingState) {
-                    return buildLoadingUi();
-                  } else if (state is ProfessionalLoginSuccessState) {
-                    return Container();
-                  } else if (state is ManagerLoginSuccessState) {
-                    return Container();
-                  }
-                  return SingleChildScrollView(child: loginFormUI());
-                }),
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: SafeArea(
+          child: Scaffold(
+            body: Center(
+              child: Stack(
+                children: [
+                  BlocListener<LoginBloc, LoginState>(
+                    listener: (context, state) {
+                      if (state is ProfessionalLoginSuccessState) {
+                        navigateToProfessionalHomePage(
+                            context, state.professional);
+                      } else if (state is ForgotPasswordState) {
+                        navigateToForgotPasswordPage(context);
+                      } else if (state is ManagerLoginSuccessState) {
+                        naviagetToManagerDashboard(context, state.manager);
+                      } else if (state is LoginFailureState) {
+                        infoDialogAlert(state.message);
+                      } else if (state is MoveToSignUpScreenState) {
+                        navigateToSignupScreen(context);
+                      } else if (state is UserDetailNotFilledState) {
+                        navigateToDetailFillingScreen(state.uid, context);
+                      }
+                    },
+                    child: BlocBuilder<LoginBloc, LoginState>(
+                        builder: (context, state) {
+                      if (state is LoginInitialState) {
+                        return SingleChildScrollView(child: loginFormUI());
+                      } else if (state is LoginLoadingState) {
+                        return buildLoadingUi();
+                      } else if (state is ProfessionalLoginSuccessState) {
+                        return Container();
+                      } else if (state is ManagerLoginSuccessState) {
+                        return Container();
+                      }
+                      return SingleChildScrollView(child: loginFormUI());
+                    }),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -64,6 +81,7 @@ class _LoginBodyState extends State<LoginBody> {
 
   Widget loginFormUI() {
     double deviceWidth = MediaQuery.of(context).size.width;
+    double deviceHeight = MediaQuery.of(context).size.height;
     return Form(
         key: _formKey,
         child: Column(
@@ -251,6 +269,33 @@ class _LoginBodyState extends State<LoginBody> {
                 ),
               ),
             ),
+            SizedBox(
+              height: deviceHeight * 0.05,
+            ),
+            GestureDetector(
+              onTap: () {
+                BlocProvider.of<LoginBloc>(context)
+                    .add(MoveToSignUpScreenEvent());
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Don't have an account ? ",
+                    style: TextStyle(fontSize: 17),
+                  ),
+                  Text(
+                    "Sign Up",
+                    textScaleFactor: 1,
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 17,
+                    ),
+                  )
+                ],
+              ),
+            )
           ],
         ));
   }
@@ -272,7 +317,15 @@ class _LoginBodyState extends State<LoginBody> {
 
   void naviagetToManagerDashboard(BuildContext context, Manager manager) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return ManagerDashboardScreen(manager: manager);
+      return ManagerDashboardScreen(
+        manager: manager,
+      );
+    }));
+  }
+
+  void navigateToSignupScreen(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return SignUpScreen();
     }));
   }
 
@@ -339,5 +392,11 @@ class _LoginBodyState extends State<LoginBody> {
       return "Please use a strong password";
     } else
       return null;
+  }
+
+  void navigateToDetailFillingScreen(String uid, BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return CompleteDetailScreen(uid: uid);
+    }));
   }
 }

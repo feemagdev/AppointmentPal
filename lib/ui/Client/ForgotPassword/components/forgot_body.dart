@@ -18,31 +18,36 @@ class _ForgotBodyState extends State<ForgotBody> {
   TextEditingController _emailController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: SafeArea(
-        child: Scaffold(
-          resizeToAvoidBottomPadding: false,
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
-                listener: (context, state) {
-                  if (state is ForgotPasswordEmailSent) {
-                    infoDialogAlert(
-                        "Password email sent\nPlease also check you spam folder");
-                  } else if (state is ForgotPasswordEmailNotSent) {
-                    errorDialogAlert(state.message);
-                  }
-                },
-                child: BlocBuilder<ForgotPasswordBloc, ForgotPasswordState>(
-                    builder: (context, state) {
-                  if (state is ForgotPasswordInitial) {
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Container(
+        child: SafeArea(
+          child: Scaffold(
+            resizeToAvoidBottomPadding: false,
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
+                  listener: (context, state) {
+                    if (state is ForgotPasswordEmailSent) {
+                      infoDialogAlert(
+                          "Password email sent\nPlease also check you spam folder");
+                    } else if (state is ForgotPasswordEmailNotSent) {
+                      errorDialogAlert(state.message);
+                    }
+                  },
+                  child: BlocBuilder<ForgotPasswordBloc, ForgotPasswordState>(
+                      builder: (context, state) {
+                    if (state is ForgotPasswordInitial) {
+                      return loginFormUI();
+                    }
                     return loginFormUI();
-                  }
-                  return loginFormUI();
-                }),
-              ),
-            ],
+                  }),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -143,7 +148,7 @@ class _ForgotBodyState extends State<ForgotBody> {
                     1.5,
                     GestureDetector(
                       child: Text(
-                        "Sign in ?",
+                        "Singn In",
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: deviceWidth < 400 ? 15 : 20,
@@ -177,7 +182,10 @@ class _ForgotBodyState extends State<ForgotBody> {
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: Text("Send reset link"),
+                      child: Text(
+                        "Send reset link",
+                        style: TextStyle(fontSize: deviceWidth < 365 ? 15 : 17),
+                      ),
                     ),
                   ),
                 ),

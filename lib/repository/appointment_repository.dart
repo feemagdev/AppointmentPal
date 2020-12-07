@@ -116,7 +116,7 @@ class AppointmentRepository {
     await dbReference
         .collection('appointment')
         .doc(appointment.getAppointmentID())
-        .set(updateMap);
+        .set(updateMap, SetOptions(merge: true));
 
     return true;
   }

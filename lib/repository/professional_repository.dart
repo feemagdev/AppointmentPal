@@ -1,15 +1,14 @@
 import 'package:appointmentproject/model/professional.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfessionalRepository {
   ProfessionalRepository.defaultConstructor();
 
-  Future<Professional> getProfessionalData(User user) async {
+  Future<Professional> getProfessionalData(String professionalID) async {
     final dbReference = FirebaseFirestore.instance;
     Professional professional;
     DocumentSnapshot snapshot =
-        await dbReference.collection('professional').doc(user.uid).get();
+        await dbReference.collection('professional').doc(professionalID).get();
 
     if (snapshot.exists) {
       professional =
@@ -43,14 +42,17 @@ class ProfessionalRepository {
       "country": country,
       "phone": phone,
     };
-    await dbReference.collection('professional').doc(professionalID).set(data);
+    await dbReference
+        .collection('professional')
+        .doc(professionalID)
+        .set(data, SetOptions(merge: true));
     return true;
   }
 
   DocumentReference getProfessionalDocumentReference(String professionalID) {
     final dbReference = FirebaseFirestore.instance;
     DocumentReference documentReference =
-    dbReference.collection('professional').doc(professionalID);
+        dbReference.collection('professional').doc(professionalID);
     return documentReference;
   }
 
@@ -58,9 +60,10 @@ class ProfessionalRepository {
       String managerID) async {
     final dbReference = FirebaseFirestore.instance;
     List<Professional> professionals = List();
-    QuerySnapshot snapshot =
-    await dbReference.collection('professional').where(
-        'managerID', isEqualTo: managerID).get();
+    QuerySnapshot snapshot = await dbReference
+        .collection('professional')
+        .where('managerID', isEqualTo: managerID)
+        .get();
     snapshot.docs.forEach((element) {
       professionals
           .add(Professional.fromMap(element.data(), element.reference.id));

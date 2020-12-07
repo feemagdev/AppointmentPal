@@ -48,41 +48,71 @@ class SelectDateTimeBloc
           await WeekDaysAvailabilityRepository.defaultConstructor()
               .getListOfAvailableWeekDays(professional.getProfessionalID());
 
-      print(
-          "print week days ${weekDaysAvailability.getWednesdayAvailability()}");
-      bool dayCheck = getWeekdayAvailability(dateTime, weekDaysAvailability);
-      if (dayCheck) {
-        List<CustomTimeSlots> customTimeSlots = List();
-        customTimeSlots = await CustomTimeSlotRepository.defaultConstructor()
-            .getListOfCustomTimeSlotsOfSpecificDay(
-                getDay(dateTime), professional.getProfessionalID());
+      if (weekDaysAvailability != null) {
+        print(
+            "print week days ${weekDaysAvailability.getWednesdayAvailability()}");
+        bool dayCheck = getWeekdayAvailability(dateTime, weekDaysAvailability);
+        if (dayCheck) {
+          List<CustomTimeSlots> customTimeSlots = List();
+          customTimeSlots = await CustomTimeSlotRepository.defaultConstructor()
+              .getListOfCustomTimeSlotsOfSpecificDay(
+                  getDay(dateTime), professional.getProfessionalID());
 
-        if (customTimeSlots.isEmpty) {
-          yield NoScheduleAvailable(dateTime: dateTime);
-        } else {
-          List<Appointment> appointment = List();
-          appointment = await AppointmentRepository.defaultConstructor()
-              .getNotAvailableTime(Timestamp.fromDate(dateTime),
-                  professional.getProfessionalID());
-
-          if (appointment.isEmpty) {
-            List<CustomTimeSlots> timeSlots =
-                makeCustomScheduleTimeSlotsWithoutAppointments(
-                    dateTime, customTimeSlots);
-            if (timeSlots.isEmpty) {
-              yield NoScheduleAvailable(dateTime: dateTime);
-            } else {
-              yield ShowCustomTimeSlotsState(
-                  customTimeSlots: timeSlots, selectedDateTime: dateTime);
-            }
+          if (customTimeSlots.isEmpty) {
+            yield NoScheduleAvailable(dateTime: dateTime);
           } else {
-            List<CustomTimeSlots> timeSlots = makeCustomScheduleTimeSlots(
-                appointment, customTimeSlots, dateTime);
-            if (timeSlots.isEmpty || timeSlots.length == 0) {
-              yield NoScheduleAvailable(dateTime: dateTime);
+            List<Appointment> appointment = List();
+            appointment = await AppointmentRepository.defaultConstructor()
+                .getNotAvailableTime(Timestamp.fromDate(dateTime),
+                    professional.getProfessionalID());
+
+            if (appointment.isEmpty) {
+              List<CustomTimeSlots> timeSlots =
+                  makeCustomScheduleTimeSlotsWithoutAppointments(
+                      dateTime, customTimeSlots);
+              if (timeSlots.isEmpty) {
+                yield NoScheduleAvailable(dateTime: dateTime);
+              } else {
+                yield ShowCustomTimeSlotsState(
+                    customTimeSlots: timeSlots, selectedDateTime: dateTime);
+              }
             } else {
-              yield ShowCustomTimeSlotsState(
-                  customTimeSlots: timeSlots, selectedDateTime: dateTime);
+              List<CustomTimeSlots> timeSlots = makeCustomScheduleTimeSlots(
+                  appointment, customTimeSlots, dateTime);
+              if (timeSlots.isEmpty || timeSlots.length == 0) {
+                yield NoScheduleAvailable(dateTime: dateTime);
+              } else {
+                yield ShowCustomTimeSlotsState(
+                    customTimeSlots: timeSlots, selectedDateTime: dateTime);
+              }
+            }
+          }
+        } else {
+          Schedule schedule =
+              await getProfessionalSchedule(professional, event.dateTime);
+
+          if (schedule == null) {
+            yield NoScheduleAvailable(dateTime: event.dateTime);
+          } else {
+            DateTime dateTime = event.dateTime;
+            if (dateTime == null) {
+              dateTime = DateTime.now();
+            }
+
+            List<Appointment> appointment =
+                await AppointmentRepository.defaultConstructor()
+                    .getNotAvailableTime(Timestamp.fromDate(dateTime),
+                        professional.getProfessionalID());
+
+            List<DateTime> timeSlots = makeScheduleTimeSlots(schedule,
+                dateTime.year, dateTime.month, dateTime.day, appointment);
+            if (timeSlots.isEmpty || timeSlots.length == 0) {
+              yield NoScheduleAvailable(dateTime: event.dateTime);
+            } else {
+              yield ShowAvailableTimeState(
+                schedule: schedule,
+                timeSlots: timeSlots,
+              );
             }
           }
         }
@@ -260,14 +290,19 @@ class SelectDateTimeBloc
         } else if (appointmentStartTime < endTimeInMinutes &&
             appointmentEndTime > endTimeInMinutes) {
           checkInitialDate = false;
-        } else if (startTime.hour ==
+        } else if (appointmentStartTime >= startTimeInMinutes &&
+            appointmentEndTime <= endTimeInMinutes) {
+          checkInitialDate = false;
+          break;
+        }
+        /*else if (startTime.hour ==
             appointment[i].getAppointmentStartTime().toDate().hour) {
           if ((startTimeInMinutes + schedule.getDuration()) <=
               appointmentEndTime) {
             checkInitialDate = false;
             break;
           }
-        }
+        } */
         /*  if (Timestamp.fromDate(startTime) ==
                             appointment[i].getAppointmentStartTime()) {
                           checkInitialDate = false;
@@ -393,11 +428,6 @@ class SelectDateTimeBloc
                 appointment[i].getAppointmentEndTime().toDate().hour * 60 +
                     appointment[i].getAppointmentEndTime().toDate().minute;
 
-            if (appointmentStartTime == 660 && appointmentEndTime == 690) {
-              print("appointment time check");
-              print(startTimeInMinutes);
-              print(scheduleEndTimeInMinutes);
-            }
             if (startTimeInMinutes >= appointmentStartTime &&
                 startTimeInMinutes < appointmentEndTime) {
               checkDate = true;
@@ -407,14 +437,19 @@ class SelectDateTimeBloc
               print("new condition is true");
               checkDate = true;
               break;
-            } else if (tempDate.hour ==
+            } else if (appointmentStartTime >= startTimeInMinutes &&
+                appointmentEndTime <= scheduleEndTimeInMinutes) {
+              checkDate = true;
+              break;
+            }
+            /*else if (tempDate.hour ==
                 appointment[i].getAppointmentStartTime().toDate().hour) {
               if ((startTimeInMinutes + schedule.getDuration()) <=
                   appointmentEndTime) {
                 checkDate = true;
                 break;
               }
-            }
+            } */
             /* if (Timestamp.fromDate(tempDate) ==
                                 appointment[i].getAppointmentStartTime()) {
                               checkDate = true;
@@ -471,14 +506,19 @@ class SelectDateTimeBloc
             print("new condition is true");
             checkBreakEndTime = false;
             break;
-          } else if (breakEndTime.hour ==
+          } else if (appointmentStartTime >= breakEndTimeInMinutes &&
+              appointmentEndTime <= scheduleEndTimeInMinutes) {
+            checkBreakEndTime = true;
+            break;
+          }
+          /*else if (breakEndTime.hour ==
               appointment[i].getAppointmentStartTime().toDate().hour) {
             if ((startTimeInMinutes + schedule.getDuration()) <=
                 appointmentEndTime) {
               checkBreakEndTime = false;
               break;
             }
-          }
+          } */
           /* if (Timestamp.fromDate(breakEndTime) ==
                               appointment[i].getAppointmentStartTime()) {
                             checkBreakEndTime = false;
@@ -505,8 +545,7 @@ class SelectDateTimeBloc
         int scheduleEndTimeInMinutes =
             breakEndTimeInMinutes + schedule.getDuration();
 
-        if (breakEndTimeInMinutes + schedule.getDuration() >=
-            endTimeInMinutes) {
+        if (breakEndTimeInMinutes + schedule.getDuration() > endTimeInMinutes) {
           break;
         }
 
@@ -532,16 +571,21 @@ class SelectDateTimeBloc
             } else if (appointmentStartTime < scheduleEndTimeInMinutes &&
                 appointmentEndTime > scheduleEndTimeInMinutes) {
               print("new condition is true");
-              checkBreakEndTime = false;
+              checkDate = true;
               break;
-            } else if (tempDate.hour ==
+            } else if (appointmentStartTime >= breakEndTimeInMinutes &&
+                appointmentEndTime <= scheduleEndTimeInMinutes) {
+              checkDate = true;
+              break;
+            }
+            /*else if (tempDate.hour ==
                 appointment[i].getAppointmentStartTime().toDate().hour) {
               if ((startTimeInMinutes + schedule.getDuration()) <=
                   appointmentEndTime) {
                 checkDate = true;
                 break;
               }
-            }
+            }*/
 
             /*if (Timestamp.fromDate(tempDate) ==
                                 appointment[i].getAppointmentStartTime()) {

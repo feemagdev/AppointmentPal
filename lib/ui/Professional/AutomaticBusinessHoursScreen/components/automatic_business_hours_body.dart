@@ -18,38 +18,45 @@ class _AutomaticBusinessHoursBodyState
   Widget build(BuildContext context) {
     final Professional _professional =
         BlocProvider.of<AutomaticBusinessHoursBloc>(context).professional;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Select Day"),
-        leading: IconButton(
-          onPressed: () {
-            navigateToProfessionalSettingScreen(_professional, context);
-          },
-          icon: Icon(Icons.arrow_back),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            BlocListener<AutomaticBusinessHoursBloc,
-                AutomaticBusinessHoursState>(
-              listener: (context, state) {
-                if (state is AutomaticBusinessHoursWeekdaySelectedState) {
-                  naviagteToAddAutomaticScheduleScreen(
-                      context, state.day, _professional);
-                }
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Select Day"),
+            leading: IconButton(
+              onPressed: () {
+                navigateToProfessionalSettingScreen(_professional, context);
               },
-              child: BlocBuilder<AutomaticBusinessHoursBloc,
-                  AutomaticBusinessHoursState>(
-                builder: (context, state) {
-                  return settingBuilder(context);
-                },
-              ),
+              icon: Icon(Icons.arrow_back),
             ),
-          ],
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                BlocListener<AutomaticBusinessHoursBloc,
+                    AutomaticBusinessHoursState>(
+                  listener: (context, state) {
+                    if (state is AutomaticBusinessHoursWeekdaySelectedState) {
+                      naviagteToAddAutomaticScheduleScreen(
+                          context, state.day, _professional);
+                    }
+                  },
+                  child: BlocBuilder<AutomaticBusinessHoursBloc,
+                      AutomaticBusinessHoursState>(
+                    builder: (context, state) {
+                      return settingBuilder(context);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

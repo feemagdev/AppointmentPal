@@ -27,3 +27,5 @@ class ProfessionalHistoryEvent extends ProfessionalDashboardEvent {
   final Professional professional;
   ProfessionalHistoryEvent({@required this.professional});
 }
+
+class ProfessionalLogOutEvent extends ProfessionalDashboardEvent {}

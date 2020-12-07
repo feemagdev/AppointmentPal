@@ -49,251 +49,269 @@ class _ProfessionalAddNewCustomerBodyState
 
     bool customerAlreadyExist = false;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Add new customer"),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            if (appointment == null) {
-              if (appointmentStartTime == null) {
-                navigateToProfessionalSettingScreen(context, professional);
-              } else {
-                navigateToSelectCustomerScreen(
-                    professional,
-                    appointmentEndTime,
-                    appointmentStartTime,
-                    context,
-                    appointment,
-                    customer,
-                    manager);
-              }
-            }
-          },
-        ),
-      ),
-      body: Container(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              BlocListener<ProfessionalAddNewCustomerBloc,
-                  ProfessionalAddNewCustomerState>(
-                listener: (context, state) {
-                  if (state is CustomerAddedSuccessfullyState) {
-                    Alert(
-                      context: context,
-                      type: AlertType.success,
-                      title: "Success",
-                      desc: "Customer Added Successfully",
-                      buttons: [
-                        DialogButton(
-                          child: Text(
-                            "OK",
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                            if (appointment == null) {
-                              if (appointmentStartTime == null) {
-                                navigateToProfessionalDashboard(
-                                    context, professional);
-                              } else {
-                                moveToAppointmentBookingScreen(
-                                    professional,
-                                    state.customer,
-                                    appointmentStartTime,
-                                    appointmentEndTime,
-                                    manager);
-                              }
-                            } else {
-                              moveToUpdateAppointmentScreen(
-                                  context,
-                                  state.customer,
-                                  professional,
-                                  appointment,
-                                  manager);
-                            }
-                          },
-                          width: 120,
-                        )
-                      ],
-                    ).show();
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Add new customer"),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                if (appointment == null) {
+                  if (appointmentStartTime == null) {
+                    navigateToProfessionalSettingScreen(context, professional);
+                  } else {
+                    navigateToSelectCustomerScreen(
+                        professional,
+                        appointmentEndTime,
+                        appointmentStartTime,
+                        context,
+                        appointment,
+                        customer,
+                        manager);
                   }
-                },
-                child: BlocBuilder<ProfessionalAddNewCustomerBloc,
-                    ProfessionalAddNewCustomerState>(
-                  builder: (context, state) {
-                    if (state is ProfessionalAddNewCustomerInitial) {
-                      return Container();
-                    } else if (state is CustomerAlreadyExistState) {
-                      customerAlreadyExist = true;
-                      return Container();
-                    }else if(state is CustomerCanBeAdded){
-                      customerAlreadyExist = false;
-                      return Container();
-                    }
-                    return Container();
-                  },
-                ),
+                }
+              },
+            ),
+          ),
+          body: Container(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  BlocListener<ProfessionalAddNewCustomerBloc,
+                      ProfessionalAddNewCustomerState>(
+                    listener: (context, state) {
+                      if (state is CustomerAddedSuccessfullyState) {
+                        Alert(
+                          context: context,
+                          type: AlertType.success,
+                          title: "Success",
+                          desc: "Customer Added Successfully",
+                          buttons: [
+                            DialogButton(
+                              child: Text(
+                                "OK",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                if (appointment == null) {
+                                  if (appointmentStartTime == null) {
+                                    navigateToProfessionalDashboard(
+                                        context, professional);
+                                  } else {
+                                    moveToAppointmentBookingScreen(
+                                        professional,
+                                        state.customer,
+                                        appointmentStartTime,
+                                        appointmentEndTime,
+                                        manager);
+                                  }
+                                } else {
+                                  moveToUpdateAppointmentScreen(
+                                      context,
+                                      state.customer,
+                                      professional,
+                                      appointment,
+                                      manager);
+                                }
+                              },
+                              width: 120,
+                            )
+                          ],
+                        ).show();
+                      }
+                    },
+                    child: BlocBuilder<ProfessionalAddNewCustomerBloc,
+                        ProfessionalAddNewCustomerState>(
+                      builder: (context, state) {
+                        if (state is ProfessionalAddNewCustomerInitial) {
+                          return Container();
+                        } else if (state is CustomerAlreadyExistState) {
+                          customerAlreadyExist = true;
+                          return Container();
+                        } else if (state is CustomerCanBeAdded) {
+                          customerAlreadyExist = false;
+                          return Container();
+                        }
+                        return Container();
+                      },
+                    ),
+                  ),
+                  Center(
+                      child: SizedBox(
+                    height: deviceHeight * 0.20,
+                    child: Icon(
+                      Icons.person,
+                      size: deviceHeight * 0.20,
+                      color: Colors.blue,
+                    ),
+                  )),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            Container(
+                              height: deviceWidth < 365 ? 60 : 70,
+                              child: TextFormField(
+                                controller: nameController,
+                                decoration: InputDecoration(
+                                  labelText: "Name",
+                                  border: OutlineInputBorder(),
+                                ),
+                                keyboardType: TextInputType.name,
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return 'Please enter name';
+                                  } else if (value.length <= 2) {
+                                    return "Name should be greater than 2 characters";
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Container(
+                              height: deviceWidth < 365 ? 60 : 70,
+                              child: TextFormField(
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                controller: phoneController,
+                                decoration: InputDecoration(
+                                  labelText: "Phone",
+                                  border: OutlineInputBorder(),
+                                ),
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return 'Please enter phone';
+                                  } else if (!phoneValidator(value)) {
+                                    return "Please enter correct phone number";
+                                  }
+                                  BlocProvider.of<
+                                              ProfessionalAddNewCustomerBloc>(
+                                          context)
+                                      .add(CheckPhoneEvent(
+                                          professional: professional,
+                                          phone: value));
+                                  if (customerAlreadyExist) {
+                                    return "phone already exist";
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Container(
+                              height: deviceWidth < 365 ? 60 : 70,
+                              child: TextFormField(
+                                controller: addressController,
+                                decoration: InputDecoration(
+                                  labelText: "Address",
+                                  border: OutlineInputBorder(),
+                                ),
+                                keyboardType: TextInputType.streetAddress,
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return 'Please enter address';
+                                  } else if (value.length < 5) {
+                                    return "Please enter correct address";
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Container(
+                              height: deviceWidth < 365 ? 60 : 70,
+                              child: TextFormField(
+                                controller: cityController,
+                                decoration: InputDecoration(
+                                  labelText: "City",
+                                  border: OutlineInputBorder(),
+                                ),
+                                keyboardType: TextInputType.text,
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return 'Please enter city name';
+                                  } else if (value.length < 3) {
+                                    return "Please enter correct city name";
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Container(
+                              height: deviceWidth < 365 ? 60 : 70,
+                              child: TextFormField(
+                                controller: countryController,
+                                decoration: InputDecoration(
+                                  labelText: "Country",
+                                  border: OutlineInputBorder(),
+                                ),
+                                keyboardType: TextInputType.text,
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return 'Please enter city name';
+                                  } else if (value.length < 3) {
+                                    return "Please enter correct country name";
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Container(
+                              height: 50,
+                              width: deviceWidth * 0.50,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if (_formKey.currentState.validate()) {
+                                    print("validated");
+                                    BlocProvider.of<
+                                                ProfessionalAddNewCustomerBloc>(
+                                            context)
+                                        .add(AddNewCustomerButtonPressedEvent(
+                                            professional: professional,
+                                            name: nameController.text,
+                                            phone: phoneController.text,
+                                            address: addressController.text,
+                                            city: cityController.text,
+                                            country: countryController.text,
+                                            appointmentStartTime:
+                                                appointmentStartTime,
+                                            appointmentEndTime:
+                                                appointmentEndTime));
+                                  }
+                                },
+                                child: Text('Add new customer'),
+                              ),
+                            )
+                          ],
+                        )),
+                  )
+                ],
               ),
-              Center(
-                  child: SizedBox(
-                height: deviceHeight * 0.20,
-                child: Icon(
-                  Icons.person,
-                  size: deviceHeight * 0.20,
-                  color: Colors.blue,
-                ),
-              )),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        Container(
-                          height: deviceWidth < 365 ? 60 : 70,
-                          child: TextFormField(
-                            controller: nameController,
-                            decoration: InputDecoration(
-                              labelText: "Name",
-                              border: OutlineInputBorder(),
-                            ),
-                            keyboardType: TextInputType.name,
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Please enter name';
-                              } else if (value.length <= 2) {
-                                return "Name should be greater than 2 characters";
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        SizedBox(height: 5,),
-                        Container(
-                          height: deviceWidth < 365 ? 60 : 70,
-                          child: TextFormField(
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            controller: phoneController,
-                            decoration: InputDecoration(
-                              labelText: "Phone",
-                              border: OutlineInputBorder(),
-                            ),
-                            keyboardType: TextInputType.number,
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Please enter phone';
-                              } else if (!phoneValidator(value)) {
-                                return "Please enter correct phone number";
-                              }
-                              BlocProvider.of<ProfessionalAddNewCustomerBloc>(
-                                      context)
-                                  .add(CheckPhoneEvent(
-                                      professional: professional,
-                                      phone: value));
-                              if (customerAlreadyExist) {
-                                return "phone already exist";
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        SizedBox(height: 5,),
-                        Container(
-                          height: deviceWidth < 365 ? 60 : 70,
-                          child: TextFormField(
-                            controller: addressController,
-                            decoration: InputDecoration(
-                              labelText: "Address",
-                              border: OutlineInputBorder(),
-                            ),
-                            keyboardType: TextInputType.streetAddress,
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Please enter address';
-                              } else if (value.length < 5) {
-                                return "Please enter correct address";
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        SizedBox(height: 5,),
-                        Container(
-                          height: deviceWidth < 365 ? 60 : 70,
-                          child: TextFormField(
-                            controller: cityController,
-                            decoration: InputDecoration(
-                              labelText: "City",
-                              border: OutlineInputBorder(),
-                            ),
-                            keyboardType: TextInputType.text,
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Please enter city name';
-                              } else if (value.length < 3) {
-                                return "Please enter correct city name";
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        SizedBox(height: 5,),
-                        Container(
-                          height: deviceWidth < 365 ? 60 : 70,
-                          child: TextFormField(
-                            controller: countryController,
-                            decoration: InputDecoration(
-                              labelText: "Country",
-                              border: OutlineInputBorder(),
-                            ),
-                            keyboardType: TextInputType.text,
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Please enter city name';
-                              } else if (value.length < 3) {
-                                return "Please enter correct country name";
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Container(
-                          height: 50,
-                          width: deviceWidth * 0.50,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState.validate()) {
-                                print("validated");
-                                BlocProvider.of<ProfessionalAddNewCustomerBloc>(
-                                        context)
-                                    .add(AddNewCustomerButtonPressedEvent(
-                                        professional: professional,
-                                        name: nameController.text,
-                                        phone: phoneController.text,
-                                        address: addressController.text,
-                                        city: cityController.text,
-                                        country: countryController.text,
-                                        appointmentStartTime:
-                                            appointmentStartTime,
-                                        appointmentEndTime:
-                                            appointmentEndTime));
-                              }
-                            },
-                            child: Text('Add new customer'),
-                          ),
-                        )
-                      ],
-                    )),
-              )
-            ],
+            ),
           ),
         ),
       ),
@@ -310,21 +328,25 @@ class _ProfessionalAddNewCustomerBodyState
     return false;
   }
 
-  void moveToAppointmentBookingScreen(Professional professional,
+  void moveToAppointmentBookingScreen(
+      Professional professional,
       Customer customer,
       DateTime appointmentStartTime,
-      DateTime appointmentEndTime, Manager manager) {
+      DateTime appointmentEndTime,
+      Manager manager) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return AppointmentBookingScreen(
         professional: professional,
         appointmentStartTime: appointmentStartTime,
         customer: customer,
         appointmentEndTime: appointmentEndTime,
-        manager: manager,);
+        manager: manager,
+      );
     }));
   }
 
-  void navigateToSelectCustomerScreen(Professional professional,
+  void navigateToSelectCustomerScreen(
+      Professional professional,
       DateTime appointmentEndTime,
       DateTime appointmentStartTime,
       BuildContext context,
@@ -338,29 +360,32 @@ class _ProfessionalAddNewCustomerBodyState
         appointmentEndTime: appointmentEndTime,
         appointment: appointment,
         customer: customer,
-        manager: manager,);
+        manager: manager,
+      );
     }));
   }
 
   void moveToUpdateAppointmentScreen(BuildContext context, Customer customer,
       Professional professional, Appointment appointment, Manager manager) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return UpdateAppointmentScreen(professional: professional,
+      return UpdateAppointmentScreen(
+        professional: professional,
         appointment: appointment,
         customer: customer,
-        manager: manager,);
+        manager: manager,
+      );
     }));
   }
 
-  void navigateToProfessionalDashboard(BuildContext context,
-      Professional professional) {
+  void navigateToProfessionalDashboard(
+      BuildContext context, Professional professional) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalDashboard(professional: professional);
     }));
   }
 
-  void navigateToProfessionalSettingScreen(BuildContext context,
-      Professional professional) {
+  void navigateToProfessionalSettingScreen(
+      BuildContext context, Professional professional) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return SettingScreen(professional: professional);
     }));

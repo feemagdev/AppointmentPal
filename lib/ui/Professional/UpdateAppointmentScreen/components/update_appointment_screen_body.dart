@@ -1,4 +1,3 @@
-
 import 'package:appointmentproject/bloc/ProfessionalBloc/UpdateAppointmentBloc/update_appointment_bloc.dart';
 import 'package:appointmentproject/model/appointment.dart';
 import 'package:appointmentproject/model/customer.dart';
@@ -21,8 +20,6 @@ class UpdateAppointmentScreenBody extends StatefulWidget {
 
 class _UpdateAppointmentScreenBodyState
     extends State<UpdateAppointmentScreenBody> {
-
-
   @override
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
@@ -34,51 +31,60 @@ class _UpdateAppointmentScreenBodyState
         BlocProvider.of<UpdateAppointmentBloc>(context).customer;
     final Manager _manager =
         BlocProvider.of<UpdateAppointmentBloc>(context).manager;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Update Appointment"),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            BlocProvider.of<UpdateAppointmentBloc>(context)
-                .add(MoveToEditAppointmentScreenEvent());
-          },
-        ),
-      ),
-      body: Container(
-        child: Column(
-          children: [
-            BlocListener<UpdateAppointmentBloc, UpdateAppointmentState>(
-              listener: (context, state) {
-                if (state is UpdateAppointmentDateTimeState) {
-                  moveToSelectDateTimeScreen(context, _professional,
-                      _appointment, _customer, _manager);
-                } else if (state is MoveToEditAppointmentScreenState) {
-                  moveToEditAppointmentScreen(context, _professional, _manager);
-                } else if (state is UpdateAppointmentSelectCustomerState) {
-                  navigateToSelectCustomerScreen(context, _professional,
-                      _appointment, _customer, _manager);
-                } else if(state is AppointmentUpdatedSuccessfullyState) {
-                  if (_manager == null) {
-                    navigateToDashboard(context, _professional);
-                  } else {
-                    navigateToManagerDashboard(context, _manager);
-                  }
-                }
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Update Appointment"),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                BlocProvider.of<UpdateAppointmentBloc>(context)
+                    .add(MoveToEditAppointmentScreenEvent());
               },
-              child: BlocBuilder<UpdateAppointmentBloc, UpdateAppointmentState>(
-                builder: (context, state) {
-                  if (state is UpdateAppointmentInitial) {
-                    return appointmentBookingUI(_appointment,
-                        _customer, _professional, deviceWidth);
-                  }else if(state is UpdateAppointmentLoadingState){
-                    return loadingCircularProgressIndicator();
-                  }
-                  return Container();
-                },
-              ),
-            )
-          ],
+            ),
+          ),
+          body: Container(
+            child: Column(
+              children: [
+                BlocListener<UpdateAppointmentBloc, UpdateAppointmentState>(
+                  listener: (context, state) {
+                    if (state is UpdateAppointmentDateTimeState) {
+                      moveToSelectDateTimeScreen(context, _professional,
+                          _appointment, _customer, _manager);
+                    } else if (state is MoveToEditAppointmentScreenState) {
+                      moveToEditAppointmentScreen(
+                          context, _professional, _manager);
+                    } else if (state is UpdateAppointmentSelectCustomerState) {
+                      navigateToSelectCustomerScreen(context, _professional,
+                          _appointment, _customer, _manager);
+                    } else if (state is AppointmentUpdatedSuccessfullyState) {
+                      if (_manager == null) {
+                        navigateToDashboard(context, _professional);
+                      } else {
+                        navigateToManagerDashboard(context, _manager);
+                      }
+                    }
+                  },
+                  child: BlocBuilder<UpdateAppointmentBloc,
+                      UpdateAppointmentState>(
+                    builder: (context, state) {
+                      if (state is UpdateAppointmentInitial) {
+                        return appointmentBookingUI(_appointment, _customer,
+                            _professional, deviceWidth);
+                      } else if (state is UpdateAppointmentLoadingState) {
+                        return loadingCircularProgressIndicator();
+                      }
+                      return Container();
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -101,8 +107,8 @@ class _UpdateAppointmentScreenBodyState
           ),
           InkWell(
             onTap: () {
-              BlocProvider.of<UpdateAppointmentBloc>(context).add(
-                  UpdateAppointmentDateTimeEvent());
+              BlocProvider.of<UpdateAppointmentBloc>(context)
+                  .add(UpdateAppointmentDateTimeEvent());
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -179,8 +185,8 @@ class _UpdateAppointmentScreenBodyState
           ),
           InkWell(
             onTap: () {
-              BlocProvider.of<UpdateAppointmentBloc>(context).add(
-                  UpdateAppointmentSelectCustomerEvent());
+              BlocProvider.of<UpdateAppointmentBloc>(context)
+                  .add(UpdateAppointmentSelectCustomerEvent());
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -223,7 +229,9 @@ class _UpdateAppointmentScreenBodyState
             child: RaisedButton(
               child: Text("Update Appointment"),
               onPressed: () {
-                BlocProvider.of<UpdateAppointmentBloc>(context).add(UpdateAppointmentButtonPressedEvent(appointment:appointment));
+                BlocProvider.of<UpdateAppointmentBloc>(context).add(
+                    UpdateAppointmentButtonPressedEvent(
+                        appointment: appointment));
               },
             ),
           ),
@@ -232,27 +240,37 @@ class _UpdateAppointmentScreenBodyState
     );
   }
 
-  void moveToSelectDateTimeScreen(BuildContext context,
-      Professional professional, Appointment appointment, Customer customer,
+  void moveToSelectDateTimeScreen(
+      BuildContext context,
+      Professional professional,
+      Appointment appointment,
+      Customer customer,
       Manager manager) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalSelectDateTimeScreen(
         professional: professional,
         appointment: appointment,
-        customer: customer, manager: manager,);
+        customer: customer,
+        manager: manager,
+      );
     }));
   }
 
-  void moveToEditAppointmentScreen(BuildContext context,
-      Professional professional, Manager manager) {
+  void moveToEditAppointmentScreen(
+      BuildContext context, Professional professional, Manager manager) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalEditAppointmentScreen(
-        professional: professional, manager: manager,);
+        professional: professional,
+        manager: manager,
+      );
     }));
   }
 
-  void navigateToSelectCustomerScreen(BuildContext context,
-      Professional professional, Appointment appointment, Customer customer,
+  void navigateToSelectCustomerScreen(
+      BuildContext context,
+      Professional professional,
+      Appointment appointment,
+      Customer customer,
       Manager manager) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalSelectCustomerScreen(
@@ -273,7 +291,9 @@ class _UpdateAppointmentScreenBodyState
   }
 
   Widget loadingCircularProgressIndicator() {
-    return Center(child: CircularProgressIndicator(),);
+    return Center(
+      child: CircularProgressIndicator(),
+    );
   }
 
   void navigateToManagerDashboard(BuildContext context, Manager manager) {
