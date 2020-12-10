@@ -42,13 +42,11 @@ class PersonRepository {
     return await firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
-  Future<UserCredential> signInUserCredentials(String email,String password)async{
+  Future<UserCredential> signInUserCredentials(
+      String email, String password) async {
     final firebaseAuth = FirebaseAuth.instance;
-    UserCredential userCredential = await firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+    UserCredential userCredential = await firebaseAuth
+        .signInWithEmailAndPassword(email: email, password: password);
     return userCredential;
-
   }
-
-
-
 }

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:appointmentproject/model/professional.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class ProfessionalRepository {
   ProfessionalRepository.defaultConstructor();
@@ -69,5 +72,42 @@ class ProfessionalRepository {
           .add(Professional.fromMap(element.data(), element.reference.id));
     });
     return professionals;
+  }
+
+  Future<bool> updateProfessionalData(Professional professional) async {
+    final dbReference = FirebaseFirestore.instance;
+    await dbReference
+        .collection('professional')
+        .doc(professional.getProfessionalID())
+        .set({
+      'name': professional.getName(),
+      'phone': professional.getPhone(),
+      'address': professional.getAddress()
+    }, SetOptions(merge: true));
+    return true;
+  }
+
+  Future<bool> uploadImageToFirebase(
+      File imageFile, String professionalID, String oldImage) async {
+    if (oldImage != "") {
+      if (oldImage != null) {
+        final storageReference = FirebaseStorage.instance;
+        await storageReference.refFromURL(oldImage).delete();
+      }
+    }
+
+    Reference reference =
+        FirebaseStorage.instance.ref().child('profiles/$professionalID');
+    UploadTask uploadTask = reference.putFile(imageFile);
+    TaskSnapshot taskSnapshot = await uploadTask;
+    final String url = await taskSnapshot.ref.getDownloadURL();
+    final dbReference = FirebaseFirestore.instance;
+
+    await dbReference
+        .collection('professional')
+        .doc(professionalID)
+        .set({'image': url}, SetOptions(merge: true));
+
+    return true;
   }
 }

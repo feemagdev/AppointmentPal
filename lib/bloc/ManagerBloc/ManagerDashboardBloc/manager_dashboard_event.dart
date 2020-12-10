@@ -7,3 +7,5 @@ class ManagerDashboardAddProfessionalEvent extends ManagerDashboardEvent {}
 class ManagerDashboardAddAppointmentEvent extends ManagerDashboardEvent {}
 
 class ManagerDashboardEditAppointmentEvent extends ManagerDashboardEvent {}
+
+class ManagerLogOutEvent extends ManagerDashboardEvent {}

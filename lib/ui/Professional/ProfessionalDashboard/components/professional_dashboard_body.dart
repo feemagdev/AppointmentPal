@@ -5,6 +5,7 @@ import 'package:appointmentproject/ui/Professional/HistoryAppointmentScreen/hist
 import 'package:appointmentproject/ui/Professional/ProfessionalAddAppointmentScreen/professional_select_date_time_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/components/category_card.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalEditAppointmentScreen/professional_edit_appointment_screen.dart';
+import 'package:appointmentproject/ui/Professional/ProfessionalViewClient/professional_select_client_sceen.dart';
 import 'package:appointmentproject/ui/Professional/ProfileScreen/professional_profile_screen.dart';
 import 'package:appointmentproject/ui/Professional/SettingScreen/setting_screen.dart';
 import 'package:appointmentproject/ui/Professional/TodayAppointmentScreen/today_appointment_screen.dart';
@@ -58,6 +59,10 @@ class _ProfessionalDashboardBodyState extends State<ProfessionalDashboardBody> {
                               context, state.professional);
                         } else if (state is ProfessionalHistoryState) {
                           navigateToProfessionalHistoryScreen(
+                              context, state.professional);
+                        } else if (state
+                            is ProfessionalDashboardEditProfileState) {
+                          navigateToProfessionalSelectCustomerProfileScreen(
                               context, state.professional);
                         } else if (state
                             is ProfessionalLogOutSuccessfullyState) {
@@ -236,6 +241,11 @@ class _ProfessionalDashboardBodyState extends State<ProfessionalDashboardBody> {
                   child: CategoryCard(
                     svgSrc: "assets/icons/client.svg",
                     title: "Client",
+                    onTap: () {
+                      BlocProvider.of<ProfessionalDashboardBloc>(context).add(
+                          ProfessionalDashboardEditProfileEvent(
+                              professional: professional));
+                    },
                   ),
                 )),
             FadeAnimation(
@@ -404,7 +414,10 @@ class _ProfessionalDashboardBodyState extends State<ProfessionalDashboardBody> {
         ),
         ListTile(
           title: Text("Client"),
-          onTap: () {},
+          onTap: () {
+            navigateToProfessionalSelectCustomerProfileScreen(
+                context, professional);
+          },
         ),
         ListTile(
           title: Text("History"),
@@ -444,6 +457,13 @@ class _ProfessionalDashboardBodyState extends State<ProfessionalDashboardBody> {
   void navigateToLoginScreen(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return LoginScreen();
+    }));
+  }
+
+  void navigateToProfessionalSelectCustomerProfileScreen(
+      BuildContext context, Professional professional) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ProfessionalSelectClientScreen(professional: professional);
     }));
   }
 }

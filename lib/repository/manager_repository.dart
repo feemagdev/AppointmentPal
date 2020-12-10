@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:appointmentproject/model/manager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class ManagerRepository {
   ManagerRepository.defaultConstructor();
@@ -43,5 +46,39 @@ class ManagerRepository {
         .collection('manager')
         .doc(managerID)
         .set({"companyID": companyID}, SetOptions(merge: true));
+  }
+
+  Future<bool> updateManagerData(Manager manager) async {
+    final dbReference = FirebaseFirestore.instance;
+    await dbReference.collection('manager').doc(manager.getManagerID()).set({
+      'name': manager.getName(),
+      'phone': manager.getPhone(),
+      'address': manager.getAddress()
+    }, SetOptions(merge: true));
+    return true;
+  }
+
+  Future<bool> uploadImageToFirebase(
+      File imageFile, String managerID, String oldImage) async {
+    if (oldImage != "") {
+      if (oldImage != null) {
+        final storageReference = FirebaseStorage.instance;
+        await storageReference.refFromURL(oldImage).delete();
+      }
+    }
+
+    Reference reference =
+        FirebaseStorage.instance.ref().child('profiles/$managerID');
+    UploadTask uploadTask = reference.putFile(imageFile);
+    TaskSnapshot taskSnapshot = await uploadTask;
+    final String url = await taskSnapshot.ref.getDownloadURL();
+    final dbReference = FirebaseFirestore.instance;
+
+    await dbReference
+        .collection('manager')
+        .doc(managerID)
+        .set({'image': url}, SetOptions(merge: true));
+
+    return true;
   }
 }

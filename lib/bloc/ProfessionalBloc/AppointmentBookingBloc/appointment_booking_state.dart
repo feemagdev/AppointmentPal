@@ -18,3 +18,14 @@ class AppointmentBookedSuccessfully extends AppointmentBookingState {
   final Professional professional;
   AppointmentBookedSuccessfully({@required this.professional});
 }
+
+class AppointmentBookingLoadingState extends AppointmentBookingState {}
+
+class AppointmentBookingScreenSmsServiceNotPurchasesState
+    extends AppointmentBookingState {}
+
+class AppointmentBookedSuccessfullyWithoutMessage
+    extends AppointmentBookingState {
+  final String message;
+  AppointmentBookedSuccessfullyWithoutMessage({@required this.message});
+}

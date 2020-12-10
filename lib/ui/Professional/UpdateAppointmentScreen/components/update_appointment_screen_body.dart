@@ -11,6 +11,7 @@ import 'package:appointmentproject/ui/Professional/ProfessionalSelectCustomerScr
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class UpdateAppointmentScreenBody extends StatefulWidget {
   @override
@@ -20,6 +21,7 @@ class UpdateAppointmentScreenBody extends StatefulWidget {
 
 class _UpdateAppointmentScreenBodyState
     extends State<UpdateAppointmentScreenBody> {
+  bool cancelCheck = false;
   @override
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
@@ -62,11 +64,24 @@ class _UpdateAppointmentScreenBodyState
                       navigateToSelectCustomerScreen(context, _professional,
                           _appointment, _customer, _manager);
                     } else if (state is AppointmentUpdatedSuccessfullyState) {
-                      if (_manager == null) {
-                        navigateToDashboard(context, _professional);
-                      } else {
-                        navigateToManagerDashboard(context, _manager);
-                      }
+                      showSuccessfulDialog(
+                          context,
+                          "Appointment Updated Successfully",
+                          _professional,
+                          _manager);
+                    } else if (state
+                        is UpdateAppointmentSuccessfullyWithoutMessage) {
+                      errorSmsDialog(state.message);
+                    } else if (state
+                        is UpdateAppointmentScreenSmsServiceNotPurchasesState) {
+                      errorSmsDialog(
+                          "You have not purchase sms service.\n Go to setting to see packages");
+                    } else if (state is AppointmentCancelledSuccessfullyState) {
+                      showSuccessfulDialog(
+                          context,
+                          "Appointment Canceled Successfully",
+                          _professional,
+                          _manager);
                     }
                   },
                   child: BlocBuilder<UpdateAppointmentBloc,
@@ -223,17 +238,28 @@ class _UpdateAppointmentScreenBodyState
           ),
           Divider(),
           SizedBox(
-            height: 2,
+            height: 5,
           ),
-          Center(
-            child: RaisedButton(
-              child: Text("Update Appointment"),
-              onPressed: () {
-                BlocProvider.of<UpdateAppointmentBloc>(context).add(
-                    UpdateAppointmentButtonPressedEvent(
-                        appointment: appointment));
-              },
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              RaisedButton(
+                child: Text("Update Appointment"),
+                onPressed: () {
+                  cancelCheck = false;
+                  smsInfoDialog("Do you want to send SMS to your customer ?",
+                      appointment);
+                },
+              ),
+              RaisedButton(
+                child: Text("Cancel Appointment"),
+                onPressed: () {
+                  cancelCheck = true;
+                  smsInfoDialog("Do you want to send SMS to your customer ?",
+                      appointment);
+                },
+              ),
+            ],
           ),
         ],
       ),
@@ -300,5 +326,104 @@ class _UpdateAppointmentScreenBodyState
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ManagerDashboardScreen(manager: manager);
     }));
+  }
+
+  smsInfoDialog(String message, Appointment appointment) async {
+    await Alert(
+      context: context,
+      type: AlertType.info,
+      title: "SMS Alert",
+      desc: message,
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Yes",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+            if (cancelCheck) {
+              BlocProvider.of<UpdateAppointmentBloc>(context).add(
+                  CancelAppointmentEvent(
+                      appointment: appointment, smsCheck: true));
+            } else {
+              BlocProvider.of<UpdateAppointmentBloc>(context).add(
+                  UpdateAppointmentButtonPressedEvent(
+                      appointment: appointment, smsCheck: true));
+            }
+          },
+          width: 120,
+        ),
+        DialogButton(
+          child: Text(
+            "No",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+            if (cancelCheck) {
+              BlocProvider.of<UpdateAppointmentBloc>(context).add(
+                  CancelAppointmentEvent(
+                      appointment: appointment, smsCheck: false));
+            } else {
+              BlocProvider.of<UpdateAppointmentBloc>(context).add(
+                  UpdateAppointmentButtonPressedEvent(
+                      appointment: appointment, smsCheck: false));
+            }
+          },
+          width: 120,
+        )
+      ],
+    ).show();
+  }
+
+  showSuccessfulDialog(BuildContext context, String message,
+      Professional professional, Manager manager) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Alert"),
+            content: Text(
+              message,
+              style: TextStyle(color: Colors.green),
+            ),
+            actions: [
+              FlatButton(
+                child: Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        }).then((value) {
+      if (manager == null) {
+        navigateToDashboard(context, professional);
+      } else {
+        navigateToManagerDashboard(context, manager);
+      }
+    });
+  }
+
+  errorSmsDialog(String message) async {
+    await Alert(
+      context: context,
+      type: AlertType.info,
+      title: "SMS Not Sent",
+      desc: message,
+      buttons: [
+        DialogButton(
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          width: 120,
+        ),
+      ],
+    ).show();
   }
 }

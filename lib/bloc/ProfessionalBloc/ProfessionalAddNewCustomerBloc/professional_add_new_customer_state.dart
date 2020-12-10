@@ -43,7 +43,6 @@ class CustomerCanBeAdded extends ProfessionalAddNewCustomerState {
   CustomerCanBeAdded({@required this.professional});
 }
 
-
 class AddNewCustomerAgainState extends ProfessionalAddNewCustomerState {
   final Professional professional;
   final DateTime appointmentStartTime;
@@ -56,11 +55,13 @@ class AddNewCustomerAgainState extends ProfessionalAddNewCustomerState {
 
   AddNewCustomerAgainState(
       {@required this.professional,
-        this.name,
-        this.appointmentStartTime,
-        this.phone,
-        this.address,
-        this.city,
-        this.country,
-        this.appointmentEndTime});
+      this.name,
+      this.appointmentStartTime,
+      this.phone,
+      this.address,
+      this.city,
+      this.country,
+      this.appointmentEndTime});
 }
+
+class AddNewCustomerLoadingState extends ProfessionalAddNewCustomerState {}

@@ -28,6 +28,9 @@ class ProfessionalDashboardBloc
       yield ProfessionalDashboardLoadingState();
       await PersonRepository.defaultConstructor().signOut();
       yield ProfessionalLogOutSuccessfullyState();
+    } else if (event is ProfessionalDashboardEditProfileEvent) {
+      yield ProfessionalDashboardEditProfileState(
+          professional: event.professional);
     }
   }
 
