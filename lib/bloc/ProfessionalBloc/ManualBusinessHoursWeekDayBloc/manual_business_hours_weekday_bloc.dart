@@ -39,6 +39,16 @@ class ManualBusinessHoursWeekdayBloc extends Bloc<
       WeekDaysAvailability weekDaysAvailability =
           await WeekDaysAvailabilityRepository.defaultConstructor()
               .getListOfAvailableWeekDays(professional.getProfessionalID());
+              if(weekDaysAvailability == null){
+                weekDaysAvailability = WeekDaysAvailability.defaultConstructor();
+                weekDaysAvailability.setMondayAvailability(false);
+                weekDaysAvailability.setTuesdayAvailability(false);
+                weekDaysAvailability.setWednesdayAvailability(false);
+                weekDaysAvailability.setThursdayAvailability(false);
+                weekDaysAvailability.setFridayAvailability(false);
+                weekDaysAvailability.setSaturdayAvailability(false);
+                weekDaysAvailability.setSundayAvailability(false);
+              }
       yield GetManualAvailableWeekDaysStatusState(
           weekDaysAvailability: weekDaysAvailability);
     } else if (event is UpdateManualBusinessHoursWeekdaysEvent) {

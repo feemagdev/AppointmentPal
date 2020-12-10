@@ -20,102 +20,116 @@ class ProfessionalEditAppointmentBody extends StatelessWidget {
         BlocProvider.of<ProfessionalEditAppointmentBloc>(context).professional;
     Manager _manager =
         BlocProvider.of<ProfessionalEditAppointmentBloc>(context).manager;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Select Appointment"),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            if (_manager == null) {
-              BlocProvider.of<ProfessionalEditAppointmentBloc>(context)
-                  .add(MoveToDashboardScreenFromEditAppointmentEvent());
-            } else {
-              navigateToManagerSelectProfessionalScreen(
-                  context, _manager, "edit_appointment");
-            }
-          },
-        ),
-      ),
-      body: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.only(left: 7),
-              child: Text(
-                "Select date",
-                style: TextStyle(fontSize: deviceWidth < 365 ? 12 : 17),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 7),
-              child: CustomDateView(
-                onTap: (DateTime dateTime) {
-                  BlocProvider.of<ProfessionalEditAppointmentBloc>(context).add(
-                      ProfessionalShowSelectedDayAppointmentsEvent(
-                          dateTime: dateTime));
-                },
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            BlocListener<ProfessionalEditAppointmentBloc,
-                ProfessionalEditAppointmentState>(
-              listener: (context, state) {
-                if (state is ProfessionalAppointmentIsSelectedState) {
-                  navigateToUpdateAppointmentScreen(context, state.appointment,
-                      _professional, state.customer, _manager);
-                } else if (state
-                    is MoveToDashboardScreenFromEditAppointmentState) {
-                  navigateToDashboardScreen(context, _professional);
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Select Appointment"),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                if (_manager == null) {
+                  BlocProvider.of<ProfessionalEditAppointmentBloc>(context)
+                      .add(MoveToDashboardScreenFromEditAppointmentEvent());
+                } else {
+                  navigateToManagerSelectProfessionalScreen(
+                      context, _manager, "edit_appointment");
                 }
               },
-              child: BlocBuilder<ProfessionalEditAppointmentBloc,
-                  ProfessionalEditAppointmentState>(
-                builder: (context, state) {
-                  if (state is ProfessionalEditAppointmentInitial) {
-                    return loadingState(context);
-                  } else if (state is ProfessionalEditAppointmentLoadingState) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (state
-                      is ProfessionalShowSelectedDayAppointmentsState) {
-                    if (state.appointments.isEmpty) {
-                      return Text("No Appointment on this day");
-                    }
-                    return Expanded(
-                      child: appointmentsBuilder(context, state.appointments,
-                          _professional, state.customers),
-                    );
-                  }
-                  return Container();
-                },
-              ),
             ),
-          ],
+          ),
+          body: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.only(left: 7),
+                  child: Text(
+                    "Select date",
+                    style: TextStyle(fontSize: deviceWidth < 365 ? 12 : 17),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 7),
+                  child: CustomDateView(
+                    onTap: (DateTime dateTime) {
+                      BlocProvider.of<ProfessionalEditAppointmentBloc>(context)
+                          .add(ProfessionalShowSelectedDayAppointmentsEvent(
+                              dateTime: dateTime));
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                BlocListener<ProfessionalEditAppointmentBloc,
+                    ProfessionalEditAppointmentState>(
+                  listener: (context, state) {
+                    if (state is ProfessionalAppointmentIsSelectedState) {
+                      navigateToUpdateAppointmentScreen(
+                          context,
+                          state.appointment,
+                          _professional,
+                          state.customer,
+                          _manager);
+                    } else if (state
+                        is MoveToDashboardScreenFromEditAppointmentState) {
+                      navigateToDashboardScreen(context, _professional);
+                    }
+                  },
+                  child: BlocBuilder<ProfessionalEditAppointmentBloc,
+                      ProfessionalEditAppointmentState>(
+                    builder: (context, state) {
+                      if (state is ProfessionalEditAppointmentInitial) {
+                        return loadingState(context);
+                      } else if (state
+                          is ProfessionalEditAppointmentLoadingState) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (state
+                          is ProfessionalShowSelectedDayAppointmentsState) {
+                        if (state.appointments.isEmpty) {
+                          return Text("No Appointment on this day");
+                        }
+                        return Expanded(
+                          child: appointmentsBuilder(
+                              context,
+                              state.appointments,
+                              _professional,
+                              state.customers),
+                        );
+                      }
+                      return Container();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
   Widget loadingState(BuildContext context) {
-    BlocProvider.of<ProfessionalEditAppointmentBloc>(context).add(
-        ProfessionalShowSelectedDayAppointmentsEvent(dateTime: null));
+    BlocProvider.of<ProfessionalEditAppointmentBloc>(context)
+        .add(ProfessionalShowSelectedDayAppointmentsEvent(dateTime: null));
     return Center(child: CircularProgressIndicator());
   }
 
-  Widget appointmentUI(BuildContext context, Appointment appointment,
-      Customer customer) {
+  Widget appointmentUI(
+      BuildContext context, Appointment appointment, Customer customer) {
     return InkWell(
         onTap: () {
           BlocProvider.of<ProfessionalEditAppointmentBloc>(context).add(
               ProfessionalEditAppointmentSelectedEvent(
-                  appointment: appointment,
-                  customer: customer));
+                  appointment: appointment, customer: customer));
         },
         child: Container(
             decoration: BoxDecoration(
@@ -187,34 +201,35 @@ class ProfessionalEditAppointmentBody extends StatelessWidget {
       scrollDirection: Axis.vertical,
       itemBuilder: (context, index) => Padding(
         padding: const EdgeInsets.only(right: 7, top: 10, left: 7),
-        child: appointmentUI(
-            context, appointments[index], customers[index]),
+        child: appointmentUI(context, appointments[index], customers[index]),
       ),
     );
   }
 
-  navigateToUpdateAppointmentScreen(BuildContext context,
-      Appointment appointment, Professional professional, Customer customer,
+  navigateToUpdateAppointmentScreen(
+      BuildContext context,
+      Appointment appointment,
+      Professional professional,
+      Customer customer,
       Manager manager) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return UpdateAppointmentScreen(
           appointment: appointment,
           professional: professional,
           customer: customer,
-          manager: manager
-      );
+          manager: manager);
     }));
   }
 
-  void navigateToDashboardScreen(BuildContext context,
-      Professional professional) {
+  void navigateToDashboardScreen(
+      BuildContext context, Professional professional) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalDashboard(professional: professional);
     }));
   }
 
-  void navigateToManagerSelectProfessionalScreen(BuildContext context,
-      Manager manager, String route) {
+  void navigateToManagerSelectProfessionalScreen(
+      BuildContext context, Manager manager, String route) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ManagerSelectProfessionalScreen(manager: manager, route: route);
     }));

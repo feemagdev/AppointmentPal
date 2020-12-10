@@ -28,123 +28,136 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
         BlocProvider.of<ProfessionalSelectCustomerBloc>(context).customer;
     final Manager manager =
         BlocProvider.of<ProfessionalSelectCustomerBloc>(context).manager;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Select Customer"),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            if (appointment == null && manager == null) {
-              print("manager null");
-              BlocProvider.of<ProfessionalSelectCustomerBloc>(context).add(
-                  MoveBackToSelectDateTimeScreenEvent(
-                      professional: professional));
-            } else if (appointment != null && manager == null) {
-              print("update appointment screen");
-              BlocProvider.of<ProfessionalSelectCustomerBloc>(context)
-                  .add(MoveBackToUpdateAppointmentScreenEvent());
-            } else if (appointment == null && manager != null) {
-              print("select date time");
-              navigateToSelectDateTimeScreen(context, professional, manager);
-            } else if (appointment != null && manager != null) {
-              navigateToUpdateAppointmentScreen(
-                  context, professional, appointment, customer, manager);
-            }
-          },
-        ),
-      ),
-      body: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 15,
-              ),
-              Container(
-                height: 50,
-                child: InkWell(
-                  onTap: () {
-                    print("add customer button tapped");
-                    BlocProvider.of<ProfessionalSelectCustomerBloc>(context)
-                        .add(AddCustomerButtonPressedEvent());
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.add,
-                        size: deviceWidth < 365 ? 15 : 25,
-                        color: Colors.blue,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        "Customer",
-                        style: TextStyle(
-                            fontSize: deviceWidth < 365 ? 15 : 17,
-                            color: Colors.blue),
-                      )
-                    ],
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Select Customer"),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                if (appointment == null && manager == null) {
+                  print("manager null");
+                  BlocProvider.of<ProfessionalSelectCustomerBloc>(context).add(
+                      MoveBackToSelectDateTimeScreenEvent(
+                          professional: professional));
+                } else if (appointment != null && manager == null) {
+                  print("update appointment screen");
+                  BlocProvider.of<ProfessionalSelectCustomerBloc>(context)
+                      .add(MoveBackToUpdateAppointmentScreenEvent());
+                } else if (appointment == null && manager != null) {
+                  print("select date time");
+                  navigateToSelectDateTimeScreen(
+                      context, professional, manager);
+                } else if (appointment != null && manager != null) {
+                  navigateToUpdateAppointmentScreen(
+                      context, professional, appointment, customer, manager);
+                }
+              },
+            ),
+          ),
+          body: Container(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 15,
                   ),
-                ),
+                  Container(
+                    height: 50,
+                    child: InkWell(
+                      onTap: () {
+                        print("add customer button tapped");
+                        BlocProvider.of<ProfessionalSelectCustomerBloc>(context)
+                            .add(AddCustomerButtonPressedEvent());
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.add,
+                            size: deviceWidth < 365 ? 15 : 25,
+                            color: Colors.blue,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            "Customer",
+                            style: TextStyle(
+                                fontSize: deviceWidth < 365 ? 15 : 17,
+                                color: Colors.blue),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  Divider(
+                    color: Colors.grey[500],
+                  ),
+                  BlocListener<ProfessionalSelectCustomerBloc,
+                      ProfessionalSelectCustomerState>(
+                    listener: (context, state) {
+                      if (state is AddCustomerButtonPressedState) {
+                        moveToAddNewCustomerScreen(
+                            professional,
+                            appointmentStartTime,
+                            context,
+                            appointmentEndTime,
+                            appointment,
+                            customer,
+                            manager);
+                      } else if (state is CustomerIsSelectedState) {
+                        if (appointment == null) {
+                          navigateToAppointmentBookingScreen(
+                              professional,
+                              manager,
+                              state.customer,
+                              appointmentStartTime,
+                              appointmentEndTime,
+                              context);
+                        } else {
+                          navigateToUpdateAppointmentScreen(
+                              context,
+                              professional,
+                              appointment,
+                              state.customer,
+                              manager);
+                        }
+                      } else if (state is MoveBackToSelectDateTimeScreenState) {
+                        navigateToAddAppointmentScreen(
+                            context, state.professional);
+                      }
+                    },
+                    child: BlocBuilder<ProfessionalSelectCustomerBloc,
+                        ProfessionalSelectCustomerState>(
+                      builder: (context, state) {
+                        if (state is ProfessionalSelectCustomerInitial) {
+                          return loadingState(context, professional,
+                              appointmentStartTime, appointmentEndTime);
+                        }
+                        if (state
+                            is ProfessionalSelectCustomerShowAllCustomerState) {
+                          return customerUIBuilder(
+                              state.customers,
+                              context,
+                              deviceWidth,
+                              appointmentEndTime,
+                              appointmentStartTime,
+                              professional);
+                        }
+                        return Container();
+                      },
+                    ),
+                  )
+                ],
               ),
-              Divider(
-                color: Colors.grey[500],
-              ),
-              BlocListener<ProfessionalSelectCustomerBloc,
-                  ProfessionalSelectCustomerState>(
-                listener: (context, state) {
-                  if (state is AddCustomerButtonPressedState) {
-                    moveToAddNewCustomerScreen(
-                        professional,
-                        appointmentStartTime,
-                        context,
-                        appointmentEndTime,
-                        appointment,
-                        customer,
-                        manager);
-                  } else if (state is CustomerIsSelectedState) {
-                    if (appointment == null) {
-                      navigateToAppointmentBookingScreen(
-                          professional,
-                          manager,
-                          state.customer,
-                          appointmentStartTime,
-                          appointmentEndTime,
-                          context);
-                    } else {
-                      navigateToUpdateAppointmentScreen(context, professional,
-                          appointment, state.customer, manager);
-                    }
-                  } else if (state is MoveBackToSelectDateTimeScreenState) {
-                    navigateToAddAppointmentScreen(context, state.professional);
-                  }
-                },
-                child: BlocBuilder<ProfessionalSelectCustomerBloc,
-                    ProfessionalSelectCustomerState>(
-                  builder: (context, state) {
-                    if (state is ProfessionalSelectCustomerInitial) {
-                      return loadingState(context, professional,
-                          appointmentStartTime, appointmentEndTime);
-                    }
-                    if (state
-                        is ProfessionalSelectCustomerShowAllCustomerState) {
-                      return customerUIBuilder(
-                          state.customers,
-                          context,
-                          deviceWidth,
-                          appointmentEndTime,
-                          appointmentStartTime,
-                          professional);
-                    }
-                    return Container();
-                  },
-                ),
-              )
-            ],
+            ),
           ),
         ),
       ),
@@ -187,9 +200,8 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
       children: [
         InkWell(
           onTap: () {
-            BlocProvider.of<ProfessionalSelectCustomerBloc>(context).add(
-                CustomerIsSelectedEvent(
-                    customer: customer));
+            BlocProvider.of<ProfessionalSelectCustomerBloc>(context)
+                .add(CustomerIsSelectedEvent(customer: customer));
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -234,12 +246,13 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
 
   Widget loadingState(BuildContext context, Professional professional,
       DateTime appointmentStartTime, DateTime appointmentEndTime) {
-    BlocProvider.of<ProfessionalSelectCustomerBloc>(context).add(
-        ProfessionalSelectCustomerShowAllCustomerEvent());
+    BlocProvider.of<ProfessionalSelectCustomerBloc>(context)
+        .add(ProfessionalSelectCustomerShowAllCustomerEvent());
     return CircularProgressIndicator();
   }
 
-  void moveToAddNewCustomerScreen(Professional professional,
+  void moveToAddNewCustomerScreen(
+      Professional professional,
       DateTime appointmentStartTime,
       BuildContext context,
       DateTime appointmentEndTime,
@@ -258,7 +271,8 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
     }));
   }
 
-  void navigateToAppointmentBookingScreen(Professional professional,
+  void navigateToAppointmentBookingScreen(
+      Professional professional,
       Manager manager,
       Customer customer,
       DateTime appointmentStartTime,
@@ -281,19 +295,24 @@ class ProfessionalSelectCustomerScreenBody extends StatelessWidget {
     }));
   }
 
-  void navigateToUpdateAppointmentScreen(BuildContext context,
-      Professional professional, Appointment appointment, Customer customer,
+  void navigateToUpdateAppointmentScreen(
+      BuildContext context,
+      Professional professional,
+      Appointment appointment,
+      Customer customer,
       Manager manager) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return UpdateAppointmentScreen(
         professional: professional,
         appointment: appointment,
-        customer: customer, manager: manager,);
+        customer: customer,
+        manager: manager,
+      );
     }));
   }
 
-  void navigateToSelectDateTimeScreen(BuildContext context,
-      Professional professional, Manager manager) {
+  void navigateToSelectDateTimeScreen(
+      BuildContext context, Professional professional, Manager manager) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalSelectDateTimeScreen(
           professional: professional, manager: manager);

@@ -1,24 +1,18 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Company {
+  String _companyID;
   String _name;
   String _address;
   String _contact;
-
-  Company(this._name, this._address, this._contact);
+  String _image;
 
   Company.defaultConstructor();
 
-  Company.fromMap(Map snapshot)
+  Company.fromMap(Map snapshot, String companyID)
       : _name = snapshot['name'],
         _address = snapshot['address'],
-        _contact = snapshot['address'];
-
-  Future<Company> getCompany(DocumentReference documentReference) async {
-    DocumentSnapshot documentSnapshot = await documentReference.get();
-    Company company = Company.fromMap(documentSnapshot.data());
-    return company;
-  }
+        _contact = snapshot['contact'],
+        _image = snapshot['image'],
+        _companyID = companyID;
 
   String getCompanyAddress() {
     return _address;
@@ -44,4 +38,15 @@ class Company {
     _contact = contact;
   }
 
+  String getImage() {
+    return _image;
+  }
+
+  void setImage(String image) {
+    _image = image;
+  }
+
+  String getCompanyID() {
+    return _companyID;
+  }
 }

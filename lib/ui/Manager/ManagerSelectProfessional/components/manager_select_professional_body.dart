@@ -25,76 +25,83 @@ class _ManagerSelectProfessionalBodyState
     final String route =
         BlocProvider.of<ManagerSelectProfessionalBloc>(context).route;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Select Professional"),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            navigateToManagerDashboardScreen(context, _manager);
-          },
-        ),
-      ),
-      resizeToAvoidBottomPadding: false,
-      body: Column(
-        children: [
-          BlocListener<ManagerSelectProfessionalBloc,
-              ManagerSelectProfessionalState>(
-            listener: (context, state) {
-              if (state is ManagerProfessionalSelectedState) {
-                if (route == "edit_appointment") {
-                  navigateToManagerSelectAppointmentScreen(
-                      context, state.professional, _manager);
-                } else if (route == "profile") {
-                  navigateToProfessionalProfileScreen(
-                      context, state.professional, _manager);
-                } else {
-                  navigateToSelectDateTimeScreen(
-                      context, state.professional, _manager);
-                }
-              }
-            },
-            child: BlocBuilder<ManagerSelectProfessionalBloc,
-                ManagerSelectProfessionalState>(
-              builder: (context, state) {
-                if (state is ManagerAddAppointmentInitial) {
-                  return getProfessionals(context);
-                } else if (state is ManagerAddAppointmentLoadingState) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                return Container();
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Select Professional"),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                navigateToManagerDashboardScreen(context, _manager);
               },
             ),
           ),
-          BlocBuilder<ManagerSelectProfessionalBloc,
-              ManagerSelectProfessionalState>(
-            builder: (context, state) {
-              if (state is GetProfessionalsListState) {
-                professionals = state.professionals;
-                filteredProfessionals = professionals;
-                return Container(child: searchTextField(professionals));
-              } else if (state is ProfessionalSearchingState) {
-                professionals = state.professionalsList;
-                filteredProfessionals = state.filteredList;
-                return Container(child: searchTextField(professionals));
-              }
-              return Container();
-            },
+          resizeToAvoidBottomPadding: false,
+          body: Column(
+            children: [
+              BlocListener<ManagerSelectProfessionalBloc,
+                  ManagerSelectProfessionalState>(
+                listener: (context, state) {
+                  if (state is ManagerProfessionalSelectedState) {
+                    if (route == "edit_appointment") {
+                      navigateToManagerSelectAppointmentScreen(
+                          context, state.professional, _manager);
+                    } else if (route == "profile") {
+                      navigateToProfessionalProfileScreen(
+                          context, state.professional, _manager);
+                    } else {
+                      navigateToSelectDateTimeScreen(
+                          context, state.professional, _manager);
+                    }
+                  }
+                },
+                child: BlocBuilder<ManagerSelectProfessionalBloc,
+                    ManagerSelectProfessionalState>(
+                  builder: (context, state) {
+                    if (state is ManagerAddAppointmentInitial) {
+                      return getProfessionals(context);
+                    } else if (state is ManagerAddAppointmentLoadingState) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return Container();
+                  },
+                ),
+              ),
+              BlocBuilder<ManagerSelectProfessionalBloc,
+                  ManagerSelectProfessionalState>(
+                builder: (context, state) {
+                  if (state is GetProfessionalsListState) {
+                    professionals = state.professionals;
+                    filteredProfessionals = professionals;
+                    return Container(child: searchTextField(professionals));
+                  } else if (state is ProfessionalSearchingState) {
+                    professionals = state.professionalsList;
+                    filteredProfessionals = state.filteredList;
+                    return Container(child: searchTextField(professionals));
+                  }
+                  return Container();
+                },
+              ),
+              BlocBuilder<ManagerSelectProfessionalBloc,
+                  ManagerSelectProfessionalState>(
+                builder: (context, state) {
+                  if (state is GetProfessionalsListState) {
+                    return listOfProfessionals(filteredProfessionals);
+                  } else if (state is ProfessionalSearchingState) {
+                    return listOfProfessionals(filteredProfessionals);
+                  }
+                  return Container();
+                },
+              ),
+            ],
           ),
-          BlocBuilder<ManagerSelectProfessionalBloc,
-              ManagerSelectProfessionalState>(
-            builder: (context, state) {
-              if (state is GetProfessionalsListState) {
-                return listOfProfessionals(filteredProfessionals);
-              } else if (state is ProfessionalSearchingState) {
-                return listOfProfessionals(filteredProfessionals);
-              }
-              return Container();
-            },
-          ),
-        ],
+        ),
       ),
     );
   }

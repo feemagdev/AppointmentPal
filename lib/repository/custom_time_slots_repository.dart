@@ -10,7 +10,7 @@ class CustomTimeSlotRepository {
     CustomTimeSlots customTimeSlots = CustomTimeSlots.defaultConstructor();
 
     DocumentReference documentReference = await dbReference
-        .collection('CustomTimeSlot')
+        .collection('custom_time_slot')
         .doc(professionalID)
         .collection(day)
         .add(customTimeSlots.toMap(changeDate(from), changeDate(to)));
@@ -26,7 +26,7 @@ class CustomTimeSlotRepository {
     List<CustomTimeSlots> customTimeSlots = List();
     final dbReference = FirebaseFirestore.instance;
     QuerySnapshot querySnapshot = await dbReference
-        .collection('CustomTimeSlot')
+        .collection('custom_time_slot')
         .doc(professionalID)
         .collection(day)
         .orderBy('from')
@@ -50,7 +50,7 @@ class CustomTimeSlotRepository {
       String timeSlotID, String professionalID, String day) async {
     final dbReference = FirebaseFirestore.instance;
     dbReference
-        .collection('CustomTimeSlot')
+        .collection('custom_time_slot')
         .doc(professionalID)
         .collection(day)
         .doc(timeSlotID)

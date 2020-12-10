@@ -1,14 +1,15 @@
 import 'package:appointmentproject/bloc/ProfessionalBloc/ProfessionalDashboardBloc/professional_dashboard_bloc.dart';
 import 'package:appointmentproject/model/professional.dart';
+import 'package:appointmentproject/ui/Login/login_screen.dart';
 import 'package:appointmentproject/ui/Professional/HistoryAppointmentScreen/history_appointment_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalAddAppointmentScreen/professional_select_date_time_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/components/category_card.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalEditAppointmentScreen/professional_edit_appointment_screen.dart';
+import 'package:appointmentproject/ui/Professional/ProfessionalViewClient/professional_select_client_sceen.dart';
 import 'package:appointmentproject/ui/Professional/ProfileScreen/professional_profile_screen.dart';
 import 'package:appointmentproject/ui/Professional/SettingScreen/setting_screen.dart';
 import 'package:appointmentproject/ui/Professional/TodayAppointmentScreen/today_appointment_screen.dart';
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
-import 'package:appointmentproject/ui/components/background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -26,11 +27,10 @@ class _ProfessionalDashboardBodyState extends State<ProfessionalDashboardBody> {
   _ProfessionalDashboardBodyState({@required this.professional});
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  bool uiBuilder = true;
 
   @override
   Widget build(BuildContext context) {
-    double deviceHeight = MediaQuery.of(context).size.height;
-    double deviceWidth = MediaQuery.of(context).size.width;
     return WillPopScope(
         onWillPop: () async {
           return false;
@@ -40,9 +40,7 @@ class _ProfessionalDashboardBodyState extends State<ProfessionalDashboardBody> {
                 backgroundColor: Colors.white,
                 key: _scaffoldKey,
                 drawer: customDrawer(),
-                body: Background(
-                    child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                body: Stack(
                   children: <Widget>[
                     BlocListener<ProfessionalDashboardBloc,
                         ProfessionalDashboardState>(
@@ -62,84 +60,116 @@ class _ProfessionalDashboardBodyState extends State<ProfessionalDashboardBody> {
                         } else if (state is ProfessionalHistoryState) {
                           navigateToProfessionalHistoryScreen(
                               context, state.professional);
+                        } else if (state
+                            is ProfessionalDashboardEditProfileState) {
+                          navigateToProfessionalSelectCustomerProfileScreen(
+                              context, state.professional);
+                        } else if (state
+                            is ProfessionalLogOutSuccessfullyState) {
+                          navigateToLoginScreen(context);
                         }
                       },
                       child: BlocBuilder<ProfessionalDashboardBloc,
                               ProfessionalDashboardState>(
                           builder: (context, state) {
                         if (state is ProfessionalDashboardInitial) {
-                          return Container();
+                          return dashboardBuilder();
+                        } else if (state is ProfessionalDashboardLoadingState) {
+                          return Center(child: CircularProgressIndicator());
                         }
-                        return Container();
+                        return dashboardBuilder();
                       }),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                            icon: Icon(Icons.menu),
-                            onPressed: () {
-                              _scaffoldKey.currentState.openDrawer();
-                            }),
-                        GestureDetector(
-                          onTap: () {
-                            navigateToProfessionalProfileScreen(context);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                      fit: BoxFit.fill,
-                                      image: NetworkImage(
-                                          professional.getImage()))),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: deviceHeight * 0.03,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          FadeAnimation(
-                            1,
-                            Text(
-                              "Hey, " + professional.getName(),
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                  fontSize: deviceWidth < 360 ? 12 : 17,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                        padding: const EdgeInsets.only(left: 20),
-                        child: Text(
-                          "What can we do\nfor you ?",
-                          style: TextStyle(
-                              fontSize: deviceWidth < 360 ? 20 : 30,
-                              letterSpacing: 2),
-                        )),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Expanded(child: createGrid(context))
                   ],
-                )))));
+                ))));
+  }
+
+  Widget dashboardBuilder() {
+    return Column(
+      children: [
+        profileUI(),
+        Expanded(
+          child: createGrid(context),
+        )
+      ],
+    );
+  }
+
+  Widget profileUI() {
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.width;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+                icon: Icon(Icons.menu),
+                onPressed: () {
+                  _scaffoldKey.currentState.openDrawer();
+                }),
+            GestureDetector(
+              onTap: () {
+                navigateToProfessionalProfileScreen(context);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: professional.getImage() == null
+                    ? Icon(
+                        Icons.person_outline_rounded,
+                        color: Colors.blue,
+                      )
+                    : Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                                fit: BoxFit.fill,
+                                image: NetworkImage(professional.getImage()))),
+                      ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: deviceHeight * 0.03,
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              FadeAnimation(
+                1,
+                Text(
+                  "Hey, " + professional.getName(),
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      fontSize: deviceWidth < 360 ? 12 : 17,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey),
+                ),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+            ],
+          ),
+        ),
+        Padding(
+            padding: const EdgeInsets.only(left: 20),
+            child: Text(
+              "What can we do\nfor you ?",
+              style: TextStyle(
+                  fontSize: deviceWidth < 360 ? 20 : 30, letterSpacing: 2),
+            )),
+        SizedBox(
+          height: 20,
+        ),
+      ],
+    );
   }
 
   Widget createGrid(BuildContext context) {
@@ -211,6 +241,11 @@ class _ProfessionalDashboardBodyState extends State<ProfessionalDashboardBody> {
                   child: CategoryCard(
                     svgSrc: "assets/icons/client.svg",
                     title: "Client",
+                    onTap: () {
+                      BlocProvider.of<ProfessionalDashboardBloc>(context).add(
+                          ProfessionalDashboardEditProfileEvent(
+                              professional: professional));
+                    },
                   ),
                 )),
             FadeAnimation(
@@ -335,15 +370,22 @@ class _ProfessionalDashboardBodyState extends State<ProfessionalDashboardBody> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              fit: BoxFit.fill,
-                              image: NetworkImage(professional.getImage()))),
-                    ),
+                    child: professional.getImage() == null
+                        ? Icon(
+                            Icons.person_outline,
+                            size: 70,
+                            color: Colors.white,
+                          )
+                        : Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image:
+                                        NetworkImage(professional.getImage()))),
+                          ),
                   ),
                   Text(
                     professional.getName(),
@@ -372,7 +414,10 @@ class _ProfessionalDashboardBodyState extends State<ProfessionalDashboardBody> {
         ),
         ListTile(
           title: Text("Client"),
-          onTap: () {},
+          onTap: () {
+            navigateToProfessionalSelectCustomerProfileScreen(
+                context, professional);
+          },
         ),
         ListTile(
           title: Text("History"),
@@ -394,7 +439,10 @@ class _ProfessionalDashboardBodyState extends State<ProfessionalDashboardBody> {
         ),
         ListTile(
           title: Text("Log out"),
-          onTap: () {},
+          onTap: () {
+            BlocProvider.of<ProfessionalDashboardBloc>(context)
+                .add(ProfessionalLogOutEvent());
+          },
         ),
       ],
     ));
@@ -403,6 +451,19 @@ class _ProfessionalDashboardBodyState extends State<ProfessionalDashboardBody> {
   void navigateToProfessionalProfileScreen(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalProfileScreen(professional: professional);
+    }));
+  }
+
+  void navigateToLoginScreen(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return LoginScreen();
+    }));
+  }
+
+  void navigateToProfessionalSelectCustomerProfileScreen(
+      BuildContext context, Professional professional) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ProfessionalSelectClientScreen(professional: professional);
     }));
   }
 }

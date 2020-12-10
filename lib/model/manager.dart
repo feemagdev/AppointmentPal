@@ -57,7 +57,7 @@ class Manager {
   }
 
   void setPhone(String phone) {
-    _address = phone;
+    _phone = phone;
   }
 
   String getName() {
@@ -70,6 +70,10 @@ class Manager {
 
   String getCompanyID() {
     return _companyID;
+  }
+
+  void setCompanyID(String companyID) {
+    _companyID = companyID;
   }
 
   void setImage(String image) {

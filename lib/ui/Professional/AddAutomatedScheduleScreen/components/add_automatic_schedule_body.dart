@@ -24,59 +24,69 @@ class _AddAutomaticScheduleBodyState extends State<AddAutomaticScheduleBody> {
   Schedule tempSchedule = Schedule.defaultConstructor();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Schedule details"),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Professional professional =
-                BlocProvider.of<AddAutomaticScheduleBloc>(context).professional;
-            navigateToAutomaticBusinessHourSceeen(context, professional);
-          },
-        ),
-      ),
-      body: Container(
-        child: Column(
-          children: [
-            BlocListener<AddAutomaticScheduleBloc, AddAutomaticScheduleState>(
-              listener: (context, state) {
-                if (state is NoScheduleAvailableState) {
-                  return noScheduleAvailableAlert(
-                      "No schedule available for this day");
-                } else if (state is ScheduleUpdatedSuccessfullyState) {
-                  return scheduleUpdatedSuccessfullyAlert(
-                      "Your schedule is updated");
-                }
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Schedule details"),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Professional professional =
+                    BlocProvider.of<AddAutomaticScheduleBloc>(context)
+                        .professional;
+                navigateToAutomaticBusinessHourSceeen(context, professional);
               },
-              child: BlocBuilder<AddAutomaticScheduleBloc,
-                  AddAutomaticScheduleState>(
-                builder: (context, state) {
-                  if (state is AddAutomaticScheduleInitial) {
-                    return loadingState(context);
-                  } else if (state is GetAutomaticScheduleOfSelectedDayState) {
-                    tempSchedule = state.schedule;
-                    return addAutomaticScheduleUI(state.schedule);
-                  } else if (state is NoScheduleAvailableState) {
-                    tempSchedule.setStartTime(9);
-                    tempSchedule.setStartTimeMinutes(0);
-                    tempSchedule.setEndTime(17);
-                    tempSchedule.setEndTimeMinutes(0);
-                    tempSchedule.setBreakStartTime(-1);
-                    tempSchedule.setBreakEndTime(-1);
-                    tempSchedule.setBreakEndTimeMinutes(-1);
-                    tempSchedule.setBreakStartTime(-1);
-                    tempSchedule.setBreakStartTimeMinutes(-1);
-                    tempSchedule.setDuration(60);
-                    return addAutomaticScheduleUI(tempSchedule);
-                  } else if (state is AddAutomaticScheduleLoadingState) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  return Container();
-                },
-              ),
-            )
-          ],
+            ),
+          ),
+          body: Container(
+            child: Column(
+              children: [
+                BlocListener<AddAutomaticScheduleBloc,
+                    AddAutomaticScheduleState>(
+                  listener: (context, state) {
+                    if (state is NoScheduleAvailableState) {
+                      return noScheduleAvailableAlert(
+                          "No schedule available for this day");
+                    } else if (state is ScheduleUpdatedSuccessfullyState) {
+                      return scheduleUpdatedSuccessfullyAlert(
+                          "Your schedule is updated");
+                    }
+                  },
+                  child: BlocBuilder<AddAutomaticScheduleBloc,
+                      AddAutomaticScheduleState>(
+                    builder: (context, state) {
+                      if (state is AddAutomaticScheduleInitial) {
+                        return loadingState(context);
+                      } else if (state
+                          is GetAutomaticScheduleOfSelectedDayState) {
+                        tempSchedule = state.schedule;
+                        return addAutomaticScheduleUI(state.schedule);
+                      } else if (state is NoScheduleAvailableState) {
+                        tempSchedule.setStartTime(9);
+                        tempSchedule.setStartTimeMinutes(0);
+                        tempSchedule.setEndTime(17);
+                        tempSchedule.setEndTimeMinutes(0);
+                        tempSchedule.setBreakStartTime(-1);
+                        tempSchedule.setBreakEndTime(-1);
+                        tempSchedule.setBreakEndTimeMinutes(-1);
+                        tempSchedule.setBreakStartTime(-1);
+                        tempSchedule.setBreakStartTimeMinutes(-1);
+                        tempSchedule.setDuration(60);
+                        return addAutomaticScheduleUI(tempSchedule);
+                      } else if (state is AddAutomaticScheduleLoadingState) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      return Container();
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );

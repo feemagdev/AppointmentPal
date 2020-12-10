@@ -1,15 +1,17 @@
+import 'dart:io';
+
 import 'package:appointmentproject/model/professional.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class ProfessionalRepository {
   ProfessionalRepository.defaultConstructor();
 
-  Future<Professional> getProfessionalData(User user) async {
+  Future<Professional> getProfessionalData(String professionalID) async {
     final dbReference = FirebaseFirestore.instance;
     Professional professional;
     DocumentSnapshot snapshot =
-        await dbReference.collection('professional').doc(user.uid).get();
+        await dbReference.collection('professional').doc(professionalID).get();
 
     if (snapshot.exists) {
       professional =
@@ -43,14 +45,17 @@ class ProfessionalRepository {
       "country": country,
       "phone": phone,
     };
-    await dbReference.collection('professional').doc(professionalID).set(data);
+    await dbReference
+        .collection('professional')
+        .doc(professionalID)
+        .set(data, SetOptions(merge: true));
     return true;
   }
 
   DocumentReference getProfessionalDocumentReference(String professionalID) {
     final dbReference = FirebaseFirestore.instance;
     DocumentReference documentReference =
-    dbReference.collection('professional').doc(professionalID);
+        dbReference.collection('professional').doc(professionalID);
     return documentReference;
   }
 
@@ -58,13 +63,51 @@ class ProfessionalRepository {
       String managerID) async {
     final dbReference = FirebaseFirestore.instance;
     List<Professional> professionals = List();
-    QuerySnapshot snapshot =
-    await dbReference.collection('professional').where(
-        'managerID', isEqualTo: managerID).get();
+    QuerySnapshot snapshot = await dbReference
+        .collection('professional')
+        .where('managerID', isEqualTo: managerID)
+        .get();
     snapshot.docs.forEach((element) {
       professionals
           .add(Professional.fromMap(element.data(), element.reference.id));
     });
     return professionals;
+  }
+
+  Future<bool> updateProfessionalData(Professional professional) async {
+    final dbReference = FirebaseFirestore.instance;
+    await dbReference
+        .collection('professional')
+        .doc(professional.getProfessionalID())
+        .set({
+      'name': professional.getName(),
+      'phone': professional.getPhone(),
+      'address': professional.getAddress()
+    }, SetOptions(merge: true));
+    return true;
+  }
+
+  Future<bool> uploadImageToFirebase(
+      File imageFile, String professionalID, String oldImage) async {
+    if (oldImage != "") {
+      if (oldImage != null) {
+        final storageReference = FirebaseStorage.instance;
+        await storageReference.refFromURL(oldImage).delete();
+      }
+    }
+
+    Reference reference =
+        FirebaseStorage.instance.ref().child('profiles/$professionalID');
+    UploadTask uploadTask = reference.putFile(imageFile);
+    TaskSnapshot taskSnapshot = await uploadTask;
+    final String url = await taskSnapshot.ref.getDownloadURL();
+    final dbReference = FirebaseFirestore.instance;
+
+    await dbReference
+        .collection('professional')
+        .doc(professionalID)
+        .set({'image': url}, SetOptions(merge: true));
+
+    return true;
   }
 }

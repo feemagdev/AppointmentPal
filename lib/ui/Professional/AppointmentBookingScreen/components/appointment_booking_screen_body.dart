@@ -7,6 +7,7 @@ import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/profess
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class AppointmentBookingScreenBody extends StatefulWidget {
   @override
@@ -22,42 +23,61 @@ class _AppointmentBookingScreenBodyState
         BlocProvider.of<AppointmentBookingBloc>(context).professional;
     Manager manager = BlocProvider.of<AppointmentBookingBloc>(context).manager;
     double deviceWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("New Appointment"),
-        leading: IconButton(
-          icon: Icon(Icons.close),
-          onPressed: () {
-            showAlertDialog(context, professional, manager);
-          },
-        ),
-      ),
-      body: Container(
-        child: Column(
-          children: [
-            BlocListener<AppointmentBookingBloc, AppointmentBookingState>(
-              listener: (context, state) async {
-                if (state is AppointmentBookedSuccessfully) {
-                  await showSuccessfulDialog(context,
-                      "Appointment booked successfully", professional, manager);
-                }
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("New Appointment"),
+            leading: IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                showAlertDialog(context, professional, manager);
               },
-              child:
-                  BlocBuilder<AppointmentBookingBloc, AppointmentBookingState>(
-                builder: (context, state) {
-                  if (state is AppointmentBookingInitial) {
-                    return appointmentBookingUI(
-                        state.appointmentStartTime,
-                        state.appointmentEndTime,
-                        state.customer,
-                        professional,
-                        deviceWidth);
-                  }
-                  return Container();
-                },
-              ),
-            )
-          ],
+            ),
+          ),
+          body: Container(
+            child: Stack(
+              children: [
+                BlocListener<AppointmentBookingBloc, AppointmentBookingState>(
+                  listener: (context, state) async {
+                    if (state is AppointmentBookedSuccessfully) {
+                      await showSuccessfulDialog(
+                          context,
+                          "Appointment booked successfully",
+                          professional,
+                          manager);
+                    } else if (state
+                        is AppointmentBookedSuccessfullyWithoutMessage) {
+                      errorSmsDialog(state.message);
+                    } else if (state
+                        is AppointmentBookingScreenSmsServiceNotPurchasesState) {
+                      errorSmsDialog(
+                          "You have not purchase sms service.\n Go to setting to see packages");
+                    }
+                  },
+                  child: BlocBuilder<AppointmentBookingBloc,
+                      AppointmentBookingState>(
+                    builder: (context, state) {
+                      if (state is AppointmentBookingInitial) {
+                        return appointmentBookingUI(
+                            state.appointmentStartTime,
+                            state.appointmentEndTime,
+                            state.customer,
+                            professional,
+                            deviceWidth);
+                      } else if (state is AppointmentBookingLoadingState) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      return Container();
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -174,12 +194,13 @@ class _AppointmentBookingScreenBodyState
             child: RaisedButton(
               child: Text("Add Appointment"),
               onPressed: () {
-                BlocProvider.of<AppointmentBookingBloc>(context).add(
-                    AddAppointmentButtonPressedEvent(
-                        professional: professional,
-                        customer: customer,
-                        appointmentStartTime: appointmentStartTime,
-                        appointmentEndTime: appointmentEndTime));
+                smsInfoDialog(
+                    "Do you want to send SMS to your customer ?",
+                    professional,
+                    customer,
+                    appointmentStartTime,
+                    appointmentEndTime);
+
                 print("Appointment added");
               },
             ),
@@ -235,11 +256,11 @@ class _AppointmentBookingScreenBodyState
             ),
             actions: [
               FlatButton(
-                child: Text("Close"),
+                child: Text("OK"),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-              )
+              ),
             ],
           );
         }).then((value) {
@@ -249,6 +270,73 @@ class _AppointmentBookingScreenBodyState
         navigateToManagerDashboardScreen(context, manager);
       }
     });
+  }
+
+  smsInfoDialog(String message, Professional professional, Customer customer,
+      DateTime appointmentStartTime, DateTime appointmentEndTime) async {
+    await Alert(
+      context: context,
+      type: AlertType.info,
+      title: "SMS Alert",
+      desc: message,
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Yes",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+            BlocProvider.of<AppointmentBookingBloc>(context).add(
+                AddAppointmentButtonPressedEvent(
+                    professional: professional,
+                    customer: customer,
+                    appointmentStartTime: appointmentStartTime,
+                    appointmentEndTime: appointmentEndTime,
+                    smsCheck: true));
+          },
+          width: 120,
+        ),
+        DialogButton(
+          child: Text(
+            "No",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+            BlocProvider.of<AppointmentBookingBloc>(context).add(
+                AddAppointmentButtonPressedEvent(
+                    professional: professional,
+                    customer: customer,
+                    appointmentStartTime: appointmentStartTime,
+                    appointmentEndTime: appointmentEndTime,
+                    smsCheck: false));
+          },
+          width: 120,
+        )
+      ],
+    ).show();
+  }
+
+  errorSmsDialog(String message) async {
+    await Alert(
+      context: context,
+      type: AlertType.info,
+      title: "SMS Not Sent",
+      desc: message,
+      buttons: [
+        DialogButton(
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          width: 120,
+        ),
+      ],
+    ).show();
   }
 
   void navigateToDashboardScreen(

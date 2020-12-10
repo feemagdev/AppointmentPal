@@ -35,17 +35,18 @@ class ProfessionalAddNewCustomerBloc extends Bloc<
     ProfessionalAddNewCustomerEvent event,
   ) async* {
     if (event is AddNewCustomerButtonPressedEvent) {
+      yield AddNewCustomerLoadingState();
       Customer customer = await CustomerRepository.defaultConstructor()
           .addCustomer(event.professional.getProfessionalID(), event.name,
-          event.phone, event.address, event.city, event.country);
+              event.phone, event.address, event.city, event.country);
       if (customer != null) {
         yield CustomerAddedSuccessfullyState(customer: customer);
       }
     } else if (event is CheckPhoneEvent) {
-      print("phone event");
+      yield AddNewCustomerLoadingState();
       bool customerCheck = await CustomerRepository.defaultConstructor()
           .checkCustomerExist(
-          event.phone, event.professional.getProfessionalID());
+              event.phone, event.professional.getProfessionalID());
       if (customerCheck) {
         print("customer check true");
         yield CustomerAlreadyExistState(professional: event.professional);

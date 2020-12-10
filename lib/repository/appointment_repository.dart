@@ -4,15 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class AppointmentRepository {
   AppointmentRepository.defaultConstructor();
 
-  professionalMakeAppointment(
+  Future<bool> professionalMakeAppointment(
       String professionalID,
       String customerID,
       Timestamp appointmentStartTime,
       Timestamp appointmentEndTime,
-      String appointmentStatus) {
+      String appointmentStatus) async {
     final dbReference = FirebaseFirestore.instance;
     Appointment appointment = Appointment.bookAppointment();
-    dbReference.collection('appointment').add(
+    await dbReference.collection('appointment').add(
         appointment.professionalAppointmentMap(
             professionalID,
             customerID,
@@ -20,6 +20,8 @@ class AppointmentRepository {
             appointmentEndTime,
             changeTime(appointmentStartTime),
             appointmentStatus));
+
+    return true;
   }
 
   Future<List<Appointment>> getNotAvailableTime(
@@ -116,7 +118,7 @@ class AppointmentRepository {
     await dbReference
         .collection('appointment')
         .doc(appointment.getAppointmentID())
-        .set(updateMap);
+        .set(updateMap, SetOptions(merge: true));
 
     return true;
   }
@@ -238,5 +240,11 @@ class AppointmentRepository {
 
     totalApponitments = query.size;
     return totalApponitments;
+  }
+
+  Future<bool> cancelAppointment(String appointmentID) async {
+    final dbReference = FirebaseFirestore.instance;
+    await dbReference.collection('appointment').doc(appointmentID).delete();
+    return true;
   }
 }

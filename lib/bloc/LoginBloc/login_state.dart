@@ -29,3 +29,10 @@ class LoginFailureState extends LoginState {
 }
 
 class ForgotPasswordState extends LoginState {}
+
+class MoveToSignUpScreenState extends LoginState {}
+
+class UserDetailNotFilledState extends LoginState {
+  final String uid;
+  UserDetailNotFilledState({@required this.uid});
+}

@@ -1,4 +1,3 @@
-
 import 'package:appointmentproject/bloc/ProfessionalBloc/UpdateAppointmentBloc/update_appointment_bloc.dart';
 import 'package:appointmentproject/model/appointment.dart';
 import 'package:appointmentproject/model/customer.dart';
@@ -12,6 +11,7 @@ import 'package:appointmentproject/ui/Professional/ProfessionalSelectCustomerScr
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class UpdateAppointmentScreenBody extends StatefulWidget {
   @override
@@ -21,8 +21,7 @@ class UpdateAppointmentScreenBody extends StatefulWidget {
 
 class _UpdateAppointmentScreenBodyState
     extends State<UpdateAppointmentScreenBody> {
-
-
+  bool cancelCheck = false;
   @override
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
@@ -34,51 +33,73 @@ class _UpdateAppointmentScreenBodyState
         BlocProvider.of<UpdateAppointmentBloc>(context).customer;
     final Manager _manager =
         BlocProvider.of<UpdateAppointmentBloc>(context).manager;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Update Appointment"),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            BlocProvider.of<UpdateAppointmentBloc>(context)
-                .add(MoveToEditAppointmentScreenEvent());
-          },
-        ),
-      ),
-      body: Container(
-        child: Column(
-          children: [
-            BlocListener<UpdateAppointmentBloc, UpdateAppointmentState>(
-              listener: (context, state) {
-                if (state is UpdateAppointmentDateTimeState) {
-                  moveToSelectDateTimeScreen(context, _professional,
-                      _appointment, _customer, _manager);
-                } else if (state is MoveToEditAppointmentScreenState) {
-                  moveToEditAppointmentScreen(context, _professional, _manager);
-                } else if (state is UpdateAppointmentSelectCustomerState) {
-                  navigateToSelectCustomerScreen(context, _professional,
-                      _appointment, _customer, _manager);
-                } else if(state is AppointmentUpdatedSuccessfullyState) {
-                  if (_manager == null) {
-                    navigateToDashboard(context, _professional);
-                  } else {
-                    navigateToManagerDashboard(context, _manager);
-                  }
-                }
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Update Appointment"),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                BlocProvider.of<UpdateAppointmentBloc>(context)
+                    .add(MoveToEditAppointmentScreenEvent());
               },
-              child: BlocBuilder<UpdateAppointmentBloc, UpdateAppointmentState>(
-                builder: (context, state) {
-                  if (state is UpdateAppointmentInitial) {
-                    return appointmentBookingUI(_appointment,
-                        _customer, _professional, deviceWidth);
-                  }else if(state is UpdateAppointmentLoadingState){
-                    return loadingCircularProgressIndicator();
-                  }
-                  return Container();
-                },
-              ),
-            )
-          ],
+            ),
+          ),
+          body: Container(
+            child: Column(
+              children: [
+                BlocListener<UpdateAppointmentBloc, UpdateAppointmentState>(
+                  listener: (context, state) {
+                    if (state is UpdateAppointmentDateTimeState) {
+                      moveToSelectDateTimeScreen(context, _professional,
+                          _appointment, _customer, _manager);
+                    } else if (state is MoveToEditAppointmentScreenState) {
+                      moveToEditAppointmentScreen(
+                          context, _professional, _manager);
+                    } else if (state is UpdateAppointmentSelectCustomerState) {
+                      navigateToSelectCustomerScreen(context, _professional,
+                          _appointment, _customer, _manager);
+                    } else if (state is AppointmentUpdatedSuccessfullyState) {
+                      showSuccessfulDialog(
+                          context,
+                          "Appointment Updated Successfully",
+                          _professional,
+                          _manager);
+                    } else if (state
+                        is UpdateAppointmentSuccessfullyWithoutMessage) {
+                      errorSmsDialog(state.message);
+                    } else if (state
+                        is UpdateAppointmentScreenSmsServiceNotPurchasesState) {
+                      errorSmsDialog(
+                          "You have not purchase sms service.\n Go to setting to see packages");
+                    } else if (state is AppointmentCancelledSuccessfullyState) {
+                      showSuccessfulDialog(
+                          context,
+                          "Appointment Canceled Successfully",
+                          _professional,
+                          _manager);
+                    }
+                  },
+                  child: BlocBuilder<UpdateAppointmentBloc,
+                      UpdateAppointmentState>(
+                    builder: (context, state) {
+                      if (state is UpdateAppointmentInitial) {
+                        return appointmentBookingUI(_appointment, _customer,
+                            _professional, deviceWidth);
+                      } else if (state is UpdateAppointmentLoadingState) {
+                        return loadingCircularProgressIndicator();
+                      }
+                      return Container();
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -101,8 +122,8 @@ class _UpdateAppointmentScreenBodyState
           ),
           InkWell(
             onTap: () {
-              BlocProvider.of<UpdateAppointmentBloc>(context).add(
-                  UpdateAppointmentDateTimeEvent());
+              BlocProvider.of<UpdateAppointmentBloc>(context)
+                  .add(UpdateAppointmentDateTimeEvent());
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -179,8 +200,8 @@ class _UpdateAppointmentScreenBodyState
           ),
           InkWell(
             onTap: () {
-              BlocProvider.of<UpdateAppointmentBloc>(context).add(
-                  UpdateAppointmentSelectCustomerEvent());
+              BlocProvider.of<UpdateAppointmentBloc>(context)
+                  .add(UpdateAppointmentSelectCustomerEvent());
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -217,42 +238,65 @@ class _UpdateAppointmentScreenBodyState
           ),
           Divider(),
           SizedBox(
-            height: 2,
+            height: 5,
           ),
-          Center(
-            child: RaisedButton(
-              child: Text("Update Appointment"),
-              onPressed: () {
-                BlocProvider.of<UpdateAppointmentBloc>(context).add(UpdateAppointmentButtonPressedEvent(appointment:appointment));
-              },
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              RaisedButton(
+                child: Text("Update Appointment"),
+                onPressed: () {
+                  cancelCheck = false;
+                  smsInfoDialog("Do you want to send SMS to your customer ?",
+                      appointment);
+                },
+              ),
+              RaisedButton(
+                child: Text("Cancel Appointment"),
+                onPressed: () {
+                  cancelCheck = true;
+                  smsInfoDialog("Do you want to send SMS to your customer ?",
+                      appointment);
+                },
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  void moveToSelectDateTimeScreen(BuildContext context,
-      Professional professional, Appointment appointment, Customer customer,
+  void moveToSelectDateTimeScreen(
+      BuildContext context,
+      Professional professional,
+      Appointment appointment,
+      Customer customer,
       Manager manager) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalSelectDateTimeScreen(
         professional: professional,
         appointment: appointment,
-        customer: customer, manager: manager,);
+        customer: customer,
+        manager: manager,
+      );
     }));
   }
 
-  void moveToEditAppointmentScreen(BuildContext context,
-      Professional professional, Manager manager) {
+  void moveToEditAppointmentScreen(
+      BuildContext context, Professional professional, Manager manager) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalEditAppointmentScreen(
-        professional: professional, manager: manager,);
+        professional: professional,
+        manager: manager,
+      );
     }));
   }
 
-  void navigateToSelectCustomerScreen(BuildContext context,
-      Professional professional, Appointment appointment, Customer customer,
+  void navigateToSelectCustomerScreen(
+      BuildContext context,
+      Professional professional,
+      Appointment appointment,
+      Customer customer,
       Manager manager) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalSelectCustomerScreen(
@@ -273,12 +317,113 @@ class _UpdateAppointmentScreenBodyState
   }
 
   Widget loadingCircularProgressIndicator() {
-    return Center(child: CircularProgressIndicator(),);
+    return Center(
+      child: CircularProgressIndicator(),
+    );
   }
 
   void navigateToManagerDashboard(BuildContext context, Manager manager) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ManagerDashboardScreen(manager: manager);
     }));
+  }
+
+  smsInfoDialog(String message, Appointment appointment) async {
+    await Alert(
+      context: context,
+      type: AlertType.info,
+      title: "SMS Alert",
+      desc: message,
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Yes",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+            if (cancelCheck) {
+              BlocProvider.of<UpdateAppointmentBloc>(context).add(
+                  CancelAppointmentEvent(
+                      appointment: appointment, smsCheck: true));
+            } else {
+              BlocProvider.of<UpdateAppointmentBloc>(context).add(
+                  UpdateAppointmentButtonPressedEvent(
+                      appointment: appointment, smsCheck: true));
+            }
+          },
+          width: 120,
+        ),
+        DialogButton(
+          child: Text(
+            "No",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+            if (cancelCheck) {
+              BlocProvider.of<UpdateAppointmentBloc>(context).add(
+                  CancelAppointmentEvent(
+                      appointment: appointment, smsCheck: false));
+            } else {
+              BlocProvider.of<UpdateAppointmentBloc>(context).add(
+                  UpdateAppointmentButtonPressedEvent(
+                      appointment: appointment, smsCheck: false));
+            }
+          },
+          width: 120,
+        )
+      ],
+    ).show();
+  }
+
+  showSuccessfulDialog(BuildContext context, String message,
+      Professional professional, Manager manager) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Alert"),
+            content: Text(
+              message,
+              style: TextStyle(color: Colors.green),
+            ),
+            actions: [
+              FlatButton(
+                child: Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        }).then((value) {
+      if (manager == null) {
+        navigateToDashboard(context, professional);
+      } else {
+        navigateToManagerDashboard(context, manager);
+      }
+    });
+  }
+
+  errorSmsDialog(String message) async {
+    await Alert(
+      context: context,
+      type: AlertType.info,
+      title: "SMS Not Sent",
+      desc: message,
+      buttons: [
+        DialogButton(
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          width: 120,
+        ),
+      ],
+    ).show();
   }
 }

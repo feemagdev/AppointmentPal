@@ -4,8 +4,11 @@ import 'package:appointmentproject/ui/Professional/AutomaticBusinessHoursScreen/
 import 'package:appointmentproject/ui/Professional/ManualBusinessHoursScreen/manual_business_hours_weekday_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalAddNewCustomer/professional_add_new_customer_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/professional_dashboard_screen.dart';
+import 'package:appointmentproject/ui/Professional/ProfessionalEditProfileScreen/professional_edit_profile_screen.dart';
+import 'package:appointmentproject/ui/Professional/ProfessionalPaymentScreen/professional_payment_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class SettingScreenBody extends StatefulWidget {
   @override
@@ -17,20 +20,22 @@ class _SettingScreenBodyState extends State<SettingScreenBody> {
   Widget build(BuildContext context) {
     final Professional _professional =
         BlocProvider.of<SettingScreenBloc>(context).professional;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Setting"),
-        leading: IconButton(
-          onPressed: () {
-            navigateToProfessionalDashboardScreen(_professional, context);
-          },
-          icon: Icon(Icons.arrow_back),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Container(
-          child: Column(
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Setting"),
+            leading: IconButton(
+              onPressed: () {
+                navigateToProfessionalDashboardScreen(_professional, context);
+              },
+              icon: Icon(Icons.arrow_back),
+            ),
+          ),
+          body: Stack(
             children: [
               BlocListener<SettingScreenBloc, SettingScreenState>(
                 listener: (context, state) {
@@ -40,14 +45,26 @@ class _SettingScreenBodyState extends State<SettingScreenBody> {
                     navigateToAutomatedScheduleScreen(context, _professional);
                   } else if (state is ManualBusinessHoursState) {
                     navigateToManualBusinessHoursState(context, _professional);
+                  } else if (state is ProfessionalEditProfileState) {
+                    navigateToProfessionalEditProfileScreen(
+                        context, _professional);
+                  } else if (state is ProfessionalResetPasswordSuccess) {
+                    successDialogAlert(
+                        "Password reset email sent\nPlease also check your spam folder");
+                  } else if (state is ProfessionalResetPasswordFailure) {
+                    errorDialogAlert("Error occured please try again later");
+                  } else if (state is ProfessionalSmsPaymentState) {
+                    navigateToProfessionalPaymentScreen(context, _professional);
                   }
                 },
                 child: BlocBuilder<SettingScreenBloc, SettingScreenState>(
                   builder: (context, state) {
                     if (state is SettingScreenInitial) {
-                      return settingBuilder(context);
+                      return settingBuilder(context, _professional);
+                    } else if (state is ProfessionalSettingScreenLoadingState) {
+                      return Center(child: CircularProgressIndicator());
                     }
-                    return settingBuilder(context);
+                    return settingBuilder(context, _professional);
                   },
                 ),
               ),
@@ -58,7 +75,7 @@ class _SettingScreenBodyState extends State<SettingScreenBody> {
     );
   }
 
-  Widget settingBuilder(context) {
+  Widget settingBuilder(context, Professional professional) {
     return Column(
       children: [
         Padding(
@@ -66,7 +83,6 @@ class _SettingScreenBodyState extends State<SettingScreenBody> {
           child: settingUI(
               text: "Add Customer",
               onTap: () {
-                print("add customer");
                 BlocProvider.of<SettingScreenBloc>(context)
                     .add(AddCustomerEvent());
               }),
@@ -77,7 +93,6 @@ class _SettingScreenBodyState extends State<SettingScreenBody> {
           child: settingUI(
               text: "Automated Schedule",
               onTap: () {
-                print("goto automated schedule page");
                 BlocProvider.of<SettingScreenBloc>(context)
                     .add(AutomatedScheduleEvent());
               }),
@@ -88,9 +103,42 @@ class _SettingScreenBodyState extends State<SettingScreenBody> {
           child: settingUI(
               text: "Manual Business Hours",
               onTap: () {
-                print("goto to manual business hours");
                 BlocProvider.of<SettingScreenBloc>(context)
                     .add(ManualBusinessHoursEvent());
+              }),
+        ),
+        professional.getManagerID() == null || professional.getManagerID() == ""
+            ? Divider()
+            : Container(),
+        professional.getManagerID() == null || professional.getManagerID() == ""
+            ? Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: settingUI(
+                    text: "SMS Payment",
+                    onTap: () {
+                      BlocProvider.of<SettingScreenBloc>(context)
+                          .add(ProfessionalSmsPaymentEvent());
+                    }),
+              )
+            : Container(),
+        Divider(),
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: settingUI(
+              text: "Edit Profile",
+              onTap: () {
+                BlocProvider.of<SettingScreenBloc>(context)
+                    .add(ProfessionalEditProfileEvent());
+              }),
+        ),
+        Divider(),
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: settingUI(
+              text: "Reset Password",
+              onTap: () {
+                BlocProvider.of<SettingScreenBloc>(context)
+                    .add(ProfessionalResetPasswordEvent());
               }),
         ),
       ],
@@ -134,6 +182,61 @@ class _SettingScreenBodyState extends State<SettingScreenBody> {
       Professional professional, BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ProfessionalDashboard(professional: professional);
+    }));
+  }
+
+  void navigateToProfessionalEditProfileScreen(
+      BuildContext context, Professional professional) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ProfessionalEditProfileScreen(professional: professional);
+    }));
+  }
+
+  errorDialogAlert(String message) {
+    Alert(
+      context: this.context,
+      type: AlertType.error,
+      title: "",
+      desc: message,
+      buttons: [
+        DialogButton(
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            Navigator.pop(this.context);
+          },
+          width: 120,
+        )
+      ],
+    ).show();
+  }
+
+  successDialogAlert(String message) {
+    Alert(
+      context: this.context,
+      type: AlertType.success,
+      title: "",
+      desc: message,
+      buttons: [
+        DialogButton(
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            Navigator.pop(this.context);
+          },
+          width: 120,
+        )
+      ],
+    ).show();
+  }
+
+  void navigateToProfessionalPaymentScreen(context, Professional professional) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ProfessionalPaymentScreen(professional: professional);
     }));
   }
 }

@@ -5,12 +5,12 @@ class CustomerRepository {
   CustomerRepository.defaultConstructor();
 
   Future<List<Customer>> getAllCustomersOfProfessional(
-      String professionalDocumentID) async {
+      String professionalID) async {
     final dbReference = FirebaseFirestore.instance;
     List<Customer> customers = new List();
     await dbReference
         .collection('professional')
-        .doc(professionalDocumentID)
+        .doc(professionalID)
         .collection('customer')
         .get()
         .then((value) {
@@ -32,7 +32,7 @@ class CustomerRepository {
         .doc(professionalDocumentID)
         .collection('customer')
         .add(Customer.defaultConstructor()
-        .toMap(name, phone, address, city, country));
+            .toMap(name, phone, address, city, country));
     Customer customer = Customer.defaultConstructor();
     customer.setName(name);
     customer.setPhone(phone);

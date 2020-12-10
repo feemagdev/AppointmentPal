@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:appointmentproject/model/professional.dart';
+import 'package:appointmentproject/repository/person_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
@@ -23,6 +24,13 @@ class ProfessionalDashboardBloc
       yield ProfessionalSettingState(professional: event.professional);
     } else if (event is ProfessionalHistoryEvent) {
       yield ProfessionalHistoryState(professional: event.professional);
+    } else if (event is ProfessionalLogOutEvent) {
+      yield ProfessionalDashboardLoadingState();
+      await PersonRepository.defaultConstructor().signOut();
+      yield ProfessionalLogOutSuccessfullyState();
+    } else if (event is ProfessionalDashboardEditProfileEvent) {
+      yield ProfessionalDashboardEditProfileState(
+          professional: event.professional);
     }
   }
 

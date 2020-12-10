@@ -29,59 +29,71 @@ class _ManualBusinessHoursWeekdayBodyState
     final Professional _professional =
         BlocProvider.of<ManualBusinessHoursWeekdayBloc>(context).professional;
     WeekDaysAvailability weekDaysAvailability;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Select Day"),
-        leading: IconButton(
-          onPressed: () {
-            navigateToProfessionalSettingScreen(_professional, context);
-          },
-          icon: Icon(Icons.arrow_back),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.save_outlined),
-            onPressed: () {
-              BlocProvider.of<ManualBusinessHoursWeekdayBloc>(context).add(
-                  UpdateManualBusinessHoursWeekdaysEvent(
-                      weekDaysAvailability: weekDaysAvailability));
-            },
-          )
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            BlocListener<ManualBusinessHoursWeekdayBloc,
-                ManualBusinessHoursWeekdayState>(
-              listener: (context, state) {
-                if (state is ManualBusinessHoursWeekdaySelectedState) {
-                  navigateToAddTimeSlotScreen(
-                      context, _professional, state.day);
-                } else if (state is UpdateManualBusinessHoursWeekdaysState) {
-                  successfulDialog();
-                }
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Select Day"),
+            leading: IconButton(
+              onPressed: () {
+                navigateToProfessionalSettingScreen(_professional, context);
               },
-              child: BlocBuilder<ManualBusinessHoursWeekdayBloc,
-                  ManualBusinessHoursWeekdayState>(
-                builder: (context, state) {
-                  if (state is ManualBusinessHoursWeekdayInitial) {
-                    return loadingState(context);
-                  } else if (state is GetManualAvailableWeekDaysStatusState) {
-                    weekDaysAvailability = state.weekDaysAvailability;
-                    return settingBuilder(context, state.weekDaysAvailability);
-                  } else if (state is ManualBusinessHoursWeekdayLoadingState) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (state is UpdateManualBusinessHoursWeekdaysState) {
-                    settingBuilder(context, state.updatedWeekDays);
-                  }
-                  print("container run");
-                  return Container();
-                },
-              ),
+              icon: Icon(Icons.arrow_back),
             ),
-          ],
+            actions: [
+              IconButton(
+                icon: Icon(Icons.save_outlined),
+                onPressed: () {
+                  BlocProvider.of<ManualBusinessHoursWeekdayBloc>(context).add(
+                      UpdateManualBusinessHoursWeekdaysEvent(
+                          weekDaysAvailability: weekDaysAvailability));
+                },
+              )
+            ],
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              children: [
+                BlocListener<ManualBusinessHoursWeekdayBloc,
+                    ManualBusinessHoursWeekdayState>(
+                  listener: (context, state) {
+                    if (state is ManualBusinessHoursWeekdaySelectedState) {
+                      navigateToAddTimeSlotScreen(
+                          context, _professional, state.day);
+                    } else if (state
+                        is UpdateManualBusinessHoursWeekdaysState) {
+                      successfulDialog();
+                    }
+                  },
+                  child: BlocBuilder<ManualBusinessHoursWeekdayBloc,
+                      ManualBusinessHoursWeekdayState>(
+                    builder: (context, state) {
+                      if (state is ManualBusinessHoursWeekdayInitial) {
+                        return loadingState(context);
+                      } else if (state
+                          is GetManualAvailableWeekDaysStatusState) {
+                        weekDaysAvailability = state.weekDaysAvailability;
+                        return settingBuilder(
+                            context, state.weekDaysAvailability);
+                      } else if (state
+                          is ManualBusinessHoursWeekdayLoadingState) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (state
+                          is UpdateManualBusinessHoursWeekdaysState) {
+                        settingBuilder(context, state.updatedWeekDays);
+                      }
+                      print("container run");
+                      return Container();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -220,8 +232,8 @@ class _ManualBusinessHoursWeekdayBodyState
           ),
           onPressed: () {
             Navigator.pop(context);
-            BlocProvider.of<ManualBusinessHoursWeekdayBloc>(context).add(
-                GetManualAvailableWeekDaysStatusEvent());
+            BlocProvider.of<ManualBusinessHoursWeekdayBloc>(context)
+                .add(GetManualAvailableWeekDaysStatusEvent());
           },
           width: 120,
         )
@@ -229,19 +241,18 @@ class _ManualBusinessHoursWeekdayBodyState
     ).show();
   }
 
-
-  void navigateToAddTimeSlotScreen(BuildContext context,
-      Professional professional, String day) {
+  void navigateToAddTimeSlotScreen(
+      BuildContext context, Professional professional, String day) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return AddCustomTimeSlotScreen(professional: professional, day: day);
     }));
   }
 
-  void navigateToAutomatedScheduleScreen(BuildContext context,
-      Professional professional) {}
+  void navigateToAutomatedScheduleScreen(
+      BuildContext context, Professional professional) {}
 
-  void navigateToManualBusinessHoursState(BuildContext context,
-      Professional professional) {}
+  void navigateToManualBusinessHoursState(
+      BuildContext context, Professional professional) {}
 
   Widget loadingState(BuildContext context) {
     BlocProvider.of<ManualBusinessHoursWeekdayBloc>(context)
@@ -249,8 +260,8 @@ class _ManualBusinessHoursWeekdayBodyState
     return Container();
   }
 
-  void navigateToProfessionalSettingScreen(Professional professional,
-      BuildContext context) {
+  void navigateToProfessionalSettingScreen(
+      Professional professional, BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return SettingScreen(professional: professional);
     }));

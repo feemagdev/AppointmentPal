@@ -20,7 +20,6 @@ class _MnagaerAddProfessionalBodyState
   TextEditingController addressController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController countryController = TextEditingController();
-  TextEditingController experienceController = TextEditingController();
   TextEditingController emailController = TextEditingController();
 
   @override
@@ -28,50 +27,65 @@ class _MnagaerAddProfessionalBodyState
     final Manager _manager =
         BlocProvider.of<ManagerAddProfessionalBloc>(context).manager;
 
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Add Professional"),
-        ),
-        body: SingleChildScrollView(
-            child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Container(
-            child: Column(
-              children: [
-                BlocListener<ManagerAddProfessionalBloc,
-                    ManagerAddProfessionalState>(
-                  listener: (context, state) {
-                    if (state is ManagerAddedProfessionalSuccessfullyState) {
-                      String msg = "Professional added successfully";
-                      showSuccessDialog(msg, _manager);
-                    } else if (state
-                        is ProfessionalNotRegisteredSuccessfullyState) {
-                      showAlertDialog(state.errorMessage);
-                    } else if (state is ManagerVerificationFailedState) {
-                      showAlertDialog(state.message);
-                    }
-                  },
-                  child: BlocBuilder<ManagerAddProfessionalBloc,
-                      ManagerAddProfessionalState>(
-                    builder: (context, state) {
-                      if (state is ManagerAddProfessionalInitial) {
-                        return _professionalForm(context, _manager);
-                      } else if (state
-                          is ProfessionalNotRegisteredSuccessfullyState) {
-                        return _professionalForm(context, _manager);
-                      } else if (state is ManagerAddProfessionalLoadingState) {
-                        return Center(child: CircularProgressIndicator());
-                      } else if (state is ManagerVerifiedSuccessfully) {
-                        addUserNow(state.email, state.password);
-                      }
-                      return _professionalForm(context, _manager);
-                    },
-                  ),
-                ),
-              ],
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+            appBar: AppBar(
+              title: Text("Add Professional"),
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () {
+                  navigateToDashboard(_manager, context);
+                },
+              ),
             ),
-          ),
-        )));
+            body: SingleChildScrollView(
+                child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Container(
+                child: Column(
+                  children: [
+                    BlocListener<ManagerAddProfessionalBloc,
+                        ManagerAddProfessionalState>(
+                      listener: (context, state) {
+                        if (state
+                            is ManagerAddedProfessionalSuccessfullyState) {
+                          String msg = "Professional added successfully";
+                          showSuccessDialog(msg, _manager);
+                        } else if (state
+                            is ProfessionalNotRegisteredSuccessfullyState) {
+                          showAlertDialog(state.errorMessage);
+                        } else if (state is ManagerVerificationFailedState) {
+                          showAlertDialog(state.message);
+                        }
+                      },
+                      child: BlocBuilder<ManagerAddProfessionalBloc,
+                          ManagerAddProfessionalState>(
+                        builder: (context, state) {
+                          if (state is ManagerAddProfessionalInitial) {
+                            return _professionalForm(context, _manager);
+                          } else if (state
+                              is ProfessionalNotRegisteredSuccessfullyState) {
+                            return _professionalForm(context, _manager);
+                          } else if (state
+                              is ManagerAddProfessionalLoadingState) {
+                            return Center(child: CircularProgressIndicator());
+                          } else if (state is ManagerVerifiedSuccessfully) {
+                            addUserNow(state.email, state.password);
+                          }
+                          return _professionalForm(context, _manager);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ))),
+      ),
+    );
   }
 
   Widget _professionalForm(context, manager) {
@@ -137,7 +151,7 @@ class _MnagaerAddProfessionalBodyState
                 labelText: "Phone",
                 border: OutlineInputBorder(),
               ),
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.phone,
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter phone';
@@ -212,29 +226,6 @@ class _MnagaerAddProfessionalBodyState
                   return 'Please enter city name';
                 } else if (value.length < 3) {
                   return "Please enter correct country name";
-                }
-                return null;
-              },
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Container(
-            height: deviceWidth < 365 ? 60 : 70,
-            child: TextFormField(
-              controller: experienceController,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              decoration: InputDecoration(
-                labelText: "Experience (years)",
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.number,
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter your experience';
-                } else if (int.parse(value) > 60) {
-                  return "experience cannot be greater than 60";
                 }
                 return null;
               },

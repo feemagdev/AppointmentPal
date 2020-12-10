@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:appointmentproject/model/manager.dart';
+import 'package:appointmentproject/repository/person_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
@@ -23,6 +24,10 @@ class ManagerDashboardBloc
       yield ManagerDashboardAddAppointmentState();
     } else if (event is ManagerDashboardEditAppointmentEvent) {
       yield ManagerDashboardEditAppointmentState();
+    } else if (event is ManagerLogOutEvent) {
+      yield ManagerDashboardLoadingState();
+      await PersonRepository.defaultConstructor().signOut();
+      yield ManagerLogOutSuccess();
     }
   }
 

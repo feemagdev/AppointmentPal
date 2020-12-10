@@ -1,11 +1,14 @@
 import 'package:appointmentproject/bloc/ManagerBloc/ManagerDashboardBloc/manager_dashboard_bloc.dart';
 import 'package:appointmentproject/model/manager.dart';
+import 'package:appointmentproject/ui/Login/login_screen.dart';
+import 'package:appointmentproject/ui/Manager/CompanyProfile/company_profile_screen.dart';
 import 'package:appointmentproject/ui/Manager/ManagerAddProfessional/manager_add_professional_screen.dart';
+import 'package:appointmentproject/ui/Manager/ManagerProfile/manager_profile_screen.dart';
 import 'package:appointmentproject/ui/Manager/ManagerSelectProfessional/manager_select_professional_screen.dart';
+import 'package:appointmentproject/ui/Manager/ManagerSettingScreen/manager_setting_screen.dart';
 import 'package:appointmentproject/ui/Professional/ProfessionalDashboard/components/category_card.dart';
 
 import 'package:appointmentproject/ui/components/Animation/FadeAnimation.dart';
-import 'package:appointmentproject/ui/components/background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -31,8 +34,7 @@ class _ManagerDashboardBodyState extends State<ManagerDashboardBody> {
                 backgroundColor: Colors.white,
                 key: _scaffoldKey,
                 drawer: customDrawer(_manager),
-                body: Background(
-                    child: Column(
+                body: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     BlocListener<ManagerDashboardBloc, ManagerDashboardState>(
@@ -45,12 +47,18 @@ class _ManagerDashboardBodyState extends State<ManagerDashboardBody> {
                         } else if (state
                             is ManagerDashboardEditAppointmentState) {
                           navigateToEditAppointmentScreen(context, _manager);
+                        } else if (state is ManagerLogOutSuccess) {
+                          navigateToLoginScreen(context);
                         }
                       },
                       child: BlocBuilder<ManagerDashboardBloc,
                           ManagerDashboardState>(builder: (context, state) {
                         if (state is ManagerDashboardInitial) {
                           return Container();
+                        } else if (state is ManagerDashboardLoadingState) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
                         }
                         return Container();
                       }),
@@ -65,20 +73,25 @@ class _ManagerDashboardBodyState extends State<ManagerDashboardBody> {
                             }),
                         GestureDetector(
                           onTap: () {
-                            navigateToManagerProfileScreen(context);
+                            navigateToManagerProfileScreen(context, _manager);
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                      fit: BoxFit.fill,
-                                      image:
-                                          NetworkImage(_manager.getImage()))),
-                            ),
+                            child: _manager.getImage() == null
+                                ? Icon(
+                                    Icons.person_outline_rounded,
+                                    color: Colors.blue,
+                                  )
+                                : Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                            fit: BoxFit.fill,
+                                            image: NetworkImage(
+                                                _manager.getImage()))),
+                                  ),
                           ),
                         ),
                       ],
@@ -121,7 +134,7 @@ class _ManagerDashboardBodyState extends State<ManagerDashboardBody> {
                     ),
                     Expanded(child: createGrid(context, _manager))
                   ],
-                )))));
+                ))));
   }
 
   Widget createGrid(BuildContext context, Manager manager) {
@@ -191,10 +204,10 @@ class _ManagerDashboardBodyState extends State<ManagerDashboardBody> {
                               width: 0.5,
                               color: Color.fromRGBO(228, 229, 231, 1)))),
                   child: CategoryCard(
-                    svgSrc: "assets/icons/check.svg",
-                    title: "View\nAppointment",
+                    svgSrc: "assets/icons/company.svg",
+                    title: "Company",
                     onTap: () {
-                      viewAppointment(context);
+                      viewCompanyProfile(context, manager);
                     },
                   ),
                 )),
@@ -236,7 +249,7 @@ class _ManagerDashboardBodyState extends State<ManagerDashboardBody> {
                   svgSrc: "assets/icons/setting2.svg",
                   title: "setting",
                   onTap: () {
-                    settingTap(context);
+                    navigateToManagerSettingScreen(context, manager);
                   },
                 )),
           ],
@@ -260,16 +273,22 @@ class _ManagerDashboardBodyState extends State<ManagerDashboardBody> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white),
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              fit: BoxFit.fill,
-                              image: NetworkImage(manager.getImage()))),
-                    ),
+                    child: manager.getImage() == null
+                        ? Icon(
+                            Icons.person_outline,
+                            size: 70,
+                            color: Colors.white,
+                          )
+                        : Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.white),
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: NetworkImage(manager.getImage()))),
+                          ),
                   ),
                   Text(
                     manager.getName(),
@@ -291,9 +310,9 @@ class _ManagerDashboardBodyState extends State<ManagerDashboardBody> {
           },
         ),
         ListTile(
-          title: Text("View Appointment"),
+          title: Text("Company"),
           onTap: () {
-            viewAppointment(context);
+            viewCompanyProfile(context, manager);
           },
         ),
         ListTile(
@@ -304,15 +323,22 @@ class _ManagerDashboardBodyState extends State<ManagerDashboardBody> {
         ),
         ListTile(
           title: Text("View Professional"),
-          onTap: () {},
+          onTap: () {
+            navigateToSelectProfessionalScreen(context, manager);
+          },
         ),
         ListTile(
           title: Text("Setting"),
-          onTap: () {},
+          onTap: () {
+            navigateToManagerSettingScreen(context, manager);
+          },
         ),
         ListTile(
           title: Text("Log out"),
-          onTap: () {},
+          onTap: () {
+            BlocProvider.of<ManagerDashboardBloc>(context)
+                .add(ManagerLogOutEvent());
+          },
         ),
       ],
     ));
@@ -326,11 +352,6 @@ class _ManagerDashboardBodyState extends State<ManagerDashboardBody> {
   void editAppointmentTap(BuildContext context) {
     BlocProvider.of<ManagerDashboardBloc>(context)
         .add(ManagerDashboardEditAppointmentEvent());
-  }
-
-  void viewAppointment(BuildContext context) {
-    // BlocProvider.of<ProfessionalDashboardBloc>(context)
-    //     .add(ProfessionalTodayAppointmentEvent(professional: professional));
   }
 
   void settingTap(BuildContext context) {
@@ -367,13 +388,35 @@ class _ManagerDashboardBodyState extends State<ManagerDashboardBody> {
     }));
   }
 
-  void navigateToManagerProfileScreen(BuildContext context) {}
+  void navigateToManagerProfileScreen(BuildContext context, Manager manager) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ManagerProfileScreen(manager: manager);
+    }));
+  }
 
   void navigateToSelectProfessionalScreen(
       BuildContext context, Manager manager) {
     String route = 'profile';
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ManagerSelectProfessionalScreen(manager: manager, route: route);
+    }));
+  }
+
+  void viewCompanyProfile(BuildContext context, Manager manager) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (contex) {
+      return CompanyProfileScreen(manager: manager);
+    }));
+  }
+
+  void navigateToLoginScreen(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return LoginScreen();
+    }));
+  }
+
+  void navigateToManagerSettingScreen(BuildContext context, Manager manager) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ManagerSettingScreen(manager: manager);
     }));
   }
 }

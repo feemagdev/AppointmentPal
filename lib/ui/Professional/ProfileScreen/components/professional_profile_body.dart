@@ -21,63 +21,68 @@ class _ProfessionalProfileBodyState extends State<ProfessionalProfileBody> {
   Widget build(BuildContext context) {
     Professional _professional =
         BlocProvider.of<ProfessionalProfileBloc>(context).professional;
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Stack(
-          children: [
-            Column(children: [
-              BlocListener<ProfessionalProfileBloc, ProfessionalProfileState>(
-                listener: (context, state) {
-                  if (state is GetAllDataForProfileState) {
-                    _addressController.text = _professional.getAddress();
-                    _phoneController.text = _professional.getPhone();
-                    _cityController.text = _professional.getCity();
-                  }
-                },
-                child: BlocBuilder<ProfessionalProfileBloc,
-                    ProfessionalProfileState>(
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: Stack(
+            children: [
+              Column(children: [
+                BlocListener<ProfessionalProfileBloc, ProfessionalProfileState>(
+                  listener: (context, state) {
+                    if (state is GetAllDataForProfileState) {
+                      _addressController.text = _professional.getAddress();
+                      _phoneController.text = _professional.getPhone();
+                      _cityController.text = _professional.getCity();
+                    }
+                  },
+                  child: BlocBuilder<ProfessionalProfileBloc,
+                      ProfessionalProfileState>(
+                    builder: (context, state) {
+                      if (state is ProfessionalProfileInitial) {
+                        BlocProvider.of<ProfessionalProfileBloc>(context)
+                            .add(GetAllDataForProfileEvent());
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (state is ProfessionalProfileLoadingState) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (state is GetAllDataForProfileState) {
+                        Manager manager =
+                            BlocProvider.of<ProfessionalProfileBloc>(context)
+                                .manager;
+                        return profileUpperPartUI(
+                            _professional, state.email, manager);
+                      }
+                      return Container();
+                    },
+                  ),
+                ),
+                BlocBuilder<ProfessionalProfileBloc, ProfessionalProfileState>(
                   builder: (context, state) {
-                    if (state is ProfessionalProfileInitial) {
-                      BlocProvider.of<ProfessionalProfileBloc>(context)
-                          .add(GetAllDataForProfileEvent());
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else if (state is ProfessionalProfileLoadingState) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else if (state is GetAllDataForProfileState) {
-                      Manager manager =
-                          BlocProvider.of<ProfessionalProfileBloc>(context)
-                              .manager;
-                      return profileUpperPartUI(
-                          _professional, state.email, manager);
+                    if (state is GetAllDataForProfileState) {
+                      return profileLowerPartUI();
                     }
                     return Container();
                   },
                 ),
-              ),
+              ]),
               BlocBuilder<ProfessionalProfileBloc, ProfessionalProfileState>(
                 builder: (context, state) {
                   if (state is GetAllDataForProfileState) {
-                    return profileLowerPartUI();
+                    return profileCountersUI(state.completedAppointments,
+                        state.canceledAppointments);
                   }
                   return Container();
                 },
               ),
-            ]),
-            BlocBuilder<ProfessionalProfileBloc, ProfessionalProfileState>(
-              builder: (context, state) {
-                if (state is GetAllDataForProfileState) {
-                  return profileCountersUI(
-                      state.completedAppointments, state.canceledAppointments);
-                }
-                return Container();
-              },
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -217,11 +222,18 @@ class _ProfessionalProfileBodyState extends State<ProfessionalProfileBody> {
                 width: 3.0,
               ),
             ),
-            child: ClipOval(
-                child: FadeInImage.assetNetwork(
-                    fit: BoxFit.fill,
-                    placeholder: 'assets/images/logo2.png',
-                    image: professional.getImage())),
+            child:
+                professional.getImage() == null || professional.getImage() == ""
+                    ? Icon(
+                        Icons.person,
+                        size: 50,
+                        color: Colors.white,
+                      )
+                    : ClipOval(
+                        child: FadeInImage.assetNetwork(
+                            fit: BoxFit.fill,
+                            placeholder: 'assets/images/logo2.png',
+                            image: professional.getImage())),
           ),
           Text(
             professional.getName(),

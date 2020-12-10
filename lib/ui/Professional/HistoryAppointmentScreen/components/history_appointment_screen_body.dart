@@ -22,45 +22,52 @@ class _HistoryAppointmentBodyState extends State<HistoryAppointmentBody> {
   DateTime selectedDateTime;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("History"),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Professional professional =
-                  BlocProvider.of<HistoryAppointmentBloc>(context).professional;
-              naviagateToProfessionalDashboard(context, professional);
-            },
-          ),
-        ),
-        body: Column(
-          children: [
-            _searchBar(),
-            _radioButton(),
-            BlocListener<HistoryAppointmentBloc, HistoryAppointmentState>(
-              listener: (context, state) {},
-              child:
-                  BlocBuilder<HistoryAppointmentBloc, HistoryAppointmentState>(
-                      builder: (context, state) {
-                if (state is GetHistoryOfCompletedAppointmentState) {
-                  return Expanded(
-                      child: appointmentsBuilder(
-                          context, state.appointmentList, state.customerList));
-                } else if (state is HistoryAppointmentLoadingState) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (state is GetHistoryOfCanceledAppointmentState) {
-                  return Expanded(
-                      child: appointmentsBuilder(
-                          context, state.appointmentList, state.customerList));
-                }
-                return Container();
-              }),
-            )
-          ],
-        ));
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+            appBar: AppBar(
+              title: Text("History"),
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () {
+                  Professional professional =
+                      BlocProvider.of<HistoryAppointmentBloc>(context)
+                          .professional;
+                  naviagateToProfessionalDashboard(context, professional);
+                },
+              ),
+            ),
+            body: Column(
+              children: [
+                _searchBar(),
+                _radioButton(),
+                BlocListener<HistoryAppointmentBloc, HistoryAppointmentState>(
+                  listener: (context, state) {},
+                  child: BlocBuilder<HistoryAppointmentBloc,
+                      HistoryAppointmentState>(builder: (context, state) {
+                    if (state is GetHistoryOfCompletedAppointmentState) {
+                      return Expanded(
+                          child: appointmentsBuilder(context,
+                              state.appointmentList, state.customerList));
+                    } else if (state is HistoryAppointmentLoadingState) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (state is GetHistoryOfCanceledAppointmentState) {
+                      return Expanded(
+                          child: appointmentsBuilder(context,
+                              state.appointmentList, state.customerList));
+                    }
+                    return Container();
+                  }),
+                )
+              ],
+            )),
+      ),
+    );
   }
 
   Widget _searchBar() {
