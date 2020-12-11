@@ -46,9 +46,9 @@ class AppointmentBookingBloc
               Timestamp.fromDate(event.appointmentStartTime),
               Timestamp.fromDate(event.appointmentEndTime),
               'booked');
+
       if (event.smsCheck) {
-        if (event.professional.getManagerID() != null ||
-            event.professional.getManagerID() != "") {
+        if (event.professional.getManagerID() != "") {
           bool check = await PaymentRepository.defualtConstructor()
               .getManagerPaymentStatus(event.professional.getManagerID());
           if (check) {

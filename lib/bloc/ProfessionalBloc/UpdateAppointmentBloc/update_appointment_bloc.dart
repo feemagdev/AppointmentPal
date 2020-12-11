@@ -45,8 +45,7 @@ class UpdateAppointmentBloc
       await AppointmentRepository.defaultConstructor()
           .cancelAppointment(event.appointment.getAppointmentID());
       if (event.smsCheck) {
-        if (professional.getManagerID() != null ||
-            professional.getManagerID() != "") {
+        if (professional.getManagerID() != "") {
           bool check = await PaymentRepository.defualtConstructor()
               .getManagerPaymentStatus(professional.getManagerID());
           if (check) {
@@ -116,8 +115,7 @@ class UpdateAppointmentBloc
           .updateAppointment(appointment);
 
       if (event.smsCheck) {
-        if (professional.getManagerID() != null ||
-            professional.getManagerID() != "") {
+        if (professional.getManagerID() != "") {
           bool check = await PaymentRepository.defualtConstructor()
               .getManagerPaymentStatus(professional.getManagerID());
           if (check) {
