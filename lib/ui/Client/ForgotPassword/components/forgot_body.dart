@@ -33,7 +33,7 @@ class _ForgotBodyState extends State<ForgotBody> {
                   listener: (context, state) {
                     if (state is ForgotPasswordEmailSent) {
                       infoDialogAlert(
-                          "Password email sent\nPlease also check you spam folder");
+                          "Password email sent\nPlease also check your spam folder");
                     } else if (state is ForgotPasswordEmailNotSent) {
                       errorDialogAlert(state.message);
                     }
@@ -148,7 +148,7 @@ class _ForgotBodyState extends State<ForgotBody> {
                     1.5,
                     GestureDetector(
                       child: Text(
-                        "Singn In",
+                        "Sign In",
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: deviceWidth < 400 ? 15 : 20,
