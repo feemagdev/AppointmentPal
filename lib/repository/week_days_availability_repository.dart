@@ -10,7 +10,7 @@ class WeekDaysAvailabilityRepository {
     WeekDaysAvailability weekDaysAvailability =
         WeekDaysAvailability.defaultConstructor();
     DocumentSnapshot snapshot = await dbReference
-        .collection('CustomTimeSlot')
+        .collection('custom_time_slot')
         .doc(professionalID)
         .get();
     if (snapshot.exists) {
@@ -24,10 +24,8 @@ class WeekDaysAvailabilityRepository {
   Future<WeekDaysAvailability> updateWeekDaysAvailability(
       String professionalID, WeekDaysAvailability weekDaysAvailability) async {
     final dbReference = FirebaseFirestore.instance;
-    await dbReference
-        .collection('CustomTimeSlot')
-        .doc(professionalID)
-        .set(WeekDaysAvailability.defaultConstructor().toMap(
+    await dbReference.collection('custom_time_slot').doc(professionalID).set(
+        WeekDaysAvailability.defaultConstructor().toMap(
           weekDaysAvailability.getMondayAvailability(),
           weekDaysAvailability.getTuesdayAvailability(),
           weekDaysAvailability.getWednesdayAvailability(),
@@ -35,7 +33,8 @@ class WeekDaysAvailabilityRepository {
           weekDaysAvailability.getFridayAvailability(),
           weekDaysAvailability.getSaturdayAvailability(),
           weekDaysAvailability.getSundayAvailability(),
-        ),SetOptions(merge:true));
+        ),
+        SetOptions(merge: true));
     return weekDaysAvailability;
   }
 }

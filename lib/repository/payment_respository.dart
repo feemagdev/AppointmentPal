@@ -35,6 +35,7 @@ class PaymentRepository {
         .where('professionalID', isEqualTo: professionalID)
         .get();
     if (snapshot.size == 0) {
+      print("snapshot size is zero");
       return true;
     } else {
       return false;
