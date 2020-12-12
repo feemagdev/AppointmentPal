@@ -239,6 +239,7 @@ class AppointmentRepository {
         .get();
 
     totalApponitments = query.size;
+
     return totalApponitments;
   }
 
