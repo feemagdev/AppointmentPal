@@ -423,6 +423,10 @@ class _AddAutomaticScheduleBodyState extends State<AddAutomaticScheduleBody> {
                         noScheduleAvailableAlert(
                             "Break start time sholud be less than Break end time");
                       } else {
+                        print("check");
+                        print(
+                            (startTimeInMinutes + tempSchedule.getDuration()));
+                        print(endTimeInMinutes);
                         tempSchedule.setBreakStartTime(fromDateTime.hour);
                         tempSchedule
                             .setBreakStartTimeMinutes(fromDateTime.minute);
@@ -433,12 +437,23 @@ class _AddAutomaticScheduleBodyState extends State<AddAutomaticScheduleBody> {
                                 schedule: tempSchedule));
                       }
                     } else {
-                      tempSchedule.setStartTime(fromDateTime.hour);
-                      tempSchedule.setStartTimeMinutes(fromDateTime.minute);
-                      tempSchedule.setEndTime(toDateTime.hour);
-                      tempSchedule.setEndTimeMinutes(toDateTime.minute);
-                      BlocProvider.of<AddAutomaticScheduleBloc>(context).add(
-                          UpdateAutomaticScheduleEvent(schedule: tempSchedule));
+                      int durationCheck2 = fromDateTime.hour * 60 +
+                          fromDateTime.minute +
+                          tempSchedule.getDuration();
+                      int endTimeCheck =
+                          toDateTime.hour * 60 + toDateTime.minute;
+                      if (durationCheck2 >= endTimeCheck) {
+                        noScheduleAvailableAlert(
+                            "Wrong start and end time given");
+                      } else {
+                        tempSchedule.setStartTime(fromDateTime.hour);
+                        tempSchedule.setStartTimeMinutes(fromDateTime.minute);
+                        tempSchedule.setEndTime(toDateTime.hour);
+                        tempSchedule.setEndTimeMinutes(toDateTime.minute);
+                        BlocProvider.of<AddAutomaticScheduleBloc>(context).add(
+                            UpdateAutomaticScheduleEvent(
+                                schedule: tempSchedule));
+                      }
                     }
                     breakTimeEditCheck = false;
                   },
@@ -544,6 +559,8 @@ class _AddAutomaticScheduleBodyState extends State<AddAutomaticScheduleBody> {
                         duration.hour * 60 + duration.minute;
                     if (newDurationMinutes > totalMinutes) {
                       noScheduleAvailableAlert("Invalid duration");
+                    } else if (newDurationMinutes == 0) {
+                      noScheduleAvailableAlert("invalid duration");
                     } else {
                       tempSchedule
                           .setDuration(duration.hour * 60 + duration.minute);

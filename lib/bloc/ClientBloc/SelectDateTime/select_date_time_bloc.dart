@@ -479,7 +479,7 @@ class SelectDateTimeBloc
         }
       }
       multiplier = 1;
-      bool checkBreakEndTime = false;
+      bool checkBreakEndTime = true;
 
       if (appointment == null) {
         checkBreakEndTime = true;
@@ -500,15 +500,18 @@ class SelectDateTimeBloc
           if (breakEndTimeInMinutes >= appointmentStartTime &&
               breakEndTimeInMinutes < appointmentEndTime) {
             checkBreakEndTime = false;
+            print("1st is true");
             break;
           } else if (appointmentStartTime < scheduleEndTimeInMinutes &&
               appointmentEndTime > scheduleEndTimeInMinutes) {
             print("new condition is true");
+            print(i);
             checkBreakEndTime = false;
             break;
           } else if (appointmentStartTime >= breakEndTimeInMinutes &&
               appointmentEndTime <= scheduleEndTimeInMinutes) {
-            checkBreakEndTime = true;
+            print("end is true");
+            checkBreakEndTime = false;
             break;
           }
           /*else if (breakEndTime.hour ==
